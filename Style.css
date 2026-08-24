@@ -8,11 +8,13 @@ html {
   scroll-behavior: smooth;
   width: 100%;
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 body {
   width: 100%;
   min-height: 100vh;
+  min-height: 100dvh;
   overflow-x: hidden;
   overflow-y: auto;
   font-family: 'Montserrat', sans-serif;
@@ -29,6 +31,7 @@ body {
   transform: translate(-50%, -50%) scale(1.0);
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   object-fit: cover;
   z-index: 1;
   pointer-events: none;
@@ -43,6 +46,7 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   z-index: 2;
   pointer-events: none;
   background: rgba(181, 190, 157, 0.2);
@@ -64,6 +68,7 @@ body.darkened .bg-video {
   left: 0;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   z-index: 3;
   pointer-events: none;
   opacity: 1;
@@ -79,6 +84,7 @@ body.darkened #smokeCanvas {
   position: relative;
   z-index: 10;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -121,6 +127,7 @@ body.darkened .stars-divider .star-group { color: #d8c3a5; }
   justify-content: center;
   width: 100%;
   min-height: calc(100vh - 100px);
+  min-height: calc(100dvh - 100px);
   margin: auto 0;
   transition: opacity 2s cubic-bezier(0.4, 0, 0.2, 1), transform 2s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -202,6 +209,7 @@ body.darkened .brand-subtitle { color: #d8c3a5; }
   letter-spacing: 0.2em;
   border-radius: 40px;
   backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
   transition: all 0.4s ease;
   cursor: pointer;
 }
@@ -338,6 +346,7 @@ body.darkened .stars-group path {
   letter-spacing: 0.12em;
   cursor: pointer;
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   transition: all 0.3s ease;
 }
 
@@ -359,6 +368,7 @@ body.darkened .stars-group path {
   font-weight: 500;
   cursor: pointer;
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
@@ -401,6 +411,7 @@ body.darkened .stars-group path {
   align-items: center;
   gap: 6px;
   backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
   transition: all 0.3s ease;
 }
 
@@ -515,6 +526,7 @@ body.darkened .stars-group path {
   transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
   animation: starPulseBtn 3s ease-in-out infinite;
+  will-change: transform, box-shadow;
 }
 
 .btn-sobre-mim .arrow-down {
@@ -547,9 +559,11 @@ body.darkened .stars-group path {
   border: 1px solid rgba(212, 175, 55, 0.3);
   border-radius: 20px;
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1), transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
   animation: starPulse 4s ease-in-out infinite;
+  will-change: opacity, transform, box-shadow;
 }
 
 .sobre-mim-section.fade-out {
@@ -678,16 +692,14 @@ body.darkened .sobre-mim-section {
 }
 
 /* =========================================================
-   AJUSTES RESPONSIVOS PARA CELULAR (Evita sobreposição)
+   AJUSTES RESPONSIVOS PARA CELULAR
    ========================================================= */
 @media (max-width: 768px) {
-  /* Impede que o modal do quiz fique encavalado no celular */
   .quiz-interactive-layout {
     flex-direction: column;
     min-height: auto;
   }
 
-  /* Painel lateral de informação passa para baixo das opções */
   .info-inline-panel {
     position: relative !important;
     right: auto !important;
@@ -702,12 +714,10 @@ body.darkened .sobre-mim-section {
     border: 1px solid rgba(216, 195, 165, 0.3);
   }
 
-  /* Ajusta tamanho dos títulos no celular */
   .brand-title {
     font-size: 2rem !important;
   }
 
-  /* Organiza o botão voltar para não encavalar com o título */
   .step-header {
     flex-direction: column;
     gap: 12px;
@@ -721,7 +731,10 @@ body.darkened .sobre-mim-section {
     align-self: flex-start;
   }
 
-  /* Ajuste do botão Sobre Mim em telas pequenas */
+  .btn-back:hover {
+    transform: translateX(-3px) !important;
+  }
+
   .btn-sobre-mim {
     bottom: 15px;
     left: 15px;
@@ -732,5 +745,15 @@ body.darkened .sobre-mim-section {
   .sobre-mim-img-wrapper {
     width: 100%;
     max-width: 220px;
+  }
+}
+
+/* ACESSIBILIDADE - REDUÇÃO DE MOVIMENTO */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
