@@ -2,7 +2,6 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Natallyane Costa — Massoterapeuta</title>
   
@@ -37,11 +36,11 @@
 
     <!-- TELA 1: HERO (INICIAL) -->
     <div class="screen-hero" id="screenHero">
-     <!-- Botão "Sobre Mim" flutuante -->
-<button id="btnSobreMim" class="btn-sobre-mim">
-  <span id="btnSobreMimText">Sobre Mim</span>
-  <span id="btnSobreMimArrow" class="arrow-down">↓</span>
-</button>
+      <!-- Botão "Sobre Mim" flutuante -->
+      <button id="btnSobreMim" class="btn-sobre-mim">
+        <span id="btnSobreMimText">Sobre Mim</span>
+        <span id="btnSobreMimArrow" class="arrow-down">↓</span>
+      </button>
 
       <!-- LOGO E NOME CENTRALIZADOS -->
       <div class="center-brand-block">
@@ -81,51 +80,50 @@
     <!-- TELA 2: QUESTIONÁRIO -->
     <div class="quiz-container hidden" id="quizContainer">
       
-     <!-- Passo 1: Técnica -->
-<div class="quiz-step active" id="step1">
-  <div class="step-header">
-    <button type="button" class="btn-back" id="btnBackToHero" title="Voltar para o início">
-      <span class="arrow">←</span> Voltar
-    </button>
-    <h2 class="quiz-title">Qual técnica você gostaria de agendar?</h2>
-  </div>
-  
-  <div class="quiz-interactive-layout">
-    <div class="options-grid">
-      <div class="option-wrapper">
-        <button type="button" class="opt-btn" data-category="tecnica" data-value="Ventosaterapia">Ventosaterapia</button>
-        <button type="button" class="info-btn active" data-info="ventosaterapia" title="Saiba mais">?</button>
-      </div>
+      <!-- Passo 1: Técnica -->
+      <div class="quiz-step active" id="step1">
+        <div class="step-header">
+          <button type="button" class="btn-back" id="btnBackToHero" title="Voltar para o início">
+            <span class="arrow">←</span> Voltar
+          </button>
+          <h2 class="quiz-title">Qual técnica você gostaria de agendar?</h2>
+        </div>
+        
+        <div class="quiz-interactive-layout">
+          <div class="options-grid">
+            <div class="option-wrapper">
+              <button type="button" class="opt-btn" data-category="tecnica" data-value="Ventosaterapia">Ventosaterapia</button>
+              <button type="button" class="info-btn active" data-info="ventosaterapia" title="Saiba mais">?</button>
+            </div>
 
-      <div class="option-wrapper">
-        <button type="button" class="opt-btn" data-category="tecnica" data-value="Massagem Relaxante">Massagem Relaxante</button>
-        <button type="button" class="info-btn" data-info="relaxante" title="Saiba mais">?</button>
-      </div>
+            <div class="option-wrapper">
+              <button type="button" class="opt-btn" data-category="tecnica" data-value="Massagem Relaxante">Massagem Relaxante</button>
+              <button type="button" class="info-btn" data-info="relaxante" title="Saiba mais">?</button>
+            </div>
 
-      <div class="option-wrapper">
-        <button type="button" class="opt-btn" data-category="tecnica" data-value="Drenagem Linfática">Drenagem Linfática</button>
-        <button type="button" class="info-btn" data-info="drenagem" title="Saiba mais">?</button>
-      </div>
+            <div class="option-wrapper">
+              <button type="button" class="opt-btn" data-category="tecnica" data-value="Drenagem Linfática">Drenagem Linfática</button>
+              <button type="button" class="info-btn" data-info="drenagem" title="Saiba mais">?</button>
+            </div>
 
-      <div class="option-wrapper">
-        <button type="button" class="opt-btn" data-category="tecnica" data-value="Avaliação Terapêutica">Preciso de Indicação</button>
-        <button type="button" class="info-btn" data-info="indicacao" title="Saiba mais">?</button>
-      </div>
-    </div>
+            <div class="option-wrapper">
+              <button type="button" class="opt-btn" data-category="tecnica" data-value="Avaliação Terapêutica">Preciso de Indicação</button>
+              <button type="button" class="info-btn" data-info="indicacao" title="Saiba mais">?</button>
+            </div>
+          </div>
 
-    <div class="info-inline-panel visible" id="infoInlinePanel">
-      <div class="tech-img-container has-img" id="techImgWrapper">
-        <img src="imagem/Ventosaterapia.jpg" alt="Técnica" class="tech-img" id="techImg">
+          <div class="info-inline-panel visible" id="infoInlinePanel">
+            <div class="tech-img-container has-img" id="techImgWrapper">
+              <img src="imagem/Ventosaterapia.jpg" alt="Técnica" class="tech-img" id="techImg">
+            </div>
+            
+            <h3 class="info-inline-title" id="infoTitle">Ventosaterapia</h3>
+            <p class="info-inline-text" id="infoText">
+              <strong>Procedimento:</strong> Aplicação de ventosas para liberação miofascial, melhora da circulação e alívio de tensões profundas.
+            </p>
+          </div>
+        </div>
       </div>
-      
-      <h3 class="info-inline-title" id="infoTitle">Ventosaterapia</h3>
-      <p class="info-inline-text" id="infoText">
-        <strong>Procedimento:</strong> Aplicação de ventosas para liberação miofascial, melhora da circulação e alívio de tensões profundas.
-      </p>
-    </div>
-  </div>
-
-</div>
 
       <!-- Passo 2: Horário -->
       <div class="quiz-step" id="step2">
@@ -159,7 +157,7 @@
 
     </div>
 
-    <!-- SEÇÃO SOBRE MIM (APARECE COM IMAGEM EU.PNG E TEXTO ABAIXO DA TELA HERO) -->
+    <!-- SEÇÃO SOBRE MIM -->
     <section class="sobre-mim-section" id="sobreMimSection">
       <div class="sobre-mim-container">
         <div class="sobre-mim-img-wrapper">
