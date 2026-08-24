@@ -522,4 +522,44 @@ function animateSmoke() {
 
 initSmoke();
 animateSmoke();
-});
+});// ==========================================
+// CONTROLE DE ÁUDIO NO WHATSAPP E REAGENDAMENTO
+// ==========================================
+const bgAudio = document.querySelector('audio') || document.getElementById('bgAudio');
+let fadeOutInterval = null;
+
+// Substitua '.btn-confirmar-whatsapp' pela classe ou ID REAL do seu botão final do WhatsApp
+const btnConfirmarWhatsapp = document.querySelector('.btn-confirmar-whatsapp'); 
+
+if (btnConfirmarWhatsapp) {
+  btnConfirmarWhatsapp.addEventListener('click', () => {
+    if (fadeOutInterval) clearInterval(fadeOutInterval);
+
+    // Espera 10 segundos para começar o fade-out
+    setTimeout(() => {
+      fadeOutInterval = setInterval(() => {
+        if (bgAudio && bgAudio.volume > 0.05) {
+          bgAudio.volume -= 0.05;
+        } else if (bgAudio) {
+          bgAudio.pause();
+          bgAudio.volume = 1;
+          clearInterval(fadeOutInterval);
+        }
+      }, 200);
+    }, 10000);
+  });
+}
+
+// Botão que abre a consulta novamente
+const btnAgendar = document.querySelector('.btn-agendar');
+
+if (btnAgendar) {
+  btnAgendar.addEventListener('click', () => {
+    if (bgAudio) {
+      if (fadeOutInterval) clearInterval(fadeOutInterval);
+      bgAudio.volume = 1;
+      bgAudio.currentTime = 0;
+      bgAudio.play();
+    }
+  });
+}
