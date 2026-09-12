@@ -83,9 +83,10 @@
     const estrelas = document.querySelectorAll('.estrela');
     const inputNota = document.getElementById('notaSelecionada');
 
+    // Função que acende as estrelas de 1 até o valor clicado (carregando progressivamente)
     function destacarEstrelas(nota) {
       estrelas.forEach(estrela => {
-        if (estrela.dataset.value <= nota) {
+        if (parseInt(estrela.dataset.value) <= parseInt(nota)) {
           estrela.classList.add('ativo');
         } else {
           estrela.classList.remove('ativo');
@@ -93,36 +94,36 @@
       });
     }
 
-    // Inicializa com 5 estrelas ativas e brilhando
+    // Inicializa com 5 estrelas ativas ao carregar a página
     destacarEstrelas(5);
 
-    // Toca o som de forma segura ao clicar nas estrelas
+    // Função para tocar o bip2 duas vezes seguidas
+    function tocarDuploBip() {
+      try {
+        somBip.currentTime = 0;
+        somBip.play().then(() => {
+          // Quando o primeiro som terminar ou após um pequeno delay, toca o segundo
+          setTimeout(() => {
+            somBip.currentTime = 0;
+            somBip.play().catch(e => {});
+          }, 180); // Intervalo curto de 180ms entre os dois bips
+        }).catch(err => {});
+      } catch(err) {}
+    }
+
+    // Evento de clique nas estrelas
     estrelas.forEach(estrela => {
       estrela.addEventListener('click', () => {
         const valor = estrela.dataset.value;
         inputNota.value = valor;
         destacarEstrelas(valor);
-        
-        try {
-          somBip.currentTime = 0;
-          let promessaAudio = somBip.play();
-          if (promessaAudio !== undefined) {
-            promessaAudio.catch(error => {
-              console.log("Áudio bloqueado temporariamente pelo navegador:", error);
-            });
-          }
-        } catch(err) {
-          console.error(err);
-        }
+        tocarDuploBip();
       });
     });
 
     document.getElementById('formAvaliacao').addEventListener('submit', async (e) => {
       e.preventDefault();
-      try { 
-        somBip.currentTime = 0;
-        somBip.play(); 
-      } catch(err) {}
+      tocarDuploBip();
 
       const dados = {
         nome_cliente: document.getElementById('nomeCliente').value,

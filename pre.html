@@ -22,15 +22,18 @@
       box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
       outline: none;
     }
+    /* Cores legíveis para as opções do select no fundo escuro */
+    .form-group select option {
+      background-color: #1a1e19;
+      color: #fff;
+    }
   </style>
 </head>
 <body>
-  <!-- Elemento de áudio para o bip -->
-  <audio id="somBip" src="audio/bip1.mp3"></audio>
+  <audio id="somBip" src="audio/bip1.mp3" preload="auto"></audio>
 
   <div class="container-card container-card-flex">
     <div class="video-coluna">
-      <!-- Vídeo atualizado para .webm -->
       <video src="video/b6d2b43d316f4df28e8b3afd0390dc2d (1).webm" autoplay loop muted playsinline></video>
     </div>
 
@@ -51,11 +54,11 @@
         <div class="form-group">
           <label>Nível de dor atual (0 a 10):</label>
           <select id="preNivelDor" required>
-            <option value="0" style="color:#000;">0 - Sem dor / Relaxamento</option>
-            <option value="3" style="color:#000;">3 - Dor moderada</option>
-            <option value="5" style="color:#000;">5 - Dor incômoda</option>
-            <option value="7" style="color:#000;">7 - Dor forte</option>
-            <option value="10" style="color:#000;">10 - Dor insuportável</option>
+            <option value="0">0 - Sem dor / Relaxamento</option>
+            <option value="3">3 - Dor moderada</option>
+            <option value="5">5 - Dor incômoda</option>
+            <option value="7">7 - Dor forte</option>
+            <option value="10">10 - Dor insuportável</option>
           </select>
         </div>
 
