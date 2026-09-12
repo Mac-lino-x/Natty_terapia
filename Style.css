@@ -12,16 +12,24 @@ html {
   min-height: 100dvh;
 }
 
+/* Definição do tom Ciano / Azul Bebê Suave */
+:root {
+  --bg-color: #cbe3db; /* Tom ciano / azul bebê pastel suave */
+  --text-color: #1c2b26; /* Texto escuro para manter o bom contraste */
+}
+
+/* Fundo padrão da página */
 body {
-  width: 100%;
-  min-height: 100vh;
-  min-height: 100dvh;
-  overflow-x: hidden;
-  overflow-y: auto;
-  font-family: 'Montserrat', sans-serif;
-  background-color: #b5be9d;
-  color: #2c251d;
-  position: relative;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  margin: 0;
+  padding: 0;
+  transition: background-color 0.4s ease;
+}
+
+/* Estado ativo do Quiz/Agendamento */
+body.darkened {
+  background-color: #0b1a20; /* Tom azul-bebê bem escuro (noite/ciano profundo) para o modo quiz */
 }
 
 /* VÍDEO DE FUNDO */
