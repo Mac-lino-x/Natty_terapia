@@ -49,12 +49,12 @@ body {
   height: 100dvh;
   z-index: 2;
   pointer-events: none;
-  background: rgba(181, 190, 157, 0.2);
+  background: rgba(170, 179, 147, 0.2);
   transition: background 2.2s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 body.darkened .dark-overlay {
-  background: rgba(12, 14, 10, 0.94);
+  background: rgba(162, 184, 141, 0.94);
 }
 
 body.darkened .bg-video {
@@ -257,9 +257,9 @@ body.darkened .brand-subtitle { color: #d8c3a5; }
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: radial-gradient(circle at center, rgba(255, 248, 214, 0.95) 0%, rgba(212, 175, 55, 0.55) 35%, rgba(212, 175, 55, 0) 70%);
+  background: radial-gradient(circle at center, rgba(255, 248, 214, 0.95) 0%, rgba(255, 244, 205, 0.55) 35%, rgba(212, 175, 55, 0) 70%);
   z-index: 500;
-  opacity: 0.2;
+  opacity: 0.5;
   pointer-events: none;
 }
 
