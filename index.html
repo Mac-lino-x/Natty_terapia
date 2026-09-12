@@ -35,8 +35,9 @@
       <span class="line"></span>
     </div>
 
-    <!-- TELA 1: HERO (INICIAL) -->
+  <!-- TELA 1: HERO (INICIAL) -->
     <div class="screen-hero" id="screenHero">
+      
       <!-- LOGO E NOME CENTRALIZADOS -->
       <div class="center-brand-block">
         <div class="logo-symbol">
@@ -47,13 +48,19 @@
         <p class="brand-subtitle">MASSOTERAPEUTA</p>
       </div>
 
-      <!-- ÁREA DE AÇÃO (Apenas o botão de agendar e o interruptor de som) -->
-      <div class="action-area">
-        <button type="button" id="btnAgendar" class="btn-agendar">
+      <!-- ÁREA DE AÇÃO CENTRALIZADA -->
+      <div class="action-area" style="position: relative; z-index: 10;">
+        <button type="button" id="btnAgendar" class="btn-agendar" style="position: relative; z-index: 20; cursor: pointer;">
           AGENDAR SESSÃO
         </button>
 
-        <div class="right-switch-block" id="switchBtn">
+        <!-- BOTÃO SOBRE MIM REENCAIXADO -->
+        <button id="btnSobreMim" class="btn-sobre-mim" type="button" style="margin-top: 15px; position: relative; z-index: 20; cursor: pointer;">
+          <span id="btnSobreMimText">Sobre Mim</span>
+          <span id="btnSobreMimArrow" class="arrow-down">↓</span>
+        </button>
+
+        <div class="right-switch-block" id="switchBtn" style="position: relative; z-index: 20; cursor: pointer;">
           <svg class="switch-svg-clean" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
             <g class="stars-group">
               <path d="M 150 30 Q 150 45 165 45 Q 150 45 150 60 Q 150 45 135 45 Q 150 45 150 30 Z" fill="#d4af37" />
@@ -71,6 +78,7 @@
         </div>
       </div>
     </div>
+
     
     <!-- TELA 2: QUESTIONÁRIO -->
     <div class="quiz-container hidden" id="quizContainer">
