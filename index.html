@@ -144,7 +144,7 @@
       pointer-events: none;
     }
 
-    /* CLARÃO DE TRANSIÇÃO POSICIONADO EXATAMENTE ATRÁS DO NOME E LOGO (MUITO SUAVE, BRANCO E LENTO) */
+    /* CLARÃO DE TRANSIÇÃO (BRANCO E TRANSPARENTE, LENTO) */
     .shine-flash {
       position: absolute;
       top: 50%;
@@ -1054,6 +1054,12 @@
     function startQuiz() {
       const hero = document.getElementById('screenHero');
       const quiz = document.getElementById('quizContainer');
+      const shineFlash = document.getElementById('shineFlash');
+
+      // Dispara o clarão branco e transparente ao clicar em Agendar
+      shineFlash.classList.remove('active');
+      void shineFlash.offsetWidth;
+      shineFlash.classList.add('active');
 
       hero.classList.add('fade-out');
       setTimeout(() => {
