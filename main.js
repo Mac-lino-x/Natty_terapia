@@ -87,6 +87,16 @@ document.addEventListener('DOMContentLoaded', () => {
       description: "<strong>Procedimento:</strong> Técnica manual que estimula o sistema linfático, reduzindo a retenção de líquidos e o inchaço.",
       img: "imagem/Drenagem Linfática.webp"
     },
+    terapeutica: {
+      title: "Massagem Terapêutica",
+      description: "<strong>Procedimento:</strong> É indicada para estresse, tensão muscular, dores relacionadas à sobrecarga e rigidez corporal.",
+      img: "imagem/Massagem Terapêutica.jpg" // Ajuste o nome da imagem conforme o seu arquivo
+    },
+    liberacao: {
+      title: "Liberação Miofascial",
+      description: "<strong>Procedimento:</strong> É indicada principalmente para tensão muscular, rigidez, sobrecarga e restrição de movimento.",
+      img: "imagem/Liberação Miofascial.jpg" // Ajuste o nome da imagem conforme o seu arquivo
+    },
     indicacao: {
       title: "Avaliação Terapêutica",
       description: "<strong>Procedimento:</strong> Análise individual do seu estado físico e queixas de dor antes do início do tratamento.",
