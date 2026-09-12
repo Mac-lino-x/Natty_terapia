@@ -1,3 +1,10 @@
+Entendido! O fundo das imagens do Instagram possui um **tom verde-sálvia / oliva suave pastel** (aproximadamente `#c8d4bf` / `#c0cca8`).
+
+Quando você ativa o modo de agendamento (modo escuro), o fundo que antes estava ficando um azul/ciano escuro ou preto agora passará a ser uma versão **escurecida do verde-sálvia** (estilo verde-militar/oliva escuro com toques de verde da marca), garantindo que a identidade visual permaneça fiel e harmoniosa.
+
+Abaixo está o código CSS atualizado. As variáveis de cor foram ajustadas exatamente com base nas suas imagens de referência:
+
+```css
 * {
   margin: 0;
   padding: 0;
@@ -5,17 +12,20 @@
 }
 
 :root {
-  /* Cores no tom Ciano / Azul-Bebê Suave */
-  --bg-color-light: #cbe3db;       /* Ciano / Azul bebê claro pastel */
-  --bg-overlay-light: rgba(203, 227, 219, 0.25);
-  --bg-color-dark: #09171c;        /* Ciano petróleo bem escuro (fundo darkened) */
-  --bg-overlay-dark: rgba(9, 23, 28, 0.95);
+  /* Cores extraídas diretamente das imagens (Verde-Sálvia Pastel) */
+  --bg-color-light: #c8d4bf;       /* Verde-sálvia claro pastel (conforme print) */
+  --bg-overlay-light: rgba(200, 212, 191, 0.3);
   
-  --text-main: #142428;            /* Texto escuro com boa visibilidade */
-  --text-muted: #2f454c;
-  --text-darkened: #e1f3ee;        /* Texto claro no modo darkened */
-  --accent-cyan: #7bc4be;          /* Destaque ciano suave */
-  --accent-glow: #38b2ac;
+  /* Tom escuro baseado no Verde-Sálvia (Verde Oliva/Militar escuro em vez de ciano/preto puro) */
+  --bg-color-dark: #0f1712;        /* Verde oliva profundo e sofisticado */
+  --bg-overlay-dark: rgba(15, 23, 18, 0.95);
+  
+  --text-main: #2b3327;            /* Texto escuro em tom verde-musgo */
+  --text-muted: #53614e;
+  --text-darkened: #e2ebd8;        /* Texto claro no modo escuro */
+  
+  --accent-sage: #8f9e85;          /* Tom de destaque verde-sálvia médio */
+  --accent-glow: #a8b89d;          /* Brilho verde suave */
 }
 
 html {
@@ -78,7 +88,7 @@ body.darkened .dark-overlay {
 }
 
 body.darkened .bg-video {
-  filter: brightness(0.2) contrast(1.1);
+  filter: brightness(0.18) contrast(1.1);
 }
 
 /* CANVAS DE FUMAÇA */
@@ -136,8 +146,8 @@ body.darkened #smokeCanvas {
   transition: color 2.5s ease;
 }
 
-body.darkened .stars-divider .line { background-color: rgba(123, 196, 190, 0.4); }
-body.darkened .stars-divider .star-group { color: var(--accent-cyan); }
+body.darkened .stars-divider .line { background-color: rgba(143, 158, 133, 0.4); }
+body.darkened .stars-divider .star-group { color: var(--accent-sage); }
 
 /* TELA HERO */
 .screen-hero {
@@ -191,8 +201,8 @@ body.darkened .stars-divider .star-group { color: var(--accent-cyan); }
 }
 
 body.darkened .brand-title {
-  color: #e0f8f5;
-  text-shadow: 0 0 12px rgba(123, 196, 190, 0.6), 0 0 25px rgba(56, 178, 172, 0.4);
+  color: #f1f7eb;
+  text-shadow: 0 0 12px rgba(143, 158, 133, 0.6), 0 0 25px rgba(168, 184, 157, 0.4);
 }
 
 .brand-subtitle {
@@ -204,7 +214,7 @@ body.darkened .brand-title {
   transition: color 2.5s ease;
 }
 
-body.darkened .brand-subtitle { color: var(--accent-cyan); }
+body.darkened .brand-subtitle { color: var(--accent-sage); }
 
 /* ÁREA DE AÇÃO */
 .action-area {
@@ -274,17 +284,17 @@ body.darkened .brand-subtitle { color: var(--accent-cyan); }
 
 body.darkened .switch-border,
 body.darkened .switch-border-inner {
-  stroke: var(--accent-cyan);
+  stroke: var(--accent-sage);
 }
 
 body.darkened .switch-lever {
   transform: translateY(6px);
-  fill: var(--accent-cyan);
+  fill: var(--accent-sage);
 }
 
 body.darkened .stars-group path {
-  fill: #b2ede8;
-  filter: drop-shadow(0px 0px 4px rgba(178, 237, 232, 0.6));
+  fill: #d8e2cf;
+  filter: drop-shadow(0px 0px 4px rgba(216, 226, 207, 0.6));
 }
 
 /* QUESTIONÁRIO */
@@ -310,13 +320,13 @@ body.darkened .stars-group path {
 .quiz-title {
   font-family: 'Cormorant Garamond', serif;
   font-size: clamp(1.8rem, 4vw, 2.5rem);
-  color: #e0f8f5;
+  color: #f1f7eb;
   font-weight: 400;
   margin-bottom: 25px;
 }
 
 .quiz-desc {
-  color: var(--accent-cyan);
+  color: var(--accent-sage);
   font-size: 0.95rem;
   margin-bottom: 25px;
   line-height: 1.5;
@@ -358,9 +368,9 @@ body.darkened .stars-group path {
 
 .opt-btn {
   padding: 16px 20px;
-  border: 1px solid rgba(123, 196, 190, 0.4);
-  background: rgba(9, 23, 28, 0.6);
-  color: #e0f8f5;
+  border: 1px solid rgba(143, 158, 133, 0.4);
+  background: rgba(15, 23, 18, 0.6);
+  color: #f1f7eb;
   border-radius: 30px;
   font-size: 0.88rem;
   letter-spacing: 0.12em;
@@ -371,8 +381,8 @@ body.darkened .stars-group path {
 }
 
 .opt-btn:hover, .opt-btn.selected {
-  background: rgba(123, 196, 190, 0.25);
-  border-color: var(--accent-cyan);
+  background: rgba(143, 158, 133, 0.25);
+  border-color: var(--accent-sage);
 }
 
 /* BOTÃO DE INTERROGAÇÃO (?) */
@@ -380,9 +390,9 @@ body.darkened .stars-group path {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  border: 1px solid rgba(123, 196, 190, 0.4);
-  background: rgba(9, 23, 28, 0.6);
-  color: var(--accent-cyan);
+  border: 1px solid rgba(143, 158, 133, 0.4);
+  background: rgba(15, 23, 18, 0.6);
+  color: var(--accent-sage);
   font-family: 'Montserrat', sans-serif;
   font-size: 0.75rem;
   font-weight: 500;
@@ -397,11 +407,11 @@ body.darkened .stars-group path {
 }
 
 .info-btn:hover, .info-btn.active {
-  background: rgba(123, 196, 190, 0.3);
-  border-color: #e0f8f5;
-  color: #e0f8f5;
+  background: rgba(143, 158, 133, 0.3);
+  border-color: #f1f7eb;
+  color: #f1f7eb;
   transform: scale(1.1);
-  box-shadow: 0 0 8px rgba(123, 196, 190, 0.5);
+  box-shadow: 0 0 8px rgba(143, 158, 133, 0.5);
 }
 
 /* BOTÃO DE VOLTAR */
@@ -419,9 +429,9 @@ body.darkened .stars-group path {
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(9, 23, 28, 0.5);
-  border: 1px solid rgba(123, 196, 190, 0.3);
-  color: var(--accent-cyan);
+  background: rgba(15, 23, 18, 0.5);
+  border: 1px solid rgba(143, 158, 133, 0.3);
+  color: var(--accent-sage);
   font-family: 'Montserrat', sans-serif;
   font-size: 0.85rem;
   padding: 8px 16px;
@@ -436,9 +446,9 @@ body.darkened .stars-group path {
 }
 
 .btn-back:hover {
-  background: rgba(123, 196, 190, 0.2);
-  color: #e0f8f5;
-  border-color: #e0f8f5;
+  background: rgba(143, 158, 133, 0.2);
+  color: #f1f7eb;
+  border-color: #f1f7eb;
   transform: translateY(-50%) translateX(-3px);
 }
 
@@ -492,7 +502,7 @@ body.darkened .stars-group path {
   object-fit: cover;
   border-radius: 10px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(123, 196, 190, 0.3);
+  border: 1px solid rgba(143, 158, 133, 0.3);
   display: block;
 }
 
@@ -500,7 +510,7 @@ body.darkened .stars-group path {
   font-family: 'Cormorant Garamond', serif;
   font-size: 1.35rem;
   font-weight: 500;
-  color: #e0f8f5;
+  color: #f1f7eb;
   letter-spacing: 0.05em;
   margin: 0 !important;
   padding: 0 !important;
@@ -511,14 +521,14 @@ body.darkened .stars-group path {
   font-family: 'Montserrat', sans-serif;
   font-size: 0.8rem;
   line-height: 1.35;
-  color: #cbe3db;
+  color: #c8d4bf;
   font-weight: 300;
   margin: 0 !important;
   padding: 0 !important;
 }
 
 .info-inline-text strong {
-  color: #e0f8f5;
+  color: #f1f7eb;
   font-weight: 500;
 }
 
@@ -536,10 +546,10 @@ body.darkened .stars-group path {
   font-size: 1.1rem;
   font-weight: 600;
   letter-spacing: 1px;
-  background: rgba(14, 30, 36, 0.85);
+  background: rgba(22, 33, 26, 0.85);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(123, 196, 190, 0.5);
+  border: 1px solid rgba(143, 158, 133, 0.5);
   border-radius: 30px;
   color: #fff;
   cursor: pointer;
@@ -553,19 +563,19 @@ body.darkened .stars-group path {
   font-size: 1.1rem;
   transition: transform 0.3s ease;
   display: inline-block;
-  color: var(--accent-cyan);
+  color: var(--accent-sage);
 }
 
 .btn-sobre-mim:hover {
-  background: rgba(123, 196, 190, 0.9);
-  color: #09171c;
-  border-color: var(--accent-cyan);
+  background: rgba(143, 158, 133, 0.9);
+  color: #0f1712;
+  border-color: var(--accent-sage);
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(123, 196, 190, 0.4);
+  box-shadow: 0 8px 25px rgba(143, 158, 133, 0.4);
 }
 
 .btn-sobre-mim:hover .arrow-down {
-  color: #09171c;
+  color: #0f1712;
   transform: translateY(3px);
 }
 
@@ -575,8 +585,8 @@ body.darkened .stars-group path {
   max-width: 950px;
   margin: 60px auto 30px auto;
   padding: 40px 25px;
-  background: rgba(15, 35, 42, 0.8);
-  border: 1px solid rgba(123, 196, 190, 0.3);
+  background: rgba(20, 31, 24, 0.8);
+  border: 1px solid rgba(143, 158, 133, 0.3);
   border-radius: 20px;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -593,8 +603,8 @@ body.darkened .stars-group path {
 }
 
 body.darkened .sobre-mim-section {
-  border-color: rgba(123, 196, 190, 0.5);
-  background: rgba(9, 23, 28, 0.9);
+  border-color: rgba(143, 158, 133, 0.5);
+  background: rgba(15, 23, 18, 0.9);
 }
 
 .sobre-mim-container {
@@ -620,7 +630,7 @@ body.darkened .sobre-mim-section {
   width: 100%;
   height: auto;
   border-radius: 15px;
-  border: 1px solid rgba(123, 196, 190, 0.4);
+  border: 1px solid rgba(143, 158, 133, 0.4);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
   object-fit: cover;
 }
@@ -628,13 +638,13 @@ body.darkened .sobre-mim-section {
 .sobre-mim-content {
   flex: 1;
   text-align: left;
-  color: #cbe3db;
+  color: #c8d4bf;
 }
 
 .sobre-mim-title {
   font-family: 'Cormorant Garamond', serif;
   font-size: 2.2rem;
-  color: #e0f8f5;
+  color: #f1f7eb;
   margin-bottom: 15px;
   font-weight: 500;
   letter-spacing: 0.05em;
@@ -642,7 +652,7 @@ body.darkened .sobre-mim-section {
 
 .sobre-mim-intro {
   font-size: 1.05rem;
-  color: var(--accent-cyan);
+  color: var(--accent-sage);
   margin-bottom: 12px;
   font-weight: 400;
 }
@@ -657,7 +667,7 @@ body.darkened .sobre-mim-section {
 .sobre-mim-subtitle {
   font-family: 'Cormorant Garamond', serif;
   font-size: 1.35rem;
-  color: #e0f8f5;
+  color: #f1f7eb;
   margin: 20px 0 10px 0;
 }
 
@@ -672,42 +682,42 @@ body.darkened .sobre-mim-section {
   padding: 10px 14px;
   border-radius: 8px;
   margin-bottom: 8px;
-  border-left: 3px solid var(--accent-cyan);
+  border-left: 3px solid var(--accent-sage);
   line-height: 1.4;
 }
 
 .sobre-mim-list strong {
-  color: #e0f8f5;
+  color: #f1f7eb;
 }
 
 /* ANIMAÇÕES GLOW & PULSE */
 @keyframes starPulse {
   0%, 100% {
-    box-shadow: 0 0 15px rgba(123, 196, 190, 0.2), 0 0 30px rgba(123, 196, 190, 0.1);
-    border-color: rgba(123, 196, 190, 0.3);
+    box-shadow: 0 0 15px rgba(143, 158, 133, 0.2), 0 0 30px rgba(143, 158, 133, 0.1);
+    border-color: rgba(143, 158, 133, 0.3);
   }
   50% {
-    box-shadow: 0 0 30px rgba(123, 196, 190, 0.5), 0 0 50px rgba(56, 178, 172, 0.3);
-    border-color: rgba(123, 196, 190, 0.7);
+    box-shadow: 0 0 30px rgba(143, 158, 133, 0.5), 0 0 50px rgba(168, 184, 157, 0.3);
+    border-color: rgba(143, 158, 133, 0.7);
   }
 }
 
 @keyframes starPulseBtn {
   0%, 100% {
-    box-shadow: 0 0 10px rgba(123, 196, 190, 0.4), 0 0 20px rgba(123, 196, 190, 0.2);
-    border-color: rgba(123, 196, 190, 0.5);
+    box-shadow: 0 0 10px rgba(143, 158, 133, 0.4), 0 0 20px rgba(143, 158, 133, 0.2);
+    border-color: rgba(143, 158, 133, 0.5);
     transform: scale(1);
   }
   50% {
-    box-shadow: 0 0 25px rgba(123, 196, 190, 0.8), 0 0 40px rgba(56, 178, 172, 0.5);
-    border-color: rgba(224, 248, 245, 0.9);
+    box-shadow: 0 0 25px rgba(143, 158, 133, 0.8), 0 0 40px rgba(168, 184, 157, 0.5);
+    border-color: rgba(241, 247, 235, 0.9);
     transform: scale(1.04);
   }
 }
 
 .glow-natally {
-  color: #e0f8f5 !important;
-  text-shadow: 0 0 12px #7bc4be, 0 0 25px #38b2ac, 0 0 40px #ffffff !important;
+  color: #f1f7eb !important;
+  text-shadow: 0 0 12px #8f9e85, 0 0 25px #a8b89d, 0 0 40px #ffffff !important;
   transition: text-shadow 1s ease, color 1s ease;
 }
 
@@ -726,10 +736,10 @@ body.darkened .sobre-mim-section {
     width: 100% !important;
     max-width: 380px;
     margin-top: 20px;
-    background: rgba(9, 23, 28, 0.85);
+    background: rgba(15, 23, 18, 0.85);
     padding: 15px;
     border-radius: 12px;
-    border: 1px solid rgba(123, 196, 190, 0.3);
+    border: 1px solid rgba(143, 158, 133, 0.3);
   }
 
   .brand-title {
@@ -775,3 +785,5 @@ body.darkened .sobre-mim-section {
     scroll-behavior: auto !important;
   }
 }
+
+```
