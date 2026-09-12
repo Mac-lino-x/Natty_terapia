@@ -1,0 +1,63 @@
+/* Estilos padronizados para Pré, Pós e Painel Admin (Mantém a identidade visual terrosa/verde) */
+body {
+  background-color: #b5be9d;
+  color: #2c322b;
+  font-family: 'Montserrat', sans-serif;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.container-card {
+  background: rgba(44, 50, 43, 0.85);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  padding: 30px;
+  border-radius: 16px;
+  max-width: 600px;
+  width: 100%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  color: #f8f4d6;
+  text-align: center;
+}
+
+h1, h2 {
+  font-family: 'Cormorant Garamond', serif;
+  color: #f8f4d6;
+  margin-bottom: 20px;
+}
+
+p {
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.btn-acao {
+  display: inline-block;
+  background-color: #d4af37;
+  color: #1a1e19;
+  padding: 12px 25px;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-acao:hover {
+  background-color: #f8f4d6;
+}
+
+/* Estilo do Contador no Admin */
+.contador-box {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 12px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #d4af37;
+  margin: 20px 0;
+}
