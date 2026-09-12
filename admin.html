@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Gestão | Natty Terapia</title>
+    <link rel="stylesheet" href="Style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { padding: 20px; font-family: sans-serif; background-color: #f4f7f4; }
+        .dashboard-container { max-width: 1000px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .card-metrica { background: #e8f5e9; padding: 20px; border-radius: 8px; font-size: 1.3rem; color: #2e7d32; font-weight: bold; margin-bottom: 25px; border-left: 5px solid #2e7d32; }
+        .tabela-dados { width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 30px; }
+        .tabela-dados th, .tabela-dados td { border: 1px solid #e0e0e0; padding: 12px; text-align: left; }
+        .tabela-dados th { background-color: #f1f8e9; color: #333; }
+        h2, h3 { color: #2e7d32; }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <h2>Painel de Gestão - Natty Terapia 🌿</h2>
+        
+        <div class="card-metrica">
+            👀 Total de Acessos na Landing Page: <span id="totalAcessos">Carregando...</span>
+        </div>
+
+        <h3>📋 Fichas Pré-Sessão (Anamnese)</h3>
+        <table class="tabela-dados">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>WhatsApp</th>
+                    <th>Queixa Principal</th>
+                    <th>Dor Inicial</th>
+                    <th>Histórico / Observações</th>
+                    <th>Data</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaPre">
+                <tr><td colspan="6">Carregando dados...</td></tr>
+            </tbody>
+        </table>
+
+        <h3>⭐ Avaliações Pós-Sessão</h3>
+        <table class="tabela-dados">
+            <thead>
+                <tr>
+                    <th>WhatsApp</th>
+                    <th>Dor Pós-Sessão</th>
+                    <th>Feedback / Relato</th>
+                    <th>Data</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaPos">
+                <tr><td colspan="4">Carregando dados...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'SUA_URL_AQUI';
+        const SUPABASE_KEY = 'SUA_ANON_KEY_AQUI';
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        async function carregarDashboard() {
+            // 1. Contar Acessos
+            const { count } = await _supabase.from('acessos').select('*', { count: 'exact', head: true });
+            document.getElementById('totalAcessos').innerText = count || 0;
+
+            // 2. Buscar Dados Pré-Sessão
+            const { data: preData } = await _supabase.from('pre_sessao').select('*').order('criado_em', { ascending: false });
+            const tabelaPre = document.getElementById('tabelaPre');
+            if (preData && preData.length > 0) {
+                tabelaPre.innerHTML = preData.map(item => `
+                    <tr>
+                        <td><strong>${item.nome}</strong></td>
+                        <td>${item.whatsapp}</td>
+                        <td>${item.queixa}</td>
+                        <td><strong>${item.nivel_dor}/10</strong></td>
+                        <td>${item.historico || 'Nenhum'}</td>
+                        <td>${new Date(item.criado_em).toLocaleDateString('pt-BR')}</td>
+                    </tr>
+                `).join('');
+            } else {
+                tabelaPre.innerHTML = '<tr><td colspan="6">Nenhum formulário pré-sessão preenchido ainda.</td></tr>';
+            }
+
+            // 3. Buscar Dados Pós-Sessão
+            const { data: posData } = await _supabase.from('pos_sessao').select('*').order('criado_em', { ascending: false });
+            const tabelaPos = document.getElementById('tabelaPos');
+            if (posData && posData.length > 0) {
+                tabelaPos.innerHTML = posData.map(item => `
+                    <tr>
+                        <td>${item.whatsapp}</td>
+                        <td><strong>${item.nivel_dor}/10</strong></td>
+                        <td>${item.feedback || 'Sem comentário'}</td>
+                        <td>${new Date(item.criado_em).toLocaleDateString('pt-BR')}</td>
+                    </tr>
+                `).join('');
+            } else {
+                tabelaPos.innerHTML = '<tr><td colspan="4">Nenhuma avaliação pós-sessão preenchida ainda.</td></tr>';
+            }
+        }
+
+        carregarDashboard();
+    </script>
+</body>
+</html>

@@ -1,4 +1,75 @@
+// CONEXÃO COM O SUPABASE (Preencha com suas chaves do painel Supabase)
+const SUPABASE_URL = 'SUA_URL_AQUI';
+const SUPABASE_KEY = 'SUA_ANON_KEY_AQUI';
+
+let _supabase = null;
+if (typeof supabase !== 'undefined') {
+  _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+
+  // ==========================================
+  // 1. INTEGRAÇÃO DE DADOS (SUPABASE)
+  // ==========================================
+
+  if (_supabase) {
+    // Registrar contador de acessos na Landing Page
+    if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || window.location.pathname === '') {
+      _supabase.from('acessos').insert([{}]).then(({ error }) => {
+        if (error) console.error('Erro ao registrar acesso:', error);
+      });
+    }
+
+    // Formulário Pré-Sessão (Anamnese)
+    const formPre = document.getElementById('formPre');
+    if (formPre) {
+      formPre.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const dados = {
+          nome: document.getElementById('nome').value,
+          whatsapp: document.getElementById('whatsapp').value,
+          queixa: document.getElementById('queixa').value,
+          nivel_dor: parseInt(document.getElementById('nivelDor').value),
+          historico: document.getElementById('historico').value
+        };
+
+        const { error } = await _supabase.from('pre_sessao').insert([dados]);
+        if (!error) {
+          alert('Ficha pré-sessão enviada com sucesso!');
+          window.location.href = 'index.html';
+        } else {
+          alert('Erro ao enviar dados. Tente novamente.');
+        }
+      });
+    }
+
+    // Formulário Pós-Sessão (Avaliação)
+    const formPos = document.getElementById('formPos');
+    if (formPos) {
+      formPos.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const dados = {
+          whatsapp: document.getElementById('whatsappPos').value,
+          nivel_dor: parseInt(document.getElementById('nivelDorPos').value),
+          feedback: document.getElementById('feedback').value
+        };
+
+        const { error } = await _supabase.from('pos_sessao').insert([dados]);
+        if (!error) {
+          alert('Avaliação enviada com sucesso! Obrigado pelo feedback.');
+          window.location.href = 'index.html';
+        } else {
+          alert('Erro ao enviar avaliação. Tente novamente.');
+        }
+      });
+    }
+  }
+
+  // ==========================================
+  // 2. CÓDIGO ORIGINAL DA LANDING PAGE
+  // ==========================================
+
   // BANCO DE DADOS DAS TÉCNICAS
   const techniquesData = {
     ventosaterapia: {
@@ -268,7 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-// INTEGRAÇÃO WHATSAPP E FADE-OUT SUAVE DE 20 SEGUNDOS
+  // INTEGRAÇÃO WHATSAPP E FADE-OUT SUAVE DE 20 SEGUNDOS
   if (btnWhatsapp) {
     btnWhatsapp.addEventListener('click', () => {
       const phone = "5584988502719";
@@ -290,25 +361,25 @@ document.addEventListener('DOMContentLoaded', () => {
         if (fadeOutInterval) clearInterval(fadeOutInterval);
 
         const duration = 20000; // 20000ms = 20 segundos
-        const intervalTime = 100; // Atualiza a cada 0.1s (200 atualizações no total)
+        const intervalTime = 100; // Atualiza a cada 0.1s
         const initialVolume = bgAudio.volume;
-        const step = initialVolume / (duration / intervalTime); // Decremento preciso para durar 20s
+        const step = initialVolume / (duration / intervalTime);
 
         fadeOutInterval = setInterval(() => {
           if (bgAudio.volume > step) {
-            bgAudio.volume -= step; // Redução imperceptível passo a passo
+            bgAudio.volume -= step;
           } else {
-            // Final dos 20 segundos: desativa completamente
             bgAudio.volume = 0;
-            bgAudio.pause();          // Desativa o som / pausa o áudio
-            bgAudio.currentTime = 0;   // Reseta a faixa para o início
-            bgAudio.volume = 1;        // Restaura o volume padrão para o próximo uso
+            bgAudio.pause();
+            bgAudio.currentTime = 0;
+            bgAudio.volume = 1;
             clearInterval(fadeOutInterval);
           }
         }, intervalTime);
       }
     });
   }
+
   // CANVAS DE FUMAÇA DE INCENSO
   const canvas = document.getElementById('smokeCanvas');
   if (canvas) {
