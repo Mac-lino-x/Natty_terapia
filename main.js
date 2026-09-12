@@ -3,8 +3,12 @@ const SUPABASE_URL = 'SUA_URL_AQUI';
 const SUPABASE_KEY = 'SUA_ANON_KEY_AQUI';
 
 let _supabase = null;
-if (typeof supabase !== 'undefined') {
-  _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+try {
+  if (typeof supabase !== 'undefined' && SUPABASE_URL && SUPABASE_URL !== 'SUA_URL_AQUI') {
+    _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  }
+} catch (err) {
+  console.warn('Supabase não inicializado (verifique SUPABASE_URL/SUPABASE_KEY em main.js):', err);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -81,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
     drenagem: {
       title: "Drenagem Linfática",
       description: "<strong>Procedimento:</strong> Técnica manual que estimula o sistema linfático, reduzindo a retenção de líquidos e o inchaço.",
-      img: "imagem/Preciso de Indicação.jpg"
+      img: "imagem/Drenagem Linfática.webp"
     },
     indicacao: {
       title: "Avaliação Terapêutica",
@@ -131,6 +135,19 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) {}
   }
 
+  // EFEITO BRILHANTE (FLASH DOURADO) AO INICIAR A TRANSIÇÃO PRA OUTRA "PÁGINA"
+  function triggerShineFlash() {
+    const flash = document.createElement('div');
+    flash.className = 'shine-flash';
+    document.body.appendChild(flash);
+    requestAnimationFrame(() => {
+      flash.classList.add('active');
+    });
+    flash.addEventListener('animationend', () => flash.remove());
+    // segurança: remove mesmo se o evento não disparar por algum motivo
+    setTimeout(() => { if (flash.parentNode) flash.remove(); }, 900);
+  }
+
   // ATUALIZA PAINEL DE FOTO E TEXTO DO QUIZ
   function updateInfoPanel(key) {
     const data = techniquesData[key];
@@ -153,6 +170,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // AÇÕES DO QUIZ
   function openQuiz() {
     playBip();
+    triggerShineFlash();
+
+    // animação de "desligar" o interruptor no exato momento do clique
+    document.querySelectorAll('.right-switch-block').forEach(sw => sw.classList.add('switch-off'));
+
     if (bgAudio) {
       if (fadeOutInterval) clearInterval(fadeOutInterval);
       bgAudio.volume = 0.15;
@@ -188,6 +210,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function closeQuiz() {
     playBip();
+
+    // religa o interruptor visualmente ao voltar pro início
+    document.querySelectorAll('.right-switch-block').forEach(sw => sw.classList.remove('switch-off'));
+
     body.classList.remove('darkened');
     if (natallyName) natallyName.classList.remove('glow-natally');
     if (quizContainer) quizContainer.classList.remove('show');
@@ -220,7 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnBackToHero.addEventListener('click', closeQuiz);
   }
 
-  // BOTÃO SOBRE MIM
+  // BOTÃO SOBRE MIM — rola a tela até o FIM da página
   let isAtBottom = false;
   if (btnSobreMim) {
     btnSobreMim.addEventListener('click', (e) => {
@@ -229,18 +255,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (isAtBottom) {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
-        if (sobreMimSection) {
-          sobreMimSection.scrollIntoView({ behavior: 'smooth' });
-        } else {
-          window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-        }
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
       }
     });
 
     window.addEventListener('scroll', () => {
-      if (!sobreMimSection) return;
-      const sectionPos = sobreMimSection.getBoundingClientRect();
-      if (sectionPos.top <= window.innerHeight / 2) {
+      const scrollBottom = window.scrollY + window.innerHeight;
+      const pageBottom = document.body.scrollHeight - 2; // pequena margem de tolerância
+      if (scrollBottom >= pageBottom) {
         isAtBottom = true;
         if (btnSobreMimText) btnSobreMimText.textContent = "Voltar ao topo";
         if (btnSobreMimArrow) btnSobreMimArrow.textContent = "↑";
