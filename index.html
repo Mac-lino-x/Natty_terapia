@@ -124,7 +124,7 @@
     body.darkened .stars-divider .line { background-color: rgba(216, 195, 165, 0.4); }
     body.darkened .stars-divider .star-group { color: #d8c3a5; }
 
-    /* TRANSIÇÃO SUAVE DA TELA HERO (LENTA E GRADUAL) */
+    /* TRANSIÇÃO DA TELA HERO */
     .screen-hero {
       opacity: 1;
       transform: scale(1);
@@ -144,7 +144,7 @@
       pointer-events: none;
     }
 
-    /* CLARÃO DE TRANSIÇÃO (BRANCO E TRANSPARENTE) */
+    /* CLARÃO DE TRANSIÇÃO */
     .shine-flash {
       position: absolute;
       top: 50%;
@@ -169,7 +169,7 @@
       100% { opacity: 0; transform: translate(-50%, -50%) scale(2.0); }
     }
 
-    /* LOGO E NOME CENTRALIZADOS */
+    /* LOGO E NOME */
     .center-brand-block { 
       text-align: center;
       display: flex;
@@ -219,7 +219,7 @@
 
     body.darkened .brand-subtitle { color: #d8c3a5; }
 
-    /* ÁREA DE AÇÃO UNIFICADA */
+    /* ÁREA DE AÇÃO */
     .action-area {
       position: relative;
       margin: 20px auto 0 auto;
@@ -231,7 +231,6 @@
       z-index: 5;
     }
 
-    /* BOTÃO AGENDAR SESSÃO */
     .btn-agendar {
       position: relative;
       z-index: 10;
@@ -734,7 +733,7 @@
       }
     }
 
-    /* RESPONSIVO PARA CELULAR */
+    /* RESPONSIVO */
     @media (max-width: 768px) {
       .quiz-interactive-layout {
         flex-direction: column;
@@ -788,9 +787,10 @@
 </head>
 <body>
 
-  <!-- VÍDEO DE FUNDO -->
+  <!-- VÍDEO DE FUNDO (Certifique-se de que o arquivo 'seu-video.mp4' está na mesma pasta) -->
   <video autoplay muted loop playsinline class="bg-video" id="bgVideo">
     <source src="seu-video.mp4" type="video/mp4">
+    Seu navegador não suporta vídeos em HTML5.
   </video>
 
   <!-- CAMADA DE ESCURECIMENTO -->
@@ -817,12 +817,13 @@
     <!-- TELA HERO -->
     <div class="screen-hero" id="screenHero">
       
-      <!-- CLARÃO DE LUZ SUAVE (BRANCO E TRANSPARENTE) -->
+      <!-- CLARÃO DE LUZ -->
       <div class="shine-flash" id="shineFlash"></div>
 
       <div class="center-brand-block">
         <div class="logo-symbol">
-          <img src="sua-logo.png" alt="Logotipo" class="brand-img" id="brandLogo">
+          <!-- LOGOTIPO (Certifique-se de que o arquivo 'sua-logo.png' está na mesma pasta) -->
+          <img src="sua-logo.png" alt="Logotipo Natallyane Cota" class="brand-img" id="brandLogo">
         </div>
         <h1 class="brand-title">NATALLYANE COTA</h1>
         <p class="brand-subtitle">MASSOTERAPEUTA</p>
@@ -928,7 +929,7 @@
         </div>
       </div>
 
-      <!-- ETAPA 3 (FINALIZAÇÃO) -->
+      <!-- ETAPA 3 -->
       <div class="quiz-step" id="step3">
         <div class="step-header">
           <button class="btn-back" onclick="goToStep(2)"><span class="arrow">←</span> Voltar</button>
@@ -1117,6 +1118,7 @@
             sobreSection.innerHTML = `
               <div class="sobre-mim-container">
                 <div class="sobre-mim-img-wrapper">
+                  <!-- SUA FOTO (Certifique-se de que o arquivo 'sua-foto.jpg' está na mesma pasta, ou ela usará a imagem de fallback) -->
                   <img src="sua-foto.jpg" alt="Natallyane Cota" class="sobre-mim-img" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80'">
                 </div>
                 <div class="sobre-mim-content">
