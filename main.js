@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) {}
   }
 
-  // EFEITO BRILHANTE (FLASH DOURADO) AO INICIAR A TRANSIÇÃO PRA OUTRA "PÁGINA"
+  // EFEITO BRILHANTE MAIS LENTO, CLARO E TRANSPARENTE
   function triggerShineFlash() {
     const flash = document.createElement('div');
     flash.className = 'shine-flash';
@@ -144,8 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
       flash.classList.add('active');
     });
     flash.addEventListener('animationend', () => flash.remove());
-    // segurança: remove mesmo se o evento não disparar por algum motivo
-    setTimeout(() => { if (flash.parentNode) flash.remove(); }, 900);
+    setTimeout(() => { if (flash.parentNode) flash.remove(); }, 2500);
   }
 
   // ATUALIZA PAINEL DE FOTO E TEXTO DO QUIZ
@@ -167,12 +166,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (infoInlinePanel) infoInlinePanel.classList.add('visible');
   }
 
-  // AÇÕES DO QUIZ
+  // AÇÕES DO QUIZ COM TRANSIÇÃO MAIS LENTA E SUAVE
   function openQuiz() {
     playBip();
     triggerShineFlash();
 
-    // animação de "desligar" o interruptor no exato momento do clique
     document.querySelectorAll('.right-switch-block').forEach(sw => sw.classList.add('switch-off'));
 
     if (bgAudio) {
@@ -190,6 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (sobreMimSection) sobreMimSection.classList.add('fade-out');
     if (btnSobreMim) btnSobreMim.style.display = 'none';
 
+    // Tempo ampliado para que a tela surja bem lentamente por trás
     setTimeout(() => {
       if (screenHero) screenHero.classList.add('hidden');
       if (sobreMimSection) sobreMimSection.classList.add('hidden');
@@ -205,13 +204,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (step3) step3.classList.remove('active');
 
       updateInfoPanel('ventosaterapia');
-    }, 300);
+    }, 600);
   }
 
   function closeQuiz() {
     playBip();
 
-    // religa o interruptor visualmente ao voltar pro início
     document.querySelectorAll('.right-switch-block').forEach(sw => sw.classList.remove('switch-off'));
 
     body.classList.remove('darkened');
@@ -230,10 +228,10 @@ document.addEventListener('DOMContentLoaded', () => {
         sobreMimSection.classList.remove('fade-out');
       }
       if (btnSobreMim) btnSobreMim.style.display = 'flex';
-    }, 300);
+    }, 600);
   }
 
-  // CONFIGURAÇÃO DOS BOTÕES DE AGENDAR (Atende por ID ou Classe)
+  // CONFIGURAÇÃO DOS BOTÕES DE AGENDAR
   const agendarButtons = document.querySelectorAll('#btnAgendar, .btn-agendar, #switchBtn, .right-switch-block');
   agendarButtons.forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -246,30 +244,36 @@ document.addEventListener('DOMContentLoaded', () => {
     btnBackToHero.addEventListener('click', closeQuiz);
   }
 
-  // BOTÃO SOBRE MIM — rola a tela até o FIM da página
-  let isAtBottom = false;
+  // BOTÃO FLUTUANTE: SÓ SOMA/ MUDA PARA "SOBRE MIM" SE ESTIVER EXATAMENTE NO TOPO (0)
   if (btnSobreMim) {
-    btnSobreMim.addEventListener('click', (e) => {
-      e.preventDefault();
-      playBip();
-      if (isAtBottom) {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.addEventListener('scroll', () => {
+      const scrollPosition = window.scrollY;
+
+      if (scrollPosition <= 5) {
+        // Estritamente no topo: exibe "Sobre Mim"
+        if (btnSobreMimText) btnSobreMimText.textContent = "Sobre Mim";
+        if (btnSobreMimArrow) btnSobreMimArrow.textContent = "↓";
       } else {
-        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        // Qualquer rolagem abaixo do topo: mantém "Voltar ao Topo"
+        if (btnSobreMimText) btnSobreMimText.textContent = "Voltar ao Topo";
+        if (btnSobreMimArrow) btnSobreMimArrow.textContent = "↑";
       }
     });
 
-    window.addEventListener('scroll', () => {
-      const scrollBottom = window.scrollY + window.innerHeight;
-      const pageBottom = document.body.scrollHeight - 2; // pequena margem de tolerância
-      if (scrollBottom >= pageBottom) {
-        isAtBottom = true;
-        if (btnSobreMimText) btnSobreMimText.textContent = "Voltar ao topo";
-        if (btnSobreMimArrow) btnSobreMimArrow.textContent = "↑";
+    btnSobreMim.addEventListener('click', (e) => {
+      e.preventDefault();
+      playBip();
+      
+      const currentText = btnSobreMimText ? btnSobreMimText.textContent : "";
+      
+      if (currentText === "Voltar ao Topo") {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
-        isAtBottom = false;
-        if (btnSobreMimText) btnSobreMimText.textContent = "Sobre Mim";
-        if (btnSobreMimArrow) btnSobreMimArrow.textContent = "↓";
+        if (sobreMimSection) {
+          sobreMimSection.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
       }
     });
   }
@@ -496,4 +500,42 @@ document.addEventListener('DOMContentLoaded', () => {
     initSmoke();
     animateSmoke();
   }
-});
+});/* TRANSIÇÃO LENTA DA TELA HERO */
+.screen-hero {
+  transition: opacity 2.5s cubic-bezier(0.4, 0, 0.2, 1), transform 2.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* CLARÃO/LUZ MAIS CLARO, SUAVE E TRANSPARENTE POR TRÁS */
+.shine-flash {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 4;
+  background: radial-gradient(circle at 50% 45%, rgba(255, 253, 238, 0.85) 0%, rgba(255, 235, 150, 0.45) 35%, rgba(255, 220, 100, 0.08) 65%, rgba(0, 0, 0, 0) 90%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.shine-flash.active {
+  animation: shineFlashAnim 2.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes shineFlashAnim {
+  0% { opacity: 0; transform: scale(0.2); }
+  50% { opacity: 0.85; transform: scale(1.2); }
+  100% { opacity: 0; transform: scale(2.5); }
+}
+
+/* QUESTIONÁRIO SURGINDO BEM LENTAMENTE POR TRÁS */
+.quiz-container {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 2.5s ease 0.6s, transform 2.5s ease 0.6s;
+}
+
+.quiz-container.show {
+  opacity: 1;
+  transform: translateY(0);
+}
