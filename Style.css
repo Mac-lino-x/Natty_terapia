@@ -21,7 +21,6 @@ body {
   background-color: #b5be9d;
   color: #2c251d;
   position: relative;
-  transition: background-color 2.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* VÍDEO DE FUNDO */
@@ -37,7 +36,7 @@ body {
   z-index: 1;
   pointer-events: none;
   filter: brightness(0.7) contrast(0.9);
-  transition: filter 2.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: filter 2.5s ease;
 }
 
 /* CAMADA DE ESCURECIMENTO */
@@ -51,7 +50,7 @@ body {
   z-index: 2;
   pointer-events: none;
   background: rgba(181, 190, 157, 0.2);
-  transition: background 2.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background 2.2s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 body.darkened .dark-overlay {
@@ -74,6 +73,10 @@ body.darkened .bg-video {
   pointer-events: none;
   opacity: 1;
   filter: blur(16px);
+}
+
+body.darkened #smokeCanvas {
+  opacity: 1;
 }
 
 /* CONTAINER PRINCIPAL */
@@ -103,63 +106,45 @@ body.darkened .bg-video {
   height: 1px;
   flex: 1;
   background-color: #3b3226;
-  transition: background-color 2.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background-color 2.5s ease;
 }
 
 .stars-divider .star-group {
   color: #3b3226;
   font-size: 1rem;
   letter-spacing: 6px;
-  transition: color 2.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: color 2.5s ease;
 }
 
 body.darkened .stars-divider .line { background-color: rgba(216, 195, 165, 0.4); }
 body.darkened .stars-divider .star-group { color: #d8c3a5; }
 
-/* TRANSIÇÃO SUAVE DA TELA HERO (LENTA E GRADUAL) */
+/* TELA HERO */
 .screen-hero {
-  opacity: 1;
-  transform: scale(1);
-  transition: opacity 1.6s cubic-bezier(0.4, 0, 0.2, 1), transform 1.6s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 850px;
+  margin: auto auto;
+  min-height: calc(100vh - 100px);
+  min-height: calc(100dvh - 100px);
+  transition: opacity 2s cubic-bezier(0.4, 0, 0.2, 1), transform 2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .screen-hero.fade-out {
   opacity: 0;
-  transform: scale(0.98);
+  transform: scale(0.95);
   pointer-events: none;
 }
 
-/* CLARÃO/LUZ ATRÁS DOS NOMES E LOGO (LENTO, SUAVE E ELEGANTE) */
-.shine-flash {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 4;
-  background: radial-gradient(circle at 50% 45%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.5) 30%, rgba(255, 255, 255, 0.15) 60%, rgba(255, 255, 255, 0) 85%);
-  opacity: 0;
-  pointer-events: none;
-}
-
-.shine-flash.active {
-  animation: shineFlashAnim 2.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-@keyframes shineFlashAnim {
-  0% { opacity: 0; transform: scale(0.3); }
-  45% { opacity: 1; transform: scale(1.05); }
-  100% { opacity: 0; transform: scale(2.0); }
-}
-
-/* LOGO E NOME CENTRALIZADOS COM BRILHO LENTO */
+/* LOGO E NOME CENTRALIZADOS */
 .center-brand-block { 
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: relative;
-  z-index: 2;
 }
 
 .logo-symbol { 
@@ -183,12 +168,12 @@ body.darkened .stars-divider .star-group { color: #d8c3a5; }
   letter-spacing: 0.12em;
   color: #2c251d;
   margin-top: 10px;
-  transition: color 2.5s cubic-bezier(0.4, 0, 0.2, 1), text-shadow 2.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: color 2.5s ease, text-shadow 2.5s ease;
 }
 
 body.darkened .brand-title {
   color: #fff3d1;
-  text-shadow: 0 0 25px rgba(216, 195, 165, 0.8), 0 0 50px rgba(216, 195, 165, 0.4);
+  text-shadow: 0 0 12px rgba(216, 195, 165, 0.6), 0 0 25px rgba(212, 175, 55, 0.4);
 }
 
 .brand-subtitle {
@@ -197,21 +182,21 @@ body.darkened .brand-title {
   font-weight: 300;
   color: #423828;
   margin-top: 5px;
-  transition: color 2.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: color 2.5s ease;
 }
 
 body.darkened .brand-subtitle { color: #d8c3a5; }
 
-/* ÁREA DE AÇÃO UNIFICADA */
+/* ÁREA DE AÇÃO - BOTÃO AGENDAR + INTERRUPTOR EMPILHADOS, COLADOS, COMO UM SÓ BLOCO */
 .action-area {
   position: relative;
-  margin: 20px auto 0 auto;
+  margin: 25px auto 0 auto;
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
   align-items: center;
   width: 100%;
   gap: 0;
-  z-index: 5;
 }
 
 /* BOTÃO AGENDAR */
@@ -222,7 +207,6 @@ body.darkened .brand-subtitle { color: #d8c3a5; }
   border: 1.5px solid #2c251d;
   background: rgba(255, 255, 255, 0.45);
   color: #2c251d;
-  font-family: 'Montserrat', sans-serif;
   font-size: 0.85rem;
   letter-spacing: 0.2em;
   border-radius: 40px;
@@ -238,41 +222,55 @@ body.darkened .brand-subtitle { color: #d8c3a5; }
   color: #f7f3e9;
 }
 
-body.darkened .btn-agendar {
-  background: rgba(12, 10, 8, 0.4);
-  border-color: rgba(216, 195, 165, 0.4);
-  color: #fff3d1;
-}
-
-body.darkened .btn-agendar:hover {
-  background: #d8c3a5;
-  color: #12100c;
-}
-
-/* INTERRUPTOR */
+/* INTERRUPTOR COLADO LOGO ABAIXO DO BOTÃO AGENDAR (fluxo normal, sem sobrepor) */
 .right-switch-block {
   position: relative;
-  width: 75px;
-  height: 95px;
-  margin-top: -12px;
+  width: 120px;
+  height: 147px;
+  margin-top: -18px; /* aproxima do botão, compensando o espaço vazio do topo do SVG */
   cursor: pointer;
   z-index: 1;
   transition: transform 0.3s ease;
 }
 
 .right-switch-block:hover {
-  transform: scale(1.06);
+  transform: scale(1.05);
 }
 
+/* INTERRUPTOR "DESLIGANDO" NO MOMENTO EXATO DO CLIQUE (mais rápido que a transição geral de fundo) */
 .right-switch-block.switch-off .switch-lever {
-  transform: translateY(6px) scale(0.95);
+  transform: translateY(10px) scale(0.9);
   fill: #d8c3a5;
-  transition: transform 0.35s ease, fill 0.35s ease;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), fill 0.35s ease;
 }
 
 .right-switch-block.switch-off .switch-border,
 .right-switch-block.switch-off .switch-border-inner {
   stroke: #d8c3a5;
+  filter: drop-shadow(0 0 6px rgba(216, 195, 165, 0.6));
+}
+
+/* EFEITO BRILHANTE (FLASH DOURADO) AO CLICAR EM AGENDAR, ANTES DE ESCURECER E TROCAR DE TELA */
+.shine-flash {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle at center, rgba(255, 248, 214, 0.95) 0%, rgba(212, 175, 55, 0.55) 35%, rgba(212, 175, 55, 0) 70%);
+  z-index: 500;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.shine-flash.active {
+  animation: shineFlashAnim 0.6s ease-out forwards;
+}
+
+@keyframes shineFlashAnim {
+  0% { opacity: 0; transform: scale(0.6); }
+  35% { opacity: 1; transform: scale(1.15); }
+  100% { opacity: 0; transform: scale(1.6); }
 }
 
 .switch-svg-clean {
@@ -306,15 +304,15 @@ body.darkened .stars-group path {
   filter: drop-shadow(0px 0px 4px rgba(245, 230, 200, 0.6));
 }
 
-/* QUESTIONÁRIO (SURGINDO SUAVE E LENTO) */
+/* QUESTIONÁRIO */
 .quiz-container {
   max-width: 1100px;
   width: 100%;
   margin: auto 0;
   text-align: center;
   opacity: 0;
-  transform: translateY(15px);
-  transition: opacity 1.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s, transform 1.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s;
+  transform: translateY(20px);
+  transition: opacity 1.8s ease 0.3s, transform 1.8s ease 0.3s;
 }
 
 .quiz-container.show {
@@ -394,6 +392,7 @@ body.darkened .stars-group path {
   border-color: #d8c3a5;
 }
 
+/* BOTÃO DE INTERROGAÇÃO (?) */
 .info-btn {
   width: 28px;
   height: 28px;
@@ -422,6 +421,7 @@ body.darkened .stars-group path {
   box-shadow: 0 0 8px rgba(255, 243, 209, 0.4);
 }
 
+/* BOTÃO DE VOLTAR */
 .step-header {
   position: relative;
   display: flex;
@@ -464,6 +464,7 @@ body.darkened .stars-group path {
   line-height: 1;
 }
 
+/* PAINEL LATERAL DIREITO */
 .info-inline-panel {
   position: absolute;
   right: 0;
@@ -538,7 +539,7 @@ body.darkened .stars-group path {
   font-weight: 500;
 }
 
-/* BOTÃO SOBRE MIM / VOLTAR AO TOPO FLUTUANTE */
+/* BOTÃO SOBRE MIM FLUTUANTE */
 .btn-sobre-mim {
   position: fixed;
   bottom: 25px;
@@ -562,9 +563,10 @@ body.darkened .stars-group path {
   transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
   animation: starPulseBtn 3s ease-in-out infinite;
+  will-change: transform, box-shadow;
 }
 
-.btn-sobre-mim .arrow-icon {
+.btn-sobre-mim .arrow-down {
   font-size: 1.1rem;
   transition: transform 0.3s ease;
   display: inline-block;
@@ -579,11 +581,12 @@ body.darkened .stars-group path {
   box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
 }
 
-.btn-sobre-mim:hover .arrow-icon {
+.btn-sobre-mim:hover .arrow-down {
   color: #111;
+  transform: translateY(3px);
 }
 
-/* SEÇÃO SOBRE MIM */
+/* ESTILIZAÇÃO DA SEÇÃO SOBRE MIM */
 .sobre-mim-section {
   width: 100%;
   max-width: 950px;
@@ -595,8 +598,9 @@ body.darkened .stars-group path {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  transition: opacity 1.6s cubic-bezier(0.4, 0, 0.2, 1), transform 1.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1), transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
   animation: starPulse 4s ease-in-out infinite;
+  will-change: opacity, transform, box-shadow;
 }
 
 .sobre-mim-section.fade-out {
@@ -693,7 +697,7 @@ body.darkened .sobre-mim-section {
   color: #fff3d1;
 }
 
-/* ANIMAÇÕES */
+/* ANIMAÇÕES GLOW & PULSE */
 @keyframes starPulse {
   0%, 100% {
     box-shadow: 0 0 15px rgba(212, 175, 55, 0.2), 0 0 30px rgba(212, 175, 55, 0.1);
@@ -718,7 +722,15 @@ body.darkened .sobre-mim-section {
   }
 }
 
-/* RESPONSIVO PARA CELULAR */
+.glow-natally {
+  color: #fffdf0 !important;
+  text-shadow: 0 0 12px #ffd700, 0 0 25px #d4af37, 0 0 40px #ffffff !important;
+  transition: text-shadow 1s ease, color 1s ease;
+}
+
+/* =========================================================
+   AJUSTES RESPONSIVOS PARA CELULAR
+   ========================================================= */
 @media (max-width: 768px) {
   .quiz-interactive-layout {
     flex-direction: column;
@@ -756,6 +768,10 @@ body.darkened .sobre-mim-section {
     align-self: flex-start;
   }
 
+  .btn-back:hover {
+    transform: translateX(-3px) !important;
+  }
+
   .btn-sobre-mim {
     bottom: 15px;
     left: 15px;
@@ -766,5 +782,15 @@ body.darkened .sobre-mim-section {
   .sobre-mim-img-wrapper {
     width: 100%;
     max-width: 220px;
+  }
+}
+
+/* ACESSIBILIDADE - REDUÇÃO DE MOVIMENTO */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
