@@ -22,7 +22,6 @@ body {
   text-align: center;
 }
 
-/* Layout em duas colunas com brilho suave */
 .container-card-flex {
   display: flex;
   align-items: center;
@@ -86,40 +85,31 @@ p {
   transform: translateY(-2px);
 }
 
-.contador-box {
-  background: rgba(255, 255, 255, 0.08);
-  padding: 20px;
-  border-radius: 12px;
-  font-size: 24px;
-  font-weight: bold;
-  color: #d4af37;
-  margin: 20px 0;
-  box-shadow: 0 0 15px rgba(212, 175, 55, 0.25);
-  border: 1px solid rgba(212, 175, 55, 0.3);
-}
-
-/* Estrelas Brilhantes */
+/* ESTRELAS COM BRILHO INTENSO E DEFINITIVO */
 .estrelas-container {
   display: flex;
   justify-content: center;
-  gap: 10px;
-  font-size: 34px;
+  gap: 12px;
+  font-size: 40px;
   cursor: pointer;
-  margin: 10px 0;
+  margin: 15px 0;
 }
 
 .estrela {
   color: #444;
-  transition: transform 0.2s, color 0.2s, text-shadow 0.2s;
+  transition: all 0.2s ease-in-out;
+  display: inline-block;
+  user-select: none;
 }
 
 .estrela:hover {
-  transform: scale(1.25);
+  transform: scale(1.3);
 }
 
 .estrela.ativo {
-  color: #ffd700;
-  text-shadow: 0 0 15px #ffd700, 0 0 30px rgba(255, 215, 0, 0.85);
+  color: #ffe600 !important;
+  text-shadow: 0 0 12px #ffea00, 0 0 25px #ffb700, 0 0 40px rgba(255, 215, 0, 0.95);
+  transform: scale(1.15);
 }
 
 @media (max-width: 768px) {

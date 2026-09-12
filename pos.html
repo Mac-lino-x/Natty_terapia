@@ -25,8 +25,8 @@
   </style>
 </head>
 <body>
-  <!-- Elemento de áudio para o bip -->
-  <audio id="somBip" src="audio/bip1.mp3"></audio>
+  <!-- Elemento de áudio para o bip2 -->
+  <audio id="somBip" src="audio/bip2.mp3" preload="auto"></audio>
 
   <div class="container-card container-card-flex">
     <div class="video-coluna">
@@ -96,22 +96,33 @@
     // Inicializa com 5 estrelas ativas e brilhando
     destacarEstrelas(5);
 
-    // Evento de clique nas estrelas: muda para amarelo brilhante e toca o bip
+    // Toca o som de forma segura ao clicar nas estrelas
     estrelas.forEach(estrela => {
       estrela.addEventListener('click', () => {
         const valor = estrela.dataset.value;
         inputNota.value = valor;
         destacarEstrelas(valor);
+        
         try {
           somBip.currentTime = 0;
-          somBip.play();
-        } catch(err) {}
+          let promessaAudio = somBip.play();
+          if (promessaAudio !== undefined) {
+            promessaAudio.catch(error => {
+              console.log("Áudio bloqueado temporariamente pelo navegador:", error);
+            });
+          }
+        } catch(err) {
+          console.error(err);
+        }
       });
     });
 
     document.getElementById('formAvaliacao').addEventListener('submit', async (e) => {
       e.preventDefault();
-      try { somBip.play(); } catch(err) {}
+      try { 
+        somBip.currentTime = 0;
+        somBip.play(); 
+      } catch(err) {}
 
       const dados = {
         nome_cliente: document.getElementById('nomeCliente').value,
