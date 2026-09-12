@@ -25,8 +25,8 @@
   </style>
 </head>
 <body>
-  <!-- Elemento de áudio para o bip2 -->
-  <audio id="somBip" src="audio/bip2.mp3" preload="auto"></audio>
+  <!-- Elemento de áudio apontando para o arquivo pibs.mp3 -->
+  <audio id="somBip" src="audio/pibs.mp3" preload="auto"></audio>
 
   <div class="container-card container-card-flex">
     <div class="video-coluna">
@@ -83,7 +83,7 @@
     const estrelas = document.querySelectorAll('.estrela');
     const inputNota = document.getElementById('notaSelecionada');
 
-    // Função que acende as estrelas de 1 até o valor clicado (carregando progressivamente)
+    // Acende apenas as estrelas de 1 até o valor clicado; as da frente ficam apagadas
     function destacarEstrelas(nota) {
       estrelas.forEach(estrela => {
         if (parseInt(estrela.dataset.value) <= parseInt(nota)) {
@@ -94,36 +94,46 @@
       });
     }
 
-    // Inicializa com 5 estrelas ativas ao carregar a página
+    // Inicializa com 5 estrelas ativas ao carregar
     destacarEstrelas(5);
 
-    // Função para tocar o bip2 duas vezes seguidas
-    function tocarDuploBip() {
-      try {
-        somBip.currentTime = 0;
-        somBip.play().then(() => {
-          // Quando o primeiro som terminar ou após um pequeno delay, toca o segundo
-          setTimeout(() => {
+    // Toca a quantidade exata de bips correspondente ao número de estrelas escolhidas em sequência
+    function tocarQuantidadeBips(quantidade) {
+      let atual = 0;
+
+      function dispararProximoBip() {
+        if (atual < quantidade) {
+          atual++;
+          try {
             somBip.currentTime = 0;
-            somBip.play().catch(e => {});
-          }, 180); // Intervalo curto de 180ms entre os dois bips
-        }).catch(err => {});
-      } catch(err) {}
+            somBip.play().then(() => {
+              // Agenda o próximo bip após 250 milissegundos
+              setTimeout(dispararProximoBip, 250);
+            }).catch(e => {
+              setTimeout(dispararProximoBip, 250);
+            });
+          } catch(err) {
+            setTimeout(dispararProximoBip, 250);
+          }
+        }
+      }
+
+      dispararProximoBip();
     }
 
     // Evento de clique nas estrelas
     estrelas.forEach(estrela => {
       estrela.addEventListener('click', () => {
-        const valor = estrela.dataset.value;
+        const valor = parseInt(estrela.dataset.value);
         inputNota.value = valor;
         destacarEstrelas(valor);
-        tocarDuploBip();
+        tocarQuantidadeBips(valor); // Toca N bips correspondentes à estrela clicada
       });
     });
 
     document.getElementById('formAvaliacao').addEventListener('submit', async (e) => {
       e.preventDefault();
-      tocarDuploBip();
+      tocarQuantidadeBips(parseInt(inputNota.value));
 
       const dados = {
         nome_cliente: document.getElementById('nomeCliente').value,
