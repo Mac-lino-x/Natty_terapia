@@ -87,6 +87,7 @@ p {
 }
 
 /* ESTRELAS COM CARREGAMENTO E BRILHO INTENSO */
+/* ESTRELAS COM BARRA PROGRESSIVA E BRILHO INTENSO */
 .estrelas-container {
   display: flex;
   justify-content: center;
@@ -97,7 +98,7 @@ p {
 }
 
 .estrela {
-  color: #555;
+  color: #777 !important; /* Cor padrão visível quando desativada */
   transition: all 0.2s ease-in-out;
   display: inline-block;
   user-select: none;
@@ -105,14 +106,14 @@ p {
 
 .estrela:hover {
   transform: scale(1.3);
+  color: #aaa !important;
 }
 
 .estrela.ativo {
-  color: #ffe600 !important;
-  text-shadow: 0 0 12px #ffea00, 0 0 25px #ffb700, 0 0 40px rgba(255, 215, 0, 0.95);
+  color: #ffe600 !important; /* Amarelo vibrante */
+  text-shadow: 0 0 12px #ffea00, 0 0 25px #ffb700, 0 0 40px rgba(255, 215, 0, 0.95) !important;
   transform: scale(1.15);
 }
-
 @media (max-width: 768px) {
   .container-card-flex {
     flex-direction: column;

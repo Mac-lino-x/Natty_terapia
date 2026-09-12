@@ -25,7 +25,7 @@
   </style>
 </head>
 <body>
-  <!-- Elemento de áudio apontando para o arquivo pibs.mp3 -->
+  <!-- Elemento de áudio configurado para pibs.mp3 -->
   <audio id="somBip" src="audio/pibs.mp3" preload="auto"></audio>
 
   <div class="container-card container-card-flex">
@@ -83,10 +83,11 @@
     const estrelas = document.querySelectorAll('.estrela');
     const inputNota = document.getElementById('notaSelecionada');
 
-    // Acende apenas as estrelas de 1 até o valor clicado; as da frente ficam apagadas
+    // Função para acender as estrelas progressivamente até o valor escolhido
     function destacarEstrelas(nota) {
       estrelas.forEach(estrela => {
-        if (parseInt(estrela.dataset.value) <= parseInt(nota)) {
+        const valorEstrela = parseInt(estrela.getAttribute('data-value'));
+        if (valorEstrela <= parseInt(nota)) {
           estrela.classList.add('ativo');
         } else {
           estrela.classList.remove('ativo');
@@ -94,40 +95,39 @@
       });
     }
 
-    // Inicializa com 5 estrelas ativas ao carregar
+    // Inicializa a página com 5 estrelas ativas
     destacarEstrelas(5);
 
-    // Toca a quantidade exata de bips correspondente ao número de estrelas escolhidas em sequência
+    // Função para tocar a quantidade exata de bips em sequência (ex: 3 estrelas = 3 bips)
     function tocarQuantidadeBips(quantidade) {
       let atual = 0;
 
-      function dispararProximoBip() {
+      function dispararBip() {
         if (atual < quantidade) {
           atual++;
           try {
             somBip.currentTime = 0;
             somBip.play().then(() => {
-              // Agenda o próximo bip após 250 milissegundos
-              setTimeout(dispararProximoBip, 250);
+              setTimeout(dispararBip, 280); // Pausa de 280ms entre cada bip
             }).catch(e => {
-              setTimeout(dispararProximoBip, 250);
+              setTimeout(dispararBip, 280);
             });
           } catch(err) {
-            setTimeout(dispararProximoBip, 250);
+            setTimeout(dispararBip, 280);
           }
         }
       }
 
-      dispararProximoBip();
+      dispararBip();
     }
 
     // Evento de clique nas estrelas
     estrelas.forEach(estrela => {
       estrela.addEventListener('click', () => {
-        const valor = parseInt(estrela.dataset.value);
+        const valor = parseInt(estrela.getAttribute('data-value'));
         inputNota.value = valor;
         destacarEstrelas(valor);
-        tocarQuantidadeBips(valor); // Toca N bips correspondentes à estrela clicada
+        tocarQuantidadeBips(valor);
       });
     });
 
