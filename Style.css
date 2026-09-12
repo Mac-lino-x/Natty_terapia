@@ -49,21 +49,12 @@ body {
   height: 100dvh;
   z-index: 2;
   pointer-events: none;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(181, 190, 157, 0.2);
   transition: background 2.2s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-/* Mude aqui para deixar o fundo com o tom verdinho translúcido quando escurecido */
 body.darkened .dark-overlay {
-  background: rgba(181, 190, 157, 0.88); /* Mantém o verde musgo (#b5be9d) com boa cobertura */
-}
-
-body.darkened .bg-video {
-  filter: brightness(0.4) contrast(1.0); /* Deixa o vídeo um pouco mais visível por trás do verdinho */
-}
-
-body.darkened .dark-overlay {
-  background:  rgba(181, 190, 157, 0.88);
+  background: rgba(12, 14, 10, 0.94);
 }
 
 body.darkened .bg-video {
@@ -259,27 +250,26 @@ body.darkened .brand-subtitle { color: #d8c3a5; }
   filter: drop-shadow(0 0 6px rgba(216, 195, 165, 0.6));
 }
 
-/* EFEITO BRILHANTE (FLASH DOURADO) MAIS SUAVE E TRANSPARENTE */
+/* EFEITO BRILHANTE (FLASH DOURADO) AO CLICAR EM AGENDAR, ANTES DE ESCURECER E TROCAR DE TELA */
 .shine-flash {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  /* Valores de opacidade das cores reduzidos para ficarem bem mais translúcidos */
-  background: radial-gradient(circle at center, rgba(255, 248, 214, 0.5) 0%, rgba(212, 175, 55, 0.25) 35%, rgba(212, 175, 55, 0) 70%);
+  background: radial-gradient(circle at center, rgba(255, 248, 214, 0.95) 0%, rgba(212, 175, 55, 0.55) 35%, rgba(212, 175, 55, 0) 70%);
   z-index: 500;
-  opacity: 0;
+  opacity: 0.2;
   pointer-events: none;
 }
 
 .shine-flash.active {
-  animation: shineFlashAnim 0.7s ease-out forwards;
+  animation: shineFlashAnim 0.6s ease-out forwards;
 }
 
 @keyframes shineFlashAnim {
   0% { opacity: 0; transform: scale(0.6); }
-  35% { opacity: 0.7; transform: scale(1.15); /* Pico de opacidade mais suave (0.7 em vez de 1) */ }
+  35% { opacity: 1; transform: scale(1.15); }
   100% { opacity: 0; transform: scale(1.6); }
 }
 
@@ -386,7 +376,7 @@ body.darkened .stars-group path {
 .opt-btn {
   padding: 16px 20px;
   border: 1px solid rgba(216, 195, 165, 0.4);
-  background: rgba(141, 72, 3, 0.5);
+  background: rgba(12, 10, 8, 0.5);
   color: #f7f3e9;
   border-radius: 30px;
   font-size: 0.88rem;
