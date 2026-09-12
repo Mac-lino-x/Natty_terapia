@@ -54,7 +54,7 @@ body {
 }
 
 body.darkened .dark-overlay {
-  background: rgba(162, 184, 141, 0.94);
+  background: rgba(99, 109, 89, 0.94);
 }
 
 body.darkened .bg-video {
