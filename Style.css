@@ -21,6 +21,7 @@ body {
   background-color: #b5be9d;
   color: #2c251d;
   position: relative;
+  transition: background-color 2.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* VÍDEO DE FUNDO */
@@ -36,7 +37,7 @@ body {
   z-index: 1;
   pointer-events: none;
   filter: brightness(0.7) contrast(0.9);
-  transition: filter 2.5s ease;
+  transition: filter 2.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* CAMADA DE ESCURECIMENTO */
@@ -50,7 +51,7 @@ body {
   z-index: 2;
   pointer-events: none;
   background: rgba(181, 190, 157, 0.2);
-  transition: background 2.2s cubic-bezier(0.25, 1, 0.5, 1);
+  transition: background 2.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body.darkened .dark-overlay {
@@ -102,25 +103,33 @@ body.darkened .bg-video {
   height: 1px;
   flex: 1;
   background-color: #3b3226;
-  transition: background-color 2.5s ease;
+  transition: background-color 2.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .stars-divider .star-group {
   color: #3b3226;
   font-size: 1rem;
   letter-spacing: 6px;
-  transition: color 2.5s ease;
+  transition: color 2.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body.darkened .stars-divider .line { background-color: rgba(216, 195, 165, 0.4); }
 body.darkened .stars-divider .star-group { color: #d8c3a5; }
 
-/* TRANSIÇÃO SUAVE DA TELA HERO */
+/* TRANSIÇÃO SUAVE DA TELA HERO (LENTA E GRADUAL) */
 .screen-hero {
-  transition: opacity 1.2s ease, transform 1.2s ease;
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 1.6s cubic-bezier(0.4, 0, 0.2, 1), transform 1.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* CLARÃO/LUZ MAIS CLARO, SUAVE E TRANSPARENTE */
+.screen-hero.fade-out {
+  opacity: 0;
+  transform: scale(0.98);
+  pointer-events: none;
+}
+
+/* CLARÃO/LUZ ATRÁS DOS NOMES E LOGO (LENTO, SUAVE E ELEGANTE) */
 .shine-flash {
   position: fixed;
   top: 0;
@@ -128,33 +137,22 @@ body.darkened .stars-divider .star-group { color: #d8c3a5; }
   width: 100vw;
   height: 100vh;
   z-index: 4;
-  background: radial-gradient(circle at 50% 45%, rgba(255, 253, 220, 0.65) 0%, rgba(255, 240, 160, 0.3) 40%, rgba(255, 225, 120, 0.04) 70%, rgba(0, 0, 0, 0) 90%);
+  background: radial-gradient(circle at 50% 45%, rgba(255, 250, 225, 1) 0%, rgba(212, 175, 55, 0.75) 30%, rgba(212, 175, 55, 0.15) 60%, rgba(0, 0, 0, 0) 85%);
   opacity: 0;
   pointer-events: none;
 }
 
 .shine-flash.active {
-  animation: shineFlashAnim 1.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  animation: shineFlashAnim 2.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 @keyframes shineFlashAnim {
   0% { opacity: 0; transform: scale(0.3); }
-  50% { opacity: 0.6; transform: scale(1.1); }
-  100% { opacity: 0; transform: scale(2); }
+  45% { opacity: 1; transform: scale(1.05); }
+  100% { opacity: 0; transform: scale(2.0); }
 }
 
-/* QUESTIONÁRIO SURGINDO SUAVEMENTE */
-.quiz-container {
-  opacity: 0;
-  transform: translateY(15px);
-  transition: opacity 1.2s ease 0.2s, transform 1.2s ease 0.2s;
-}
-
-.quiz-container.show {
-  opacity: 1;
-  transform: translateY(0);
-}
-/* LOGO E NOME CENTRALIZADOS */
+/* LOGO E NOME CENTRALIZADOS COM BRILHO LENTO */
 .center-brand-block { 
   text-align: center;
   display: flex;
@@ -185,11 +183,12 @@ body.darkened .stars-divider .star-group { color: #d8c3a5; }
   letter-spacing: 0.12em;
   color: #2c251d;
   margin-top: 10px;
-  transition: color 2.5s ease;
+  transition: color 2.5s cubic-bezier(0.4, 0, 0.2, 1), text-shadow 2.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body.darkened .brand-title {
   color: #fff3d1;
+  text-shadow: 0 0 25px rgba(216, 195, 165, 0.8), 0 0 50px rgba(216, 195, 165, 0.4);
 }
 
 .brand-subtitle {
@@ -198,7 +197,7 @@ body.darkened .brand-title {
   font-weight: 300;
   color: #423828;
   margin-top: 5px;
-  transition: color 2.5s ease;
+  transition: color 2.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body.darkened .brand-subtitle { color: #d8c3a5; }
@@ -240,7 +239,7 @@ body.darkened .brand-subtitle { color: #d8c3a5; }
 }
 
 body.darkened .btn-agendar {
-  background: rgba(18, 16, 12, 0.4);
+  background: rgba(12, 10, 8, 0.4);
   border-color: rgba(216, 195, 165, 0.4);
   color: #fff3d1;
 }
@@ -276,30 +275,6 @@ body.darkened .btn-agendar:hover {
   stroke: #d8c3a5;
 }
 
-/* EFEITO DE LUZ/BRILHO LENTO POR TRÁS DAS LETRAS E LOGO */
-.shine-flash {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  /* Fica posicionado estritamente ATRÁS do conteúdo principal (z-index 4) */
-  z-index: 4;
-  background: radial-gradient(circle at 50% 45%, rgba(255, 250, 225, 1) 0%, rgba(212, 175, 55, 0.75) 30%, rgba(212, 175, 55, 0.15) 60%, rgba(0, 0, 0, 0) 85%);
-  opacity: 0;
-  pointer-events: none;
-}
-
-.shine-flash.active {
-  animation: shineFlashAnim 1.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-}
-
-@keyframes shineFlashAnim {
-  0% { opacity: 0; transform: scale(0.3); }
-  40% { opacity: 1; transform: scale(1.1); }
-  100% { opacity: 0; transform: scale(2.2); }
-}
-
 .switch-svg-clean {
   width: 100%;
   height: 100%;
@@ -331,7 +306,7 @@ body.darkened .stars-group path {
   filter: drop-shadow(0px 0px 4px rgba(245, 230, 200, 0.6));
 }
 
-/* QUESTIONÁRIO */
+/* QUESTIONÁRIO (SURGINDO SUAVE E LENTO) */
 .quiz-container {
   max-width: 1100px;
   width: 100%;
@@ -339,7 +314,7 @@ body.darkened .stars-group path {
   text-align: center;
   opacity: 0;
   transform: translateY(15px);
-  transition: opacity 1.8s ease 0.4s, transform 1.8s ease 0.4s;
+  transition: opacity 1.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s, transform 1.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s;
 }
 
 .quiz-container.show {
@@ -620,7 +595,7 @@ body.darkened .stars-group path {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1), transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 1.6s cubic-bezier(0.4, 0, 0.2, 1), transform 1.6s cubic-bezier(0.4, 0, 0.2, 1);
   animation: starPulse 4s ease-in-out infinite;
 }
 
