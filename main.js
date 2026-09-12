@@ -1,4 +1,4 @@
-// CONEXÃO COM O SUPABASE
+// CONEXÃO COM O SUPABASE (Preencha com suas chaves do painel Supabase)
 const SUPABASE_URL = 'SUA_URL_AQUI';
 const SUPABASE_KEY = 'SUA_ANON_KEY_AQUI';
 
@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==========================================
   // 1. INTEGRAÇÃO DE DADOS (SUPABASE)
   // ==========================================
+
   if (_supabase) {
     if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || window.location.pathname === '') {
       _supabase.from('acessos').insert([{}]).then(({ error }) => {
@@ -65,6 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==========================================
   // 2. CÓDIGO DA LANDING PAGE E INTERAÇÕES
   // ==========================================
+
   const techniquesData = {
     ventosaterapia: {
       title: "Ventosaterapia",
@@ -111,8 +113,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const sobreMimSection = document.getElementById('sobreMimSection') || document.querySelector('.sobre-mim-section');
   const btnSobreMim = document.getElementById('btnSobreMim') || document.querySelector('.btn-sobre-mim');
-  const btnSobreMimText = document.getElementById('btnSobreMimText');
-  const btnSobreMimArrow = document.getElementById('btnSobreMimArrow');
+  const btnSobreMimText = document.getElementById('btnSobreMimText') || (btnSobreMim ? btnSobreMim.querySelector('span') : null);
+  const btnSobreMimArrow = document.getElementById('btnSobreMimArrow') || (btnSobreMim ? btnSobreMim.querySelector('i') : null);
 
   const bgAudio = document.getElementById('bgAudio');
 
@@ -205,8 +207,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 300);
   }
 
-  // CONFIGURAÇÃO DOS BOTÕES DE AGENDAR
-  const agendarButtons = document.querySelectorAll('#btnAgendar, .btn-agendar');
+  // CONFIGURAÇÃO DOS BOTÕES DE AGENDAR (Atende por ID ou Classe)
+  const agendarButtons = document.querySelectorAll('#btnAgendar, .btn-agendar, #switchBtn, .right-switch-block');
   agendarButtons.forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
@@ -218,19 +220,17 @@ document.addEventListener('DOMContentLoaded', () => {
     btnBackToHero.addEventListener('click', closeQuiz);
   }
 
-  // BOTÃO SOBRE MIM - ROLAGEM DIRETA E ALTERAÇÃO DE TEXTO/SETA
+  // BOTÃO SOBRE MIM
+  let isAtBottom = false;
   if (btnSobreMim) {
     btnSobreMim.addEventListener('click', (e) => {
       e.preventDefault();
       playBip();
-
-      const isAtBottom = window.scrollY + window.innerHeight >= document.body.offsetHeight - 150;
-
       if (isAtBottom) {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
         if (sobreMimSection) {
-          sobreMimSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          sobreMimSection.scrollIntoView({ behavior: 'smooth' });
         } else {
           window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         }
@@ -239,12 +239,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.addEventListener('scroll', () => {
       if (!sobreMimSection) return;
-      const rect = sobreMimSection.getBoundingClientRect();
-
-      if (rect.top <= window.innerHeight / 2) {
+      const sectionPos = sobreMimSection.getBoundingClientRect();
+      if (sectionPos.top <= window.innerHeight / 2) {
+        isAtBottom = true;
         if (btnSobreMimText) btnSobreMimText.textContent = "Voltar ao topo";
         if (btnSobreMimArrow) btnSobreMimArrow.textContent = "↑";
       } else {
+        isAtBottom = false;
         if (btnSobreMimText) btnSobreMimText.textContent = "Sobre Mim";
         if (btnSobreMimArrow) btnSobreMimArrow.textContent = "↓";
       }
