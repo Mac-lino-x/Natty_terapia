@@ -187,16 +187,16 @@ body.darkened .brand-title {
 
 body.darkened .brand-subtitle { color: #d8c3a5; }
 
-/* ÁREA DE AÇÃO - BOTÃO AGENDAR + INTERRUPTOR CENTRALIZADOS JUNTOS */
+/* ÁREA DE AÇÃO - BOTÃO AGENDAR + INTERRUPTOR EMPILHADOS, COLADOS, COMO UM SÓ BLOCO */
 .action-area {
   position: relative;
   margin: 25px auto 0 auto;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: flex-start;
   align-items: center;
-  width: 220px;
-  max-width: 100%;
-  min-height: 220px;
+  width: 100%;
+  gap: 0;
 }
 
 /* BOTÃO AGENDAR */
@@ -222,21 +222,19 @@ body.darkened .brand-subtitle { color: #d8c3a5; }
   color: #f7f3e9;
 }
 
-/* INTERRUPTOR CENTRALIZADO ATRÁS DO BOTÃO AGENDAR (mesmo centro nos dois eixos) */
+/* INTERRUPTOR COLADO LOGO ABAIXO DO BOTÃO AGENDAR (fluxo normal, sem sobrepor) */
 .right-switch-block {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 180px;
-  height: 220px;
+  position: relative;
+  width: 120px;
+  height: 147px;
+  margin-top: -18px; /* aproxima do botão, compensando o espaço vazio do topo do SVG */
   cursor: pointer;
   z-index: 1;
   transition: transform 0.3s ease;
 }
 
 .right-switch-block:hover {
-  transform: translate(-50%, -50%) scale(1.05);
+  transform: scale(1.05);
 }
 
 .switch-svg-clean {
