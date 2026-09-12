@@ -628,15 +628,17 @@ body.darkened .sobre-mim-section {
   }
 }
 
+/* Aumente a largura ou altura da caixa da foto */
 .sobre-mim-img-wrapper {
-  flex-shrink: 0;
-  width: 240px;
+  max-width: 350px; /* Aumente este valor (ex: de 250px para 350px) */
+  width: 100%;
 }
 
+/* Garanta que a imagem acompanhe o novo tamanho */
 .sobre-mim-img {
   width: 100%;
   height: auto;
-  border-radius: 15px;
+  border-radius: 12px; /* Mantém o arredondamento se houver */
   border: 1px solid rgba(212, 175, 55, 0.4);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
   object-fit: cover;
