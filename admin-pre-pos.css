@@ -1,4 +1,4 @@
-/* Estilos padronizados para Pré, Pós e Painel Admin (Mantém a identidade visual terrosa/verde) */
+/* Estilos padronizados para Pré, Pós e Painel Admin */
 body {
   background-color: #b5be9d;
   color: #2c322b;
@@ -23,6 +23,35 @@ body {
   text-align: center;
 }
 
+/* Layout em duas colunas para Pré e Pós com vídeo */
+.container-card-flex {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  max-width: 900px;
+  width: 100%;
+}
+
+.video-coluna {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.video-coluna video {
+  width: 100%;
+  max-width: 260px;
+  height: auto;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.form-coluna {
+  flex: 1.5;
+  text-align: left;
+}
+
 h1, h2 {
   font-family: 'Cormorant Garamond', serif;
   color: #f8f4d6;
@@ -45,13 +74,13 @@ p {
   transition: background 0.3s ease;
   border: none;
   cursor: pointer;
+  text-align: center;
 }
 
 .btn-acao:hover {
   background-color: #f8f4d6;
 }
 
-/* Estilo do Contador no Admin */
 .contador-box {
   background: rgba(255, 255, 255, 0.1);
   padding: 20px;
@@ -60,4 +89,15 @@ p {
   font-weight: bold;
   color: #d4af37;
   margin: 20px 0;
+}
+
+/* Responsivo para celular */
+@media (max-width: 768px) {
+  .container-card-flex {
+    flex-direction: column;
+  }
+  .video-coluna video {
+    max-width: 160px;
+    margin-bottom: 10px;
+  }
 }

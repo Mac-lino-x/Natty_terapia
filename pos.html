@@ -3,15 +3,144 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pós-Sessão - Natallyane Costa</title>
+  <title>Avaliação e Pós-Sessão - Natallyane Costa</title>
   <link rel="stylesheet" href="admin-pre-pos.css">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    .estrelas-container {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      font-size: 28px;
+      cursor: pointer;
+      margin: 10px 0;
+    }
+    .estrela {
+      color: #ccc;
+      transition: color 0.2s;
+    }
+    .estrela.ativo {
+      color: #d4af37;
+    }
+    .form-group {
+      margin-bottom: 12px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 4px;
+      font-weight: 600;
+      color: #f8f4d6;
+      font-size: 0.9rem;
+    }
+    .form-group input, .form-group textarea {
+      width: 100%;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      box-sizing: border-box;
+      font-size: 0.9rem;
+    }
+  </style>
 </head>
 <body>
-  <div class="container-card">
-    <h1>Cuidados Pós-Sessão</h1>
-    <p>Obrigada por realizar seu atendimento! Beba bastante água, evite esforço excessivo e desfrute da sensação de relaxamento.</p>
-    <a href="index.html" class="btn-acao">Voltar à Página Principal</a>
+  <div class="container-card container-card-flex">
+    <!-- Coluna do Vídeo da Bonequinha (Pós) -->
+    <div class="video-coluna">
+      <video src="video/931656b0428e4cd5b1adeb1b7470cb7d.webm" autoplay loop muted playsinline></video>
+    </div>
+
+    <!-- Coluna do Formulário -->
+    <div class="form-coluna">
+      <h1>Avaliação</h1>
+      
+      <form id="formAvaliacao">
+        <div class="form-group">
+          <label>Seu Nome:</label>
+          <input type="text" id="nomeCliente" required placeholder="Digite seu nome">
+        </div>
+
+        <div class="form-group">
+          <label>Técnica realizada:</label>
+          <input type="text" id="tecnicaRealizada" required placeholder="Ex: Relaxante">
+        </div>
+
+        <div class="form-group" style="text-align: center;">
+          <label>Nível de Satisfação:</label>
+          <div class="estrelas-container" id="starRating">
+            <span class="estrela" data-value="1">★</span>
+            <span class="estrela" data-value="2">★</span>
+            <span class="estrela" data-value="3">★</span>
+            <span class="estrela" data-value="4">★</span>
+            <span class="estrela" data-value="5">★</span>
+          </div>
+          <input type="hidden" id="notaSelecionada" value="5">
+        </div>
+
+        <div class="form-group">
+          <label>Como está se sentindo após?</label>
+          <textarea id="respPos" rows="2" placeholder="Ex: Muito mais leve..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Feedback adicional:</label>
+          <textarea id="feedbackCliente" rows="2" placeholder="Seu comentário..."></textarea>
+        </div>
+
+        <button type="submit" class="btn-acao" style="width: 100%; margin-top: 5px;">Enviar Avaliação</button>
+      </form>
+    </div>
   </div>
+
+  <script>
+    const SUPABASE_URL = 'SUA_URL_AQUI'; 
+    const SUPABASE_KEY = 'SUA_ANON_KEY_AQUI';
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const estrelas = document.querySelectorAll('.estrela');
+    const inputNota = document.getElementById('notaSelecionada');
+
+    function destacarEstrelas(nota) {
+      estrelas.forEach(estrela => {
+        if (estrela.dataset.value <= nota) {
+          estrela.classList.add('ativo');
+        } else {
+          estrela.classList.remove('ativo');
+        }
+      });
+    }
+
+    destacarEstrelas(5);
+
+    estrelas.forEach(estrela => {
+      estrela.addEventListener('click', () => {
+        const valor = estrela.dataset.value;
+        inputNota.value = valor;
+        destacarEstrelas(valor);
+      });
+    });
+
+    document.getElementById('formAvaliacao').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const dados = {
+        nome_cliente: document.getElementById('nomeCliente').value,
+        tecnica: document.getElementById('tecnicaRealizada').value,
+        nota_estrelas: parseInt(inputNota.value),
+        respostas_pos: document.getElementById('respPos').value,
+        feedback: document.getElementById('feedbackCliente').value
+      };
+
+      const { error } = await supabaseClient.from('avaliacoes').insert([dados]);
+      if (error) {
+        alert('Erro ao enviar avaliação.');
+        console.error(error);
+      } else {
+        alert('Obrigado pela sua avaliação!');
+        window.location.href = 'index.html';
+      }
+    });
+  </script>
 </body>
 </html>

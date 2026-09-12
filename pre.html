@@ -3,15 +3,105 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Preparação para Sessão - Natallyane Costa</title>
+  <title>Pré-Sessão e Orientações - Natallyane Costa</title>
   <link rel="stylesheet" href="admin-pre-pos.css">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    .form-group {
+      margin-bottom: 12px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 4px;
+      font-weight: 600;
+      color: #f8f4d6;
+      font-size: 0.9rem;
+    }
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      box-sizing: border-box;
+      font-size: 0.9rem;
+    }
+  </style>
 </head>
 <body>
-  <div class="container-card">
-    <h1>Orientações Pré-Sessão</h1>
-    <p>Aqui você pode colocar as instruções importantes para o cliente antes de realizar a massagem ou procedimento (ex: evitar refeições pesadas, usar roupas confortáveis, etc.).</p>
-    <a href="index.html" class="btn-acao">Voltar à Página Principal</a>
+  <div class="container-card container-card-flex">
+    <!-- Coluna do Vídeo da Bonequinha (Pré) -->
+    <div class="video-coluna">
+      <video src="video/Firefly anotando e piscando o olho naturalmente, video infinito que se repete igaul gif  993518 (1).mp4" autoplay loop muted playsinline></video>
+    </div>
+
+    <!-- Coluna do Formulário -->
+    <div class="form-coluna">
+      <h1>Ficha Pré-Sessão</h1>
+      
+      <form id="formPreAtendimento">
+        <div class="form-group">
+          <label>Seu Nome Completo:</label>
+          <input type="text" id="preNome" required placeholder="Digite seu nome">
+        </div>
+
+        <div class="form-group">
+          <label>Técnica desejada:</label>
+          <input type="text" id="preTecnica" required placeholder="Ex: Liberação Miofascial">
+        </div>
+
+        <div class="form-group">
+          <label>Nível de dor atual (0 a 10):</label>
+          <select id="preNivelDor" required>
+            <option value="0" style="color:#000;">0 - Sem dor / Relaxamento</option>
+            <option value="3" style="color:#000;">3 - Dor moderada</option>
+            <option value="5" style="color:#000;">5 - Dor incômoda</option>
+            <option value="7" style="color:#000;">7 - Dor forte</option>
+            <option value="10" style="color:#000;">10 - Dor insuportável</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Principais sintomas/regiões de tensão:</label>
+          <textarea id="preSintomas" rows="2" placeholder="Ex: Rigidez na lombar..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Restrições médicas ou gravidez:</label>
+          <textarea id="preRestricoes" rows="2" placeholder="Ex: Nenhuma..."></textarea>
+        </div>
+
+        <button type="submit" class="btn-acao" style="width: 100%; margin-top: 5px;">Enviar Ficha</button>
+      </form>
+    </div>
   </div>
+
+  <script>
+    const SUPABASE_URL = 'SUA_URL_AQUI'; 
+    const SUPABASE_KEY = 'SUA_ANON_KEY_AQUI';
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    document.getElementById('formPreAtendimento').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const dadosPre = {
+        nome_cliente: document.getElementById('preNome').value,
+        tecnica_desejada: document.getElementById('preTecnica').value,
+        nivel_dor: parseInt(document.getElementById('preNivelDor').value),
+        sintomas_queixas: document.getElementById('preSintomas').value,
+        restricoes_medicas: document.getElementById('preRestricoes').value
+      };
+
+      const { error } = await supabaseClient.from('pre_atendimento').insert([dadosPre]);
+      if (error) {
+        alert('Erro ao enviar as informações.');
+        console.error(error);
+      } else {
+        alert('Ficha enviada com sucesso! Boa sessão.');
+        window.location.href = 'index.html';
+      }
+    });
+  </script>
 </body>
 </html>
