@@ -8,7 +8,7 @@ try {
     _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   }
 } catch (err) {
-  console.warn('Supabase não inicializado (verifique SUPABASE_URL/SUPABASE_KEY em main.js):', err);
+  console.warn('Supabase não inicializado:', err);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==========================================
   // 1. INTEGRAÇÃO DE DADOS (SUPABASE)
   // ==========================================
-
   if (_supabase) {
     if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || window.location.pathname === '') {
       _supabase.from('acessos').insert([{}]).then(({ error }) => {
@@ -68,9 +67,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ==========================================
-  // 2. CÓDIGO DA LANDING PAGE E INTERAÇÕES
+  // 2. DADOS DAS TÉCNICAS
   // ==========================================
-
   const techniquesData = {
     ventosaterapia: {
       title: "Ventosaterapia",
@@ -96,10 +94,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const bookingState = { tecnica: "", horario: "" };
 
+  // ==========================================
+  // 3. SELETORES DE ELEMENTOS DA INTERFACE
+  // ==========================================
   const body = document.body;
-  const screenHero = document.getElementById('screenHero');
-  const quizContainer = document.getElementById('quizContainer');
-  const natallyName = document.querySelector('.hero-title') || document.getElementById('natallyName');
+  const screenHero = document.querySelector('.screen-hero') || document.getElementById('screenHero');
+  const quizContainer = document.querySelector('.quiz-container') || document.getElementById('quizContainer');
+  const natallyName = document.querySelector('.brand-title') || document.getElementById('natallyName');
 
   const step1 = document.getElementById('step1');
   const step2 = document.getElementById('step2');
@@ -109,21 +110,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnBackToHero = document.getElementById('btnBackToHero');
   const btnWhatsapp = document.querySelector('.btn-confirmar-whatsapp') || document.getElementById('btnWhatsapp');
 
-  const infoInlinePanel = document.getElementById('infoInlinePanel');
-  const infoTitle = document.getElementById('infoTitle');
-  const infoText = document.getElementById('infoText');
-  const techImg = document.getElementById('techImg');
-  const techImgWrapper = document.getElementById('techImgWrapper');
+  const infoInlinePanel = document.getElementById('infoInlinePanel') || document.querySelector('.info-inline-panel');
+  const infoTitle = document.getElementById('infoTitle') || document.querySelector('.info-inline-title');
+  const infoText = document.getElementById('infoText') || document.querySelector('.info-inline-text');
+  const techImg = document.getElementById('techImg') || document.querySelector('.tech-img');
+  const techImgWrapper = document.getElementById('techImgWrapper') || document.querySelector('.tech-img-container');
 
-  const sobreMimSection = document.getElementById('sobreMimSection') || document.querySelector('.sobre-mim-section');
-  const btnSobreMim = document.getElementById('btnSobreMim') || document.querySelector('.btn-sobre-mim');
-  const btnSobreMimText = document.getElementById('btnSobreMimText') || (btnSobreMim ? btnSobreMim.querySelector('span') : null);
-  const btnSobreMimArrow = document.getElementById('btnSobreMimArrow') || (btnSobreMim ? btnSobreMim.querySelector('i') : null);
+  const sobreMimSection = document.querySelector('.sobre-mim-section') || document.getElementById('sobreMimSection');
+  const btnSobreMim = document.querySelector('.btn-sobre-mim') || document.getElementById('btnSobreMim');
+  const btnSobreMimText = btnSobreMim ? btnSobreMim.querySelector('span') : null;
+  const btnSobreMimArrow = btnSobreMim ? btnSobreMim.querySelector('.arrow-down, i') : null;
 
   const bgAudio = document.getElementById('bgAudio');
 
   let currentBip = 1;
-  let fadeOutInterval = null;
 
   function playBip() {
     try {
@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) {}
   }
 
-  // EFEITO BRILHANTE MAIS LENTO, CLARO E TRANSPARENTE
+  // EFEITO BRILHANTE (FLASH DOURADO)
   function triggerShineFlash() {
     const flash = document.createElement('div');
     flash.className = 'shine-flash';
@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
       flash.classList.add('active');
     });
     flash.addEventListener('animationend', () => flash.remove());
-    setTimeout(() => { if (flash.parentNode) flash.remove(); }, 2500);
+    setTimeout(() => { if (flash.parentNode) flash.remove(); }, 900);
   }
 
   // ATUALIZA PAINEL DE FOTO E TEXTO DO QUIZ
@@ -166,15 +166,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (infoInlinePanel) infoInlinePanel.classList.add('visible');
   }
 
-  // AÇÕES DO QUIZ COM TRANSIÇÃO MAIS LENTA E SUAVE
-  function openQuiz() {
+  // ABRIR O QUESTIONÁRIO (BOTÃO AGENDAR / INTERRUPTOR)
+  function openQuiz(e) {
+    if (e) e.preventDefault();
     playBip();
     triggerShineFlash();
 
+    // Ativa visualmente o interruptor para a posição "desligado/escuro"
     document.querySelectorAll('.right-switch-block').forEach(sw => sw.classList.add('switch-off'));
 
     if (bgAudio) {
-      if (fadeOutInterval) clearInterval(fadeOutInterval);
       bgAudio.volume = 0.15;
       bgAudio.currentTime = 0;
       bgAudio.play().catch(() => {});
@@ -188,7 +189,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (sobreMimSection) sobreMimSection.classList.add('fade-out');
     if (btnSobreMim) btnSobreMim.style.display = 'none';
 
-    // Tempo ampliado para que a tela surja bem lentamente por trás
     setTimeout(() => {
       if (screenHero) screenHero.classList.add('hidden');
       if (sobreMimSection) sobreMimSection.classList.add('hidden');
@@ -204,9 +204,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (step3) step3.classList.remove('active');
 
       updateInfoPanel('ventosaterapia');
-    }, 600);
+    }, 300);
   }
 
+  // FECHAR O QUESTIONÁRIO / VOLTAR AO HERO
   function closeQuiz() {
     playBip();
 
@@ -228,57 +229,60 @@ document.addEventListener('DOMContentLoaded', () => {
         sobreMimSection.classList.remove('fade-out');
       }
       if (btnSobreMim) btnSobreMim.style.display = 'flex';
-    }, 600);
+    }, 300);
   }
 
-  // CONFIGURAÇÃO DOS BOTÕES DE AGENDAR
-  const agendarButtons = document.querySelectorAll('#btnAgendar, .btn-agendar, #switchBtn, .right-switch-block');
+  // ==========================================
+  // 4. VINCULAÇÃO DOS BOTÕES DE AGENDAR E SWITCH
+  // ==========================================
+  const agendarButtons = document.querySelectorAll('.btn-agendar, #btnAgendar, .right-switch-block, #switchBtn');
   agendarButtons.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      openQuiz();
-    });
+    btn.addEventListener('click', openQuiz);
   });
 
   if (btnBackToHero) {
     btnBackToHero.addEventListener('click', closeQuiz);
   }
 
-  // BOTÃO FLUTUANTE: SÓ SOMA/ MUDA PARA "SOBRE MIM" SE ESTIVER EXATAMENTE NO TOPO (0)
+  // ==========================================
+  // 5. BOTÃO FLUTUANTE "SOBRE MIM" / "VOLTAR AO TOPO"
+  // ==========================================
+  let isAtBottom = false;
   if (btnSobreMim) {
-    window.addEventListener('scroll', () => {
-      const scrollPosition = window.scrollY;
-
-      if (scrollPosition <= 5) {
-        // Estritamente no topo: exibe "Sobre Mim"
-        if (btnSobreMimText) btnSobreMimText.textContent = "Sobre Mim";
-        if (btnSobreMimArrow) btnSobreMimArrow.textContent = "↓";
-      } else {
-        // Qualquer rolagem abaixo do topo: mantém "Voltar ao Topo"
-        if (btnSobreMimText) btnSobreMimText.textContent = "Voltar ao Topo";
-        if (btnSobreMimArrow) btnSobreMimArrow.textContent = "↑";
-      }
-    });
-
     btnSobreMim.addEventListener('click', (e) => {
       e.preventDefault();
       playBip();
-      
-      const currentText = btnSobreMimText ? btnSobreMimText.textContent : "";
-      
-      if (currentText === "Voltar ao Topo") {
+      if (isAtBottom) {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
-        if (sobreMimSection) {
-          sobreMimSection.scrollIntoView({ behavior: 'smooth' });
-        } else {
-          window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-        }
+        // Se a seção Sobre Mim estiver oculta (porque abriu o quiz), rola para o fim da página geral
+        const targetElement = sobreMimSection && !sobreMimSection.classList.contains('hidden') 
+          ? sobreMimSection 
+          : document.body;
+        
+        targetElement.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+
+    window.addEventListener('scroll', () => {
+      const scrollBottom = window.scrollY + window.innerHeight;
+      const pageBottom = document.body.scrollHeight - 5;
+      
+      if (scrollBottom >= pageBottom) {
+        isAtBottom = true;
+        if (btnSobreMimText) btnSobreMimText.textContent = "Voltar ao topo";
+        if (btnSobreMimArrow) btnSobreMimArrow.textContent = "↑";
+      } else {
+        isAtBottom = false;
+        if (btnSobreMimText) btnSobreMimText.textContent = "Sobre Mim";
+        if (btnSobreMimArrow) btnSobreMimArrow.textContent = "↓";
       }
     });
   }
 
-  // SELEÇÕES DO QUIZ
+  // ==========================================
+  // 6. NAVEGAÇÃO INTERNA DO QUESTIONÁRIO
+  // ==========================================
   const optionWrappers = document.querySelectorAll('.option-wrapper');
   optionWrappers.forEach(wrapper => {
     const optBtn = wrapper.querySelector('.opt-btn');
@@ -375,7 +379,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // CANVAS DE FUMAÇA DE INCENSO
+  // ==========================================
+  // 7. CANVAS DE FUMAÇA ATMOSFÉRICA
+  // ==========================================
   const canvas = document.getElementById('smokeCanvas');
   if (canvas) {
     const ctx = canvas.getContext('2d');
@@ -500,42 +506,4 @@ document.addEventListener('DOMContentLoaded', () => {
     initSmoke();
     animateSmoke();
   }
-});/* TRANSIÇÃO LENTA DA TELA HERO */
-.screen-hero {
-  transition: opacity 2.5s cubic-bezier(0.4, 0, 0.2, 1), transform 2.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* CLARÃO/LUZ MAIS CLARO, SUAVE E TRANSPARENTE POR TRÁS */
-.shine-flash {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 4;
-  background: radial-gradient(circle at 50% 45%, rgba(255, 253, 238, 0.85) 0%, rgba(255, 235, 150, 0.45) 35%, rgba(255, 220, 100, 0.08) 65%, rgba(0, 0, 0, 0) 90%);
-  opacity: 0;
-  pointer-events: none;
-}
-
-.shine-flash.active {
-  animation: shineFlashAnim 2.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-}
-
-@keyframes shineFlashAnim {
-  0% { opacity: 0; transform: scale(0.2); }
-  50% { opacity: 0.85; transform: scale(1.2); }
-  100% { opacity: 0; transform: scale(2.5); }
-}
-
-/* QUESTIONÁRIO SURGINDO BEM LENTAMENTE POR TRÁS */
-.quiz-container {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 2.5s ease 0.6s, transform 2.5s ease 0.6s;
-}
-
-.quiz-container.show {
-  opacity: 1;
-  transform: translateY(0);
-}
+});
