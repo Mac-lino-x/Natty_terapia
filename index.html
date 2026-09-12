@@ -3,1239 +3,204 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Natallyane Cota</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&family=Cormorant+Garamond:wght@400;500&display=swap" rel="stylesheet">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-      width: 100%;
-      min-height: 100vh;
-      min-height: 100dvh;
-    }
-
-    body {
-      width: 100%;
-      min-height: 100vh;
-      min-height: 100dvh;
-      overflow-x: hidden;
-      overflow-y: auto;
-      font-family: 'Montserrat', sans-serif;
-      background-color: #b5be9d;
-      color: #2c251d;
-      position: relative;
-      transition: background-color 2.5s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    /* VÍDEO DE FUNDO */
-    .bg-video {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(1.0);
-      width: 100vw;
-      height: 100vh;
-      height: 100dvh;
-      object-fit: cover;
-      z-index: 1;
-      pointer-events: none;
-      filter: brightness(0.7) contrast(0.9);
-      transition: filter 2.5s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    /* CAMADA DE ESCURECIMENTO */
-    .dark-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      height: 100dvh;
-      z-index: 2;
-      pointer-events: none;
-      background: rgba(181, 190, 157, 0.2);
-      transition: background 2.5s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    body.darkened .dark-overlay {
-      background: rgba(12, 14, 10, 0.94);
-    }
-
-    body.darkened .bg-video {
-      filter: brightness(0.2) contrast(1.1);
-    }
-
-    /* CANVAS DE FUMAÇA */
-    #smokeCanvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      height: 100dvh;
-      z-index: 3;
-      pointer-events: none;
-      opacity: 1;
-      filter: blur(16px);
-    }
-
-    /* CONTAINER PRINCIPAL */
-    .main-canvas {
-      position: relative;
-      z-index: 10;
-      min-height: 100vh;
-      min-height: 100dvh;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px;
-    }
-
-    /* DIVISORES COM ESTRELAS */
-    .stars-divider {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 15px;
-      width: 100%;
-      max-width: 850px;
-    }
-
-    .stars-divider .line {
-      height: 1px;
-      flex: 1;
-      background-color: #3b3226;
-      transition: background-color 2.5s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .stars-divider .star-group {
-      color: #3b3226;
-      font-size: 1rem;
-      letter-spacing: 6px;
-      transition: color 2.5s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    body.darkened .stars-divider .line { background-color: rgba(216, 195, 165, 0.4); }
-    body.darkened .stars-divider .star-group { color: #d8c3a5; }
-
-    /* TRANSIÇÃO SUAVE DA TELA HERO (LENTA E GRADUAL) */
-    .screen-hero {
-      opacity: 1;
-      transform: scale(1);
-      transition: opacity 1.6s cubic-bezier(0.4, 0, 0.2, 1), transform 1.6s cubic-bezier(0.4, 0, 0.2, 1);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
-      min-height: calc(100vh - 40px);
-      min-height: calc(100dvh - 40px);
-      width: 100%;
-    }
-
-    .screen-hero.fade-out {
-      opacity: 0;
-      transform: scale(0.98);
-      pointer-events: none;
-    }
-
-    /* CLARÃO DE TRANSIÇÃO (BRANCO E TRANSPARENTE, LENTO) */
-    .shine-flash {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0.4);
-      width: 550px;
-      height: 550px;
-      z-index: 4;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.12) 35%, rgba(255, 255, 255, 0.02) 65%, rgba(0, 0, 0, 0) 85%);
-      opacity: 0;
-      pointer-events: none;
-      border-radius: 50%;
-    }
-
-    .shine-flash.active {
-      animation: shineFlashAnim 3.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-    }
-
-    @keyframes shineFlashAnim {
-      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
-      45% { opacity: 0.85; transform: translate(-50%, -50%) scale(1.05); }
-      100% { opacity: 0; transform: translate(-50%, -50%) scale(2.2); }
-    }
-
-    /* LOGO E NOME CENTRALIZADOS COM BRILHO LENTO */
-    .center-brand-block { 
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      position: relative;
-      z-index: 5;
-    }
-
-    .logo-symbol { 
-      width: 280px; 
-      height: 220px; 
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .brand-img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-    }
-
-    .brand-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(2rem, 4vw, 3.2rem);
-      font-weight: 500;
-      letter-spacing: 0.12em;
-      color: #2c251d;
-      margin-top: 10px;
-      transition: color 2.5s cubic-bezier(0.4, 0, 0.2, 1), text-shadow 2.5s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    body.darkened .brand-title {
-      color: #fff3d1;
-      text-shadow: 0 0 25px rgba(255, 255, 255, 0.6), 0 0 50px rgba(255, 255, 255, 0.2);
-    }
-
-    .brand-subtitle {
-      font-size: clamp(0.75rem, 1.2vw, 0.95rem);
-      letter-spacing: 0.35em;
-      font-weight: 300;
-      color: #423828;
-      margin-top: 5px;
-      transition: color 2.5s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    body.darkened .brand-subtitle { color: #d8c3a5; }
-
-    /* ÁREA DE AÇÃO UNIFICADA */
-    .action-area {
-      position: relative;
-      margin: 20px auto 0 auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-      gap: 0;
-      z-index: 5;
-    }
-
-    /* BOTÃO AGENDAR */
-    .btn-agendar {
-      position: relative;
-      z-index: 10;
-      padding: 14px 38px;
-      border: 1.5px solid #2c251d;
-      background: rgba(255, 255, 255, 0.45);
-      color: #2c251d;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.85rem;
-      letter-spacing: 0.2em;
-      border-radius: 40px;
-      backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px);
-      transition: all 0.4s ease;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    .btn-agendar:hover {
-      background: #2c251d;
-      color: #f7f3e9;
-    }
-
-    body.darkened .btn-agendar {
-      background: rgba(12, 10, 8, 0.4);
-      border-color: rgba(216, 195, 165, 0.4);
-      color: #fff3d1;
-    }
-
-    body.darkened .btn-agendar:hover {
-      background: #d8c3a5;
-      color: #12100c;
-    }
-
-    /* INTERRUPTOR */
-    .right-switch-block {
-      position: relative;
-      width: 75px;
-      height: 95px;
-      margin-top: -12px;
-      cursor: pointer;
-      z-index: 1;
-      transition: transform 0.3s ease;
-    }
-
-    .right-switch-block:hover {
-      transform: scale(1.06);
-    }
-
-    .right-switch-block.switch-off .switch-lever {
-      transform: translateY(6px) scale(0.95);
-      fill: #d8c3a5;
-      transition: transform 0.35s ease, fill 0.35s ease;
-    }
-
-    .right-switch-block.switch-off .switch-border,
-    .right-switch-block.switch-off .switch-border-inner {
-      stroke: #d8c3a5;
-    }
-
-    .switch-svg-clean {
-      width: 100%;
-      height: 100%;
-      overflow: visible;
-    }
-
-    .switch-border, .switch-border-inner {
-      transition: stroke 0.5s ease, filter 0.5s ease;
-    }
-
-    .switch-lever {
-      transform-origin: center;
-      transition: transform 0.3s ease, fill 0.5s ease;
-      transform: translateY(-4px);
-    }
-
-    body.darkened .switch-border,
-    body.darkened .switch-border-inner {
-      stroke: #d8c3a5;
-    }
-
-    body.darkened .switch-lever {
-      transform: translateY(6px);
-      fill: #d8c3a5;
-    }
-
-    body.darkened .stars-group path {
-      fill: #f5e6c8;
-      filter: drop-shadow(0px 0px 4px rgba(245, 230, 200, 0.6));
-    }
-
-    /* QUESTIONÁRIO (SURGINDO SUAVE E LENTO) */
-    .quiz-container {
-      max-width: 1100px;
-      width: 100%;
-      margin: auto 0;
-      text-align: center;
-      opacity: 0;
-      transform: translateY(15px);
-      transition: opacity 1.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s, transform 1.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s;
-    }
-
-    .quiz-container.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .hidden { display: none !important; }
-    .quiz-step { display: none; }
-    .quiz-step.active { display: block; }
-
-    .quiz-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(1.8rem, 4vw, 2.5rem);
-      color: #f7f3e9;
-      font-weight: 400;
-      margin-bottom: 25px;
-    }
-
-    .quiz-desc {
-      color: #d8c3a5;
-      font-size: 0.95rem;
-      margin-bottom: 25px;
-      line-height: 1.5;
-    }
-
-    /* LAYOUT DO QUESTIONÁRIO */
-    .quiz-interactive-layout {
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-      margin: 20px auto 0 auto;
-      min-height: 380px;
-    }
-
-    .options-grid {
-      width: 100%;
-      max-width: 380px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      margin: 0 auto;
-      z-index: 2;
-    }
-
-    .option-wrapper {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      width: 100%;
-    }
-
-    .option-wrapper .opt-btn {
-      flex: 1;
-    }
-
-    .opt-btn {
-      padding: 16px 20px;
-      border: 1px solid rgba(216, 195, 165, 0.4);
-      background: rgba(12, 10, 8, 0.5);
-      color: #f7f3e9;
-      border-radius: 30px;
-      font-size: 0.88rem;
-      letter-spacing: 0.12em;
-      cursor: pointer;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      transition: all 0.3s ease;
-    }
-
-    .opt-btn:hover, .opt-btn.selected {
-      background: rgba(216, 195, 165, 0.3);
-      border-color: #d8c3a5;
-    }
-
-    .info-btn {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      border: 1px solid rgba(216, 195, 165, 0.4);
-      background: rgba(12, 10, 8, 0.5);
-      color: #d8c3a5;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.75rem;
-      font-weight: 500;
-      cursor: pointer;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .info-btn:hover, .info-btn.active {
-      background: rgba(216, 195, 165, 0.3);
-      border-color: #fff3d1;
-      color: #fff3d1;
-      transform: scale(1.1);
-      box-shadow: 0 0 8px rgba(255, 243, 209, 0.4);
-    }
-
-    .step-header {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      margin-bottom: 25px;
-    }
-
-    .btn-back {
-      position: absolute;
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(12, 10, 8, 0.4);
-      border: 1px solid rgba(216, 195, 165, 0.3);
-      color: #d8c3a5;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.85rem;
-      padding: 8px 16px;
-      border-radius: 20px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px);
-      transition: all 0.3s ease;
-    }
-
-    .btn-back:hover {
-      background: rgba(216, 195, 165, 0.2);
-      color: #fff3d1;
-      border-color: #fff3d1;
-      transform: translateY(-50%) translateX(-3px);
-    }
-
-    .btn-back .arrow {
-      font-size: 1.1rem;
-      line-height: 1;
-    }
-
-    .info-inline-panel {
-      position: absolute;
-      right: 0;
-      top: 35%;
-      transform: translateY(-50%);
-      width: 300px;
-      text-align: left;
-      opacity: 0;
-      transition: opacity 0.4s ease, transform 0.4s ease;
-      pointer-events: none;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
-      gap: 4px;
-      z-index: 3;
-    }
-
-    .info-inline-panel.visible {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .tech-img-container {
-      width: 100%;
-      height: 130px;
-      border-radius: 10px;
-      overflow: hidden;
-      margin: 0 0 4px 0;
-      padding: 0;
-      display: none;
-      flex-shrink: 0;
-    }
-
-    .tech-img-container.has-img {
-      display: block;
-    }
-
-    .tech-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 10px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-      border: 1px solid rgba(216, 195, 165, 0.3);
-      display: block;
-    }
-
-    .info-inline-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.35rem;
-      font-weight: 500;
-      color: #fff3d1;
-      letter-spacing: 0.05em;
-      margin: 0 !important;
-      padding: 0 !important;
-      line-height: 1.2;
-    }
-
-    .info-inline-text {
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.8rem;
-      line-height: 1.35;
-      color: #e5dac9;
-      font-weight: 300;
-      margin: 0 !important;
-      padding: 0 !important;
-    }
-
-    .info-inline-text strong {
-      color: #fff3d1;
-      font-weight: 500;
-    }
-
-    /* BOTÃO SOBRE MIM / VOLTAR AO TOPO FLUTUANTE */
-    .btn-sobre-mim {
-      position: fixed;
-      bottom: 25px;
-      left: 20px;
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 22px;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.1rem;
-      font-weight: 600;
-      letter-spacing: 1px;
-      background: rgba(20, 20, 20, 0.75);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border: 1px solid rgba(212, 175, 55, 0.5);
-      border-radius: 30px;
-      color: #fff;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-      animation: starPulseBtn 3s ease-in-out infinite;
-    }
-
-    .btn-sobre-mim .arrow-icon {
-      font-size: 1.1rem;
-      transition: transform 0.3s ease;
-      display: inline-block;
-      color: #d4af37;
-    }
-
-    .btn-sobre-mim:hover {
-      background: rgba(212, 175, 55, 0.9);
-      color: #111;
-      border-color: #d4af37;
-      transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
-    }
-
-    .btn-sobre-mim:hover .arrow-icon {
-      color: #111;
-    }
-
-    /* SEÇÃO SOBRE MIM */
-    .sobre-mim-section {
-      width: 100%;
-      max-width: 950px;
-      margin: 60px auto 30px auto;
-      padding: 40px 25px;
-      background: rgba(18, 16, 12, 0.75);
-      border: 1px solid rgba(212, 175, 55, 0.3);
-      border-radius: 20px;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-      transition: opacity 1.6s cubic-bezier(0.4, 0, 0.2, 1), transform 1.6s cubic-bezier(0.4, 0, 0.2, 1);
-      animation: starPulse 4s ease-in-out infinite;
-    }
-
-    .sobre-mim-section.fade-out {
-      opacity: 0;
-      transform: translateY(20px);
-      pointer-events: none;
-    }
-
-    body.darkened .sobre-mim-section {
-      border-color: rgba(216, 195, 165, 0.5);
-      background: rgba(10, 8, 6, 0.85);
-    }
-
-    .sobre-mim-container {
-      display: flex;
-      flex-direction: column;
-      gap: 30px;
-      align-items: center;
-    }
-
-    @media (min-width: 768px) {
-      .sobre-mim-container {
-        flex-direction: row;
-        align-items: flex-start;
-      }
-    }
-
-    .sobre-mim-img-wrapper {
-      flex-shrink: 0;
-      width: 240px;
-    }
-
-    .sobre-mim-img {
-      width: 100%;
-      height: auto;
-      border-radius: 15px;
-      border: 1px solid rgba(212, 175, 55, 0.4);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
-      object-fit: cover;
-    }
-
-    .sobre-mim-content {
-      flex: 1;
-      text-align: left;
-      color: #e5dac9;
-    }
-
-    .sobre-mim-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2.2rem;
-      color: #fff3d1;
-      margin-bottom: 15px;
-      font-weight: 500;
-      letter-spacing: 0.05em;
-    }
-
-    .sobre-mim-intro {
-      font-size: 1.05rem;
-      color: #d8c3a5;
-      margin-bottom: 12px;
-      font-weight: 400;
-    }
-
-    .sobre-mim-content p {
-      font-size: 0.9rem;
-      line-height: 1.6;
-      margin-bottom: 15px;
-      font-weight: 300;
-    }
-
-    .sobre-mim-subtitle {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.35rem;
-      color: #fff3d1;
-      margin: 20px 0 10px 0;
-    }
-
-    .sobre-mim-list {
-      list-style: none;
-      padding: 0;
-    }
-
-    .sobre-mim-list li {
-      font-size: 0.88rem;
-      background: rgba(255, 255, 255, 0.03);
-      padding: 10px 14px;
-      border-radius: 8px;
-      margin-bottom: 8px;
-      border-left: 3px solid #d4af37;
-      line-height: 1.4;
-    }
-
-    .sobre-mim-list strong {
-      color: #fff3d1;
-    }
-
-    /* ANIMAÇÕES */
-    @keyframes starPulse {
-      0%, 100% {
-        box-shadow: 0 0 15px rgba(212, 175, 55, 0.2), 0 0 30px rgba(212, 175, 55, 0.1);
-        border-color: rgba(212, 175, 55, 0.3);
-      }
-      50% {
-        box-shadow: 0 0 30px rgba(255, 223, 118, 0.6), 0 0 50px rgba(212, 175, 55, 0.35);
-        border-color: rgba(255, 223, 118, 0.8);
-      }
-    }
-
-    @keyframes starPulseBtn {
-      0%, 100% {
-        box-shadow: 0 0 10px rgba(212, 175, 55, 0.4), 0 0 20px rgba(212, 175, 55, 0.2);
-        border-color: rgba(255, 223, 118, 0.5);
-        transform: scale(1);
-      }
-      50% {
-        box-shadow: 0 0 25px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 223, 118, 0.5);
-        border-color: rgba(255, 235, 150, 1);
-        transform: scale(1.04);
-      }
-    }
-
-    /* RESPONSIVO PARA CELULAR */
-    @media (max-width: 768px) {
-      .quiz-interactive-layout {
-        flex-direction: column;
-        min-height: auto;
-      }
-
-      .info-inline-panel {
-        position: relative !important;
-        right: auto !important;
-        top: auto !important;
-        transform: none !important;
-        width: 100% !important;
-        max-width: 380px;
-        margin-top: 20px;
-        background: rgba(12, 10, 8, 0.85);
-        padding: 15px;
-        border-radius: 12px;
-        border: 1px solid rgba(216, 195, 165, 0.3);
-      }
-
-      .brand-title {
-        font-size: 2rem !important;
-      }
-
-      .step-header {
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .btn-back {
-        position: relative !important;
-        top: auto !important;
-        left: auto !important;
-        transform: none !important;
-        align-self: flex-start;
-      }
-
-      .btn-sobre-mim {
-        bottom: 15px;
-        left: 15px;
-        padding: 8px 16px;
-        font-size: 0.95rem;
-      }
-
-      .sobre-mim-img-wrapper {
-        width: 100%;
-        max-width: 220px;
-      }
-    }
-  </style>
+  <title>Natallyane Costa — Massoterapeuta</title>
+  
+  <link rel="manifest" href="manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="Style.css">
 </head>
 <body>
 
   <!-- VÍDEO DE FUNDO -->
-  <video autoplay muted loop playsinline class="bg-video" id="bgVideo">
-    <source src="seu-video.mp4" type="video/mp4">
+  <video class="bg-video" id="bgVideo" autoplay loop muted playsinline>
+    <source src="video/video1.mp4" type="video/mp4">
+    <source src="video/video1.webm" type="video/webm">
   </video>
 
   <!-- CAMADA DE ESCURECIMENTO -->
-  <div class="dark-overlay"></div>
+  <div class="dark-overlay" id="darkOverlay"></div>
 
-  <!-- CANVAS DE FUMAÇA -->
+  <!-- CANVAS DA FUMAÇA -->
   <canvas id="smokeCanvas"></canvas>
 
-  <!-- BOTÃO FLUTUANTE "SOBRE MIM" / "VOLTAR AO TOPO" -->
-  <button class="btn-sobre-mim" id="btnSobreMim" onclick="toggleSobreMim()">
-    <span id="btnSobreMimText">Sobre Mim</span>
-    <span class="arrow-icon" id="btnSobreMimIcon">↓</span>
-  </button>
-
-  <div class="main-canvas">
+  <main class="main-canvas">
     
     <!-- DIVISOR SUPERIOR -->
     <div class="stars-divider">
-      <div class="line"></div>
-      <div class="star-group">✦ ✦ ✦</div>
-      <div class="line"></div>
+      <span class="line"></span>
+      <span class="star-group">☆ ☆ ☆</span>
+      <span class="line"></span>
     </div>
 
-    <!-- TELA HERO -->
+<!-- TELA 1: HERO (INICIAL) -->
     <div class="screen-hero" id="screenHero">
       
-      <!-- CLARÃO DE LUZ SUAVE (CENTRALIZADO EXATAMENTE ATRÁS DA LOGO E NOME) -->
-      <div class="shine-flash" id="shineFlash"></div>
+      <!-- BOTÃO SOBRE MIM NO CANTO ESQUERDO -->
+      <button id="btnSobreMim" class="btn-sobre-mim" type="button">
+        <span id="btnSobreMimText">Sobre Mim</span>
+        <span id="btnSobreMimArrow" class="arrow-down">↓</span>
+      </button>
 
+      <!-- LOGO E NOME CENTRALIZADOS -->
       <div class="center-brand-block">
         <div class="logo-symbol">
-          <img src="sua-logo.png" alt="Logotipo" class="brand-img" id="brandLogo">
+          <img src="imagem/imagem1.png" alt="Natallyane Costa Logo" class="brand-img">
         </div>
-        <h1 class="brand-title">Natallyane Cota</h1>
-        <p class="brand-subtitle">EXCELÊNCIA & DESIGN</p>
+
+        <h1 class="brand-title">NATALLYANE COSTA</h1>
+        <p class="brand-subtitle">MASSOTERAPEUTA</p>
       </div>
 
+      <!-- ÁREA DE AÇÃO -->
       <div class="action-area">
-        <button class="btn-agendar" onclick="startQuiz()">AGENDAR</button>
+        <button type="button" id="btnAgendar" class="btn-agendar">
+          AGENDAR SESSÃO
+        </button>
 
-        <!-- INTERRUPTOR DO MODO ESCURO -->
-        <div class="right-switch-block switch-off" id="switchBlock" onclick="toggleDarkMode()">
-          <svg class="switch-svg-clean" viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                <feGaussianBlur stdDeviation="3" result="blur" />
-                <feComposite in="SourceGraphic" in2="blur" operator="over" />
-              </filter>
-            </defs>
-            <!-- Placa de fundo -->
-            <rect class="switch-border" x="25" y="10" width="50" height="110" rx="25" fill="none" stroke="#3b3226" stroke-width="2"/>
-            <rect class="switch-border-inner" x="30" y="15" width="40" height="100" rx="20" fill="none" stroke="#3b3226" stroke-width="1" stroke-dasharray="2 4" opacity="0.5"/>
-            
-            <!-- Alavanca (Sol/Lua) -->
-            <g class="switch-lever" id="switchLever">
-              <circle cx="50" cy="38" r="14" fill="#3b3226" filter="url(#glow)"/>
-              <!-- Estrelinhas dentro da lua/sol para charme -->
-              <g class="stars-group" transform="translate(43, 31) scale(0.6)">
-                <path d="M10,0 L12,7 L19,9 L12,11 L10,18 L8,11 L1,9 L8,7 Z" fill="#b5be9d"/>
-              </g>
+        <div class="right-switch-block" id="switchBtn">
+          <svg class="switch-svg-clean" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+            <g class="stars-group">
+              <path d="M 150 30 Q 150 45 165 45 Q 150 45 150 60 Q 150 45 135 45 Q 150 45 150 30 Z" fill="#d4af37" />
+              <path d="M 175 20 Q 175 27 182 27 Q 175 27 175 34 Q 175 27 168 27 Q 175 27 175 20 Z" fill="#d4af37" />
+              <path d="M 45 80 Q 45 95 60 95 Q 45 95 45 110 Q 45 95 30 95 Q 45 95 45 80 Z" fill="#d4af37" />
+              <path d="M 65 115 Q 65 120 70 120 Q 65 120 65 125 Q 65 120 60 120 Q 65 120 65 115 Z" fill="#d4af37" />
+              <path d="M 60 160 Q 60 180 80 180 Q 60 180 60 200 Q 60 180 40 180 Q 60 180 60 160 Z" fill="#d4af37" />
+              <path d="M 150 120 Q 150 135 165 135 Q 150 135 150 150 Q 150 135 135 135 Q 150 135 150 120 Z" fill="#d4af37" />
             </g>
+            <rect x="75" y="60" width="50" height="90" rx="4" fill="none" stroke="#2c251d" stroke-width="2.5" class="switch-border" />
+            <rect x="80" y="65" width="40" height="80" rx="2" fill="none" stroke="#2c251d" stroke-width="1" class="switch-border-inner" />
+            <rect x="91" y="93" width="18" height="24" fill="none" stroke="#2c251d" stroke-width="1.8" class="switch-border" />
+            <polygon id="switchLever" points="93,95 107,95 107,105 93,105" fill="#2c251d" class="switch-lever" />
           </svg>
         </div>
       </div>
-
-      <!-- ESPAÇADOR VAZIO PARA MANTER O ALINHAMENTO DO FLEX SPACE-BETWEEN -->
-      <div></div>
-
     </div>
 
-    <!-- QUESTIONÁRIO (OCULTO INICIALMENTE) -->
+    
+    <!-- TELA 2: QUESTIONÁRIO -->
     <div class="quiz-container hidden" id="quizContainer">
       
-      <!-- ETAPA 1 -->
+      <!-- Passo 1: Técnica -->
       <div class="quiz-step active" id="step1">
         <div class="step-header">
-          <button class="btn-back" onclick="backToHero()"><span class="arrow">←</span> Voltar</button>
-          <h2 class="quiz-title">Qual procedimento você deseja realizar?</h2>
+          <button type="button" class="btn-back" id="btnBackToHero" title="Voltar para o início">
+            <span class="arrow">←</span> Voltar
+          </button>
+          <h2 class="quiz-title">Qual técnica você gostaria de agendar?</h2>
         </div>
-        <p class="quiz-desc">Selecione uma das opções abaixo para continuarmos o seu atendimento exclusivo.</p>
         
         <div class="quiz-interactive-layout">
           <div class="options-grid">
             <div class="option-wrapper">
-              <button class="opt-btn" onclick="selectOption(1, 'Design de Luxo')">Design de Luxo</button>
-              <button class="info-btn" onmouseenter="showInfo(1, 'design')" onclick="toggleInfo(1, 'design')">i</button>
+              <button type="button" class="opt-btn" data-category="tecnica" data-value="Ventosaterapia">Ventosaterapia</button>
+              <button type="button" class="info-btn active" data-info="ventosaterapia" title="Saiba mais">?</button>
             </div>
+
             <div class="option-wrapper">
-              <button class="opt-btn" onclick="selectOption(1, 'Harmonização Avançada')">Harmonização Avançada</button>
-              <button class="info-btn" onmouseenter="showInfo(1, 'harmonizacao')" onclick="toggleInfo(1, 'harmonizacao')">i</button>
+              <button type="button" class="opt-btn" data-category="tecnica" data-value="Massagem Relaxante">Massagem Relaxante</button>
+              <button type="button" class="info-btn" data-info="relaxante" title="Saiba mais">?</button>
             </div>
+
             <div class="option-wrapper">
-              <button class="opt-btn" onclick="selectOption(1, 'Rejuvenescimento Global')">Rejuvenescimento Global</button>
-              <button class="info-btn" onmouseenter="showInfo(1, 'rejuvenescimento')" onclick="toggleInfo(1, 'rejuvenescimento')">i</button>
+              <button type="button" class="opt-btn" data-category="tecnica" data-value="Drenagem Linfática">Drenagem Linfática</button>
+              <button type="button" class="info-btn" data-info="drenagem" title="Saiba mais">?</button>
+            </div>
+
+            <div class="option-wrapper">
+              <button type="button" class="opt-btn" data-category="tecnica" data-value="Avaliação Terapêutica">Preciso de Indicação</button>
+              <button type="button" class="info-btn" data-info="indicacao" title="Saiba mais">?</button>
             </div>
           </div>
 
-          <!-- PAINEL DE INFORMAÇÕES LATERAL -->
-          <div class="info-inline-panel" id="infoPanel1">
-            <div class="tech-img-container" id="imgContainer1">
-              <img src="" alt="" class="tech-img" id="infoImg1">
+          <div class="info-inline-panel visible" id="infoInlinePanel">
+            <div class="tech-img-container has-img" id="techImgWrapper">
+              <img src="imagem/Ventosaterapia.jpg" alt="Técnica" class="tech-img" id="techImg">
             </div>
-            <h3 class="info-inline-title" id="infoTitle1"></h3>
-            <p class="info-inline-text" id="infoText1"></p>
+            
+            <h3 class="info-inline-title" id="infoTitle">Ventosaterapia</h3>
+            <p class="info-inline-text" id="infoText">
+              <strong>Procedimento:</strong> Aplicação de ventosas para liberação miofascial, melhora da circulação e alívio de tensões profundas.
+            </p>
           </div>
         </div>
       </div>
 
-      <!-- ETAPA 2 -->
+      <!-- Passo 2: Horário -->
       <div class="quiz-step" id="step2">
         <div class="step-header">
-          <button class="btn-back" onclick="goToStep(1)"><span class="arrow">←</span> Voltar</button>
-          <h2 class="quiz-title">Qual o seu principal objetivo?</h2>
+          <button type="button" class="btn-back" id="btnBackToStep1" title="Voltar">
+            <span class="arrow">←</span> Voltar
+          </button>
+          <h2 class="quiz-title">Qual horário é melhor para você?</h2>
         </div>
-        <p class="quiz-desc">Conte-nos o que você busca alcançar com o tratamento escolhido.</p>
-        
-        <div class="quiz-interactive-layout">
-          <div class="options-grid">
-            <div class="option-wrapper">
-              <button class="opt-btn" onclick="selectOption(2, 'Definição e Simetria')">Definição e Simetria</button>
-              <button class="info-btn" onmouseenter="showInfo(2, 'definicao')" onclick="toggleInfo(2, 'definicao')">i</button>
-            </div>
-            <div class="option-wrapper">
-              <button class="opt-btn" onclick="selectOption(2, 'Naturalidade e Leveza')">Naturalidade e Leveza</button>
-              <button class="info-btn" onmouseenter="showInfo(2, 'naturalidade')" onclick="toggleInfo(2, 'naturalidade')">i</button>
-            </div>
-            <div class="option-wrapper">
-              <button class="opt-btn" onclick="selectOption(2, 'Transformação Completa')">Transformação Completa</button>
-              <button class="info-btn" onmouseenter="showInfo(2, 'transformacao')" onclick="toggleInfo(2, 'transformacao')">i</button>
-            </div>
-          </div>
 
-          <div class="info-inline-panel" id="infoPanel2">
-            <div class="tech-img-container" id="imgContainer2">
-              <img src="" alt="" class="tech-img" id="infoImg2">
-            </div>
-            <h3 class="info-inline-title" id="infoTitle2"></h3>
-            <p class="info-inline-text" id="infoText2"></p>
-          </div>
+        <div class="options-grid">
+          <button type="button" class="opt-btn" data-category="horario" data-value="Turno da Manhã">Turno da Manhã</button>
+          <button type="button" class="opt-btn" data-category="horario" data-value="Turno da Tarde">Turno da Tarde</button>
+          <button type="button" class="opt-btn" data-category="horario" data-value="Turno da Noite">Turno da Noite</button>
         </div>
       </div>
 
-      <!-- ETAPA 3 (FINALIZAÇÃO) -->
+      <!-- Passo 3: Envio WhatsApp -->
       <div class="quiz-step" id="step3">
         <div class="step-header">
-          <button class="btn-back" onclick="goToStep(2)"><span class="arrow">←</span> Voltar</button>
-          <h2 class="quiz-title">Tudo pronto para o seu atendimento!</h2>
+          <button type="button" class="btn-back" id="btnBackToStep2" title="Voltar">
+            <span class="arrow">←</span> Voltar
+          </button>
+          <h2 class="quiz-title">Prontinho! Vamos confirmar?</h2>
         </div>
-        <p class="quiz-desc">Clique no botão abaixo para concluir sua solicitação diretamente via WhatsApp com Natallyane Cota.</p>
-        
-        <div class="quiz-interactive-layout" style="min-height: 200px;">
-          <div class="options-grid">
-            <button class="opt-btn" style="background: rgba(216, 195, 165, 0.4); border-color: #fff3d1; font-weight: 500;" onclick="finishQuiz()">FINALIZAR AGENDAMENTO</button>
-          </div>
-        </div>
+        <p class="quiz-desc">Clique abaixo para enviar as informações do seu agendamento no WhatsApp.</p>
+        <button type="button" id="btnWhatsapp" class="btn-agendar btn-whatsapp">
+          CONFIRMAR NO WHATSAPP 📱
+        </button>
       </div>
 
     </div>
+
+    <!-- SEÇÃO SOBRE MIM -->
+    <section class="sobre-mim-section" id="sobreMimSection">
+      <div class="sobre-mim-container">
+        <div class="sobre-mim-img-wrapper">
+          <img src="imagem/eu.png" alt="Natallyane Costa" class="sobre-mim-img">
+        </div>
+        
+        <div class="sobre-mim-content">
+          <h2 class="sobre-mim-title">Sobre Mim</h2>
+          <p class="sobre-mim-intro">Seja muito bem-vindo(a) ao meu espaço de cuidado!</p>
+          <p>
+            Sou estudante do 7º período de Fisioterapia e apaixonada pela área da saúde e pelo estudo do corpo humano. Como Massoterapeuta, meu compromisso é proporcionar a você um momento de pausa, alívio de dores e renovação do seu bem-estar físico e mental.
+          </p>
+
+          <h3 class="sobre-mim-subtitle">Como funcionam as sessões?</h3>
+          <ul class="sobre-mim-list">
+            <li><strong> Massagem Terapêutica:</strong> Alívio de dores musculares e tensões.</li>
+            <li><strong> Liberação Miofascial:</strong> Melhora da mobilidade e redução de dores crônicas.</li>
+            <li><strong> Ventosaterapia:</strong> Estimula a circulação e alivia contraturas.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
 
     <!-- DIVISOR INFERIOR -->
     <div class="stars-divider">
-      <div class="line"></div>
-      <div class="star-group">✦ ✦ ✦</div>
-      <div class="line"></div>
+      <span class="line"></span>
+      <span class="star-group">☆ ☆ ☆</span>
+      <span class="line"></span>
     </div>
 
-  </div>
+  </main>
 
-  <script>
-    // DADOS DE INFORMAÇÃO DETALHADA DOS BOTÕES
-    const infoData = {
-      design: {
-        title: "Design de Luxo",
-        text: "Técnica de alto padrão focada no visagismo facial, valorizando traços únicos com máxima precisão e sofisticação.",
-        img: ""
-      },
-      harmonizacao: {
-        title: "Harmonização Avançada",
-        text: "Procedimento integrativo para equilibrar proporções faciais, restaurando o viço e a juventude natural da pele.",
-        img: ""
-      },
-      rejuvenescimento: {
-        title: "Rejuvenescimento Global",
-        text: "Tratamento completo de estímulo de colágeno e atenuação de linhas de expressão com tecnologia de ponta.",
-        img: ""
-      },
-      definicao: {
-        title: "Definição e Simetria",
-        text: "Alinhamento minucioso dos ângulos da face para destacar contornos marcantes e elegantes.",
-        img: ""
-      },
-      naturalidade: {
-        title: "Naturalidade e Leveza",
-        text: "Abordagem sutil que preserva sua identidade e expressões genuínas com um toque radiante.",
-        img: ""
-      },
-      transformacao: {
-        title: "Transformação Completa",
-        text: "Um protocolo integrativo abrangente para uma renovação estética profunda, segura e duradoura.",
-        img: ""
-      }
-    };
+  <!-- ÁUDIO DE FUNDO -->
+  <audio id="bgAudio" loop preload="auto">
+    <source src="audio/audio1.mpeg" type="audio/mpeg">
+    <source src="audio/audio1.mp3" type="audio/mpeg">
+  </audio>
 
-    let quizData = { step1: '', step2: '' };
-    let activeInfoKey = null;
-
-    function showInfo(stepNum, key) {
-      const panel = document.getElementById(`infoPanel${stepNum}`);
-      const title = document.getElementById(`infoTitle${stepNum}`);
-      const text = document.getElementById(`infoText${stepNum}`);
-      const imgContainer = document.getElementById(`imgContainer${stepNum}`);
-      const imgElement = document.getElementById(`infoImg${stepNum}`);
-      const data = infoData[key];
-
-      if (!data) return;
-
-      title.innerText = data.title;
-      text.innerHTML = data.text;
-
-      if (data.img && data.img.trim() !== "") {
-        imgElement.src = data.img;
-        imgContainer.classList.add('has-img');
-      } else {
-        imgContainer.classList.remove('has-img');
-      }
-
-      panel.classList.add('visible');
-      activeInfoKey = key;
-    }
-
-    function toggleInfo(stepNum, key) {
-      const panel = document.getElementById(`infoPanel${stepNum}`);
-      if (activeInfoKey === key && panel.classList.contains('visible')) {
-        panel.classList.remove('visible');
-        activeInfoKey = null;
-      } else {
-        showInfo(stepNum, key);
-      }
-    }
-
-    // CONTROLE DO MODO ESCURO E CLARÃO
-    function toggleDarkMode() {
-      const body = document.body;
-      const switchBlock = document.getElementById('switchBlock');
-      const shineFlash = document.getElementById('shineFlash');
-
-      // Dispara o clarão elegante (branco, super transparente e bem lento)
-      shineFlash.classList.remove('active');
-      void shineFlash.offsetWidth; // Reinicia a animação
-      shineFlash.classList.add('active');
-
-      // Alterna o estado escuro após um leve momento para sincronizar perfeitamente
-      setTimeout(() => {
-        body.classList.toggle('darkened');
-        switchBlock.classList.toggle('switch-off');
-      }, 400);
-    }
-
-    // TRANSIÇÃO PARA O QUESTIONÁRIO
-    function startQuiz() {
-      const hero = document.getElementById('screenHero');
-      const quiz = document.getElementById('quizContainer');
-      const shineFlash = document.getElementById('shineFlash');
-
-      // Dispara o clarão branco e transparente ao clicar em Agendar
-      shineFlash.classList.remove('active');
-      void shineFlash.offsetWidth;
-      shineFlash.classList.add('active');
-
-      hero.classList.add('fade-out');
-      setTimeout(() => {
-        hero.classList.add('hidden');
-        quiz.classList.remove('hidden');
-        setTimeout(() => {
-          quiz.classList.add('show');
-        }, 50);
-      }, 1500);
-    }
-
-    function backToHero() {
-      const hero = document.getElementById('screenHero');
-      const quiz = document.getElementById('quizContainer');
-
-      quiz.classList.remove('show');
-      setTimeout(() => {
-        quiz.classList.add('hidden');
-        hero.classList.remove('hidden');
-        void hero.offsetWidth;
-        hero.classList.remove('fade-out');
-      }, 1500);
-    }
-
-    function goToStep(stepNumber) {
-      document.querySelectorAll('.quiz-step').forEach(step => step.classList.remove('active'));
-      document.getElementById(`step${stepNumber}`).classList.add('active');
-    }
-
-    function selectOption(stepNumber, value) {
-      if (stepNumber === 1) quizData.step1 = value;
-      if (stepNumber === 2) quizData.step2 = value;
-
-      if (stepNumber < 3) {
-        goToStep(stepNumber + 1);
-      }
-    }
-
-    function finishQuiz() {
-      const message = `Olá, Natallyane Cota! Gostaria de agendar um atendimento. Procedimento: ${quizData.step1} | Objetivo: ${quizData.step2}`;
-      const encoded = encodeURIComponent(message);
-      window.open(`https://wa.me/5584999999999?text=${encoded}`, '_blank');
-    }
-
-    // CONTROLE DO BOTÃO FLUTUANTE (SOBRE MIM / VOLTAR AO TOPO)
-    let isShowingAbout = false;
-
-    function toggleSobreMim() {
-      const hero = document.getElementById('screenHero');
-      const quiz = document.getElementById('quizContainer');
-      const btnText = document.getElementById('btnSobreMimText');
-      const btnIcon = document.getElementById('btnSobreMimIcon');
-      const mainCanvas = document.querySelector('.main-canvas');
-
-      if (!isShowingAbout) {
-        hero.classList.add('fade-out');
-        quiz.classList.remove('show');
-        quiz.classList.add('hidden');
-        
-        setTimeout(() => {
-          hero.classList.add('hidden');
-          
-          let sobreSection = document.getElementById('sobreMimSection');
-          if (!sobreSection) {
-            sobreSection = document.createElement('div');
-            sobreSection.id = 'sobreMimSection';
-            sobreSection.className = 'sobre-mim-section';
-            sobreSection.innerHTML = `
-              <div class="sobre-mim-container">
-                <div class="sobre-mim-img-wrapper">
-                  <img src="sua-foto.jpg" alt="Natallyane Cota" class="sobre-mim-img" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80'">
-                </div>
-                <div class="sobre-mim-content">
-                  <h2 class="sobre-mim-title">Natallyane Cota</h2>
-                  <p class="sobre-mim-intro">Especialista em Estética Avançada e Visagismo de Alto Padrão.</p>
-                  <p>Minha missão é realçar a sua beleza natural através de um atendimento humanizado, exclusivo e focado em resultados de excelência. Cada procedimento é planejado sob medida para respeitar a sua essência e elevar a sua autoestima.</p>
-                  <h3 class="sobre-mim-subtitle">Diferenciais</h3>
-                  <ul class="sobre-mim-list">
-                    <li><strong>Tecnologia de Ponta:</strong> Equipamentos modernos e seguros.</li>
-                    <li><strong>Atendimento Personalizado:</strong> Protocolos exclusivos para cada necessidade.</li>
-                    <li><strong>Sofisticação e Conforto:</strong> Um ambiente pensado para o seu bem-estar absoluto.</li>
-                  </ul>
-                </div>
-              </div>
-            `;
-            mainCanvas.insertBefore(sobreSection, mainCanvas.children[2]);
-          } else {
-            sobreSection.classList.remove('fade-out');
-          }
-
-          btnText.innerText = "Voltar";
-          btnIcon.style.transform = "rotate(180deg)";
-          isShowingAbout = true;
-        }, 1500);
-
-      } else {
-        const sobreSection = document.getElementById('sobreMimSection');
-        if (sobreSection) {
-          sobreSection.classList.add('fade-out');
-          setTimeout(() => {
-            sobreSection.remove();
-          }, 1500);
-        }
-
-        setTimeout(() => {
-          hero.classList.remove('hidden');
-          void hero.offsetWidth;
-          hero.classList.remove('fade-out');
-
-          btnText.innerText = "Sobre Mim";
-          btnIcon.style.transform = "rotate(0deg)";
-          isShowingAbout = false;
-        }, 300);
-      }
-    }
-
-    // SIMULAÇÃO DA FUMAÇA NO CANVAS DE FUNDO
-    const canvas = document.getElementById('smokeCanvas');
-    const ctx = canvas.getContext('2d');
-
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    class SmokeParticle {
-      constructor() {
-        this.reset();
-      }
-      reset() {
-        this.x = Math.random() * canvas.width;
-        this.y = canvas.height + Math.random * 100;
-        this.size = Math.random() * 80 + 40;
-        this.speedY = -(Math.random() * 0.4 + 0.2);
-        this.speedX = (Math.random() - 0.5) * 0.3;
-        this.alpha = 0;
-        this.maxAlpha = Math.random() * 0.08 + 0.03;
-        this.fadeSpeed = 0.002;
-      }
-      update() {
-        this.y += this.speedY;
-        this.x += this.speedX;
-        if (this.alpha < this.maxAlpha && this.y > canvas.height * 0.3) {
-          this.alpha += this.fadeSpeed;
-        }
-        if (this.y < -50) {
-          this.reset();
-        }
-      }
-      draw() {
-        ctx.save();
-        ctx.globalAlpha = this.alpha;
-        const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
-        grad.addColorStop(0, 'rgba(255, 255, 255, 0.4)');
-        grad.addColorStop(1, 'rgba(181, 190, 157, 0)');
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      }
-    }
-
-    const particles = Array.from({ length: 15 }, () => new SmokeParticle());
-
-    function animateSmoke() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach(p => {
-        p.update();
-        p.draw();
-      });
-      requestAnimationFrame(animateSmoke);
-    }
-    animateSmoke();
-  </script>
+  <!-- SDK do Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="main.js"></script>
 </body>
 </html>
