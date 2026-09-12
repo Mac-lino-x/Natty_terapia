@@ -22,11 +22,39 @@
       box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
       outline: none;
     }
+
+    /* SISTEMA DE ESTRELAS COM HOVER E CLIQUE DINÂMICO */
+    .estrelas-container {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      cursor: pointer;
+      margin: 15px 0;
+    }
+
+    .estrela-svg {
+      width: 40px;
+      height: 40px;
+      fill: #424242; /* Começa cinza apagada */
+      transition: transform 0.2s ease, fill 0.2s ease, filter 0.2s ease;
+    }
+
+    .estrela-svg:hover {
+      transform: scale(1.15);
+    }
+
+    /* ESTRELA ATIVA OU EM HOVER: Amarela com o brilho radiante idêntico ao botão */
+    .estrela-svg.ativa,
+    .estrela-svg.hover {
+      fill: #ffd700 !important;
+      filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8)) drop-shadow(0 0 20px rgba(255, 215, 0, 0.5));
+      transform: scale(1.1);
+    }
   </style>
 </head>
 <body>
-  <!-- Elemento de áudio configurado para pibs.mp3 -->
-  <audio id="somBip" src="audio/pibs.mp3" preload="auto"></audio>
+  <!-- Elemento de áudio oficial -->
+  <audio id="meuAudio" src="audio/pib2.mp3" preload="auto"></audio>
 
   <div class="container-card container-card-flex">
     <div class="video-coluna">
@@ -49,14 +77,15 @@
 
         <div class="form-group" style="text-align: center;">
           <label>Nível de Satisfação:</label>
-          <div class="estrelas-container" id="starRating">
-            <span class="estrela" data-value="1">★</span>
-            <span class="estrela" data-value="2">★</span>
-            <span class="estrela" data-value="3">★</span>
-            <span class="estrela" data-value="4">★</span>
-            <span class="estrela" data-value="5">★</span>
+          <!-- Container inteiro com eventos para rastrear o mouse em cima das estrelas -->
+          <div class="estrelas-container" id="starContainer">
+            <svg class="estrela-svg" data-valor="1" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="estrela-svg" data-valor="2" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="estrela-svg" data-valor="3" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="estrela-svg" data-valor="4" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="estrela-svg" data-valor="5" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
           </div>
-          <input type="hidden" id="notaSelecionada" value="5">
+          <input type="hidden" id="notaSelecionada" value="0">
         </div>
 
         <div class="form-group">
@@ -78,62 +107,71 @@
     const SUPABASE_URL = 'SUA_URL_AQUI'; 
     const SUPABASE_KEY = 'SUA_ANON_KEY_AQUI';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    const somBip = document.getElementById('somBip');
 
-    const estrelas = document.querySelectorAll('.estrela');
+    const estrelas = document.querySelectorAll('.estrela-svg');
+    const container = document.getElementById('starContainer');
     const inputNota = document.getElementById('notaSelecionada');
+    const audioElement = document.getElementById('meuAudio');
 
-    // Função para acender as estrelas progressivamente até o valor escolhido
-    function destacarEstrelas(nota) {
-      estrelas.forEach(estrela => {
-        const valorEstrela = parseInt(estrela.getAttribute('data-value'));
-        if (valorEstrela <= parseInt(nota)) {
-          estrela.classList.add('ativo');
-        } else {
-          estrela.classList.remove('ativo');
-        }
-      });
-    }
-
-    // Inicializa a página com 5 estrelas ativas
-    destacarEstrelas(5);
-
-    // Função para tocar a quantidade exata de bips em sequência (ex: 3 estrelas = 3 bips)
-    function tocarQuantidadeBips(quantidade) {
-      let atual = 0;
-
-      function dispararBip() {
-        if (atual < quantidade) {
-          atual++;
-          try {
-            somBip.currentTime = 0;
-            somBip.play().then(() => {
-              setTimeout(dispararBip, 280); // Pausa de 280ms entre cada bip
-            }).catch(e => {
-              setTimeout(dispararBip, 280);
-            });
-          } catch(err) {
-            setTimeout(dispararBip, 280);
-          }
-        }
+    // Função para tocar o som pib2.mp3 de forma segura
+    function tocarSom() {
+      try {
+        audioElement.currentTime = 0;
+        audioElement.play().catch(err => {
+          console.log("Aguardando interação para tocar o áudio:", err);
+        });
+      } catch (e) {
+        console.log("Erro no audio:", e);
       }
-
-      dispararBip();
     }
 
-    // Evento de clique nas estrelas
+    // Efeito ao passar o mouse por cima (arrastar o mouse pelas estrelas)
     estrelas.forEach(estrela => {
-      estrela.addEventListener('click', () => {
-        const valor = parseInt(estrela.getAttribute('data-value'));
-        inputNota.value = valor;
-        destacarEstrelas(valor);
-        tocarQuantidadeBips(valor);
+      estrela.addEventListener('mouseenter', () => {
+        const valorHover = parseInt(estrela.getAttribute('data-valor'));
+        estrelas.forEach(item => {
+          const valItem = parseInt(item.getAttribute('data-valor'));
+          if (valItem <= valorHover) {
+            item.classList.add('hover');
+          } else {
+            item.classList.remove('hover');
+          }
+        });
       });
     });
 
+    // Quando o mouse sai do container das estrelas, limpa o hover e restaura a seleção fixa
+    container.addEventListener('mouseleave', () => {
+      estrelas.forEach(item => item.classList.remove('hover'));
+    });
+
+    // Clique na estrela fixa a nota, acende permanentemente e toca o som
+    estrelas.forEach(estrela => {
+      estrela.addEventListener('click', () => {
+        const valorClicado = parseInt(estrela.getAttribute('data-valor'));
+        inputNota.value = valorClicado;
+
+        estrelas.forEach(item => {
+          const valItem = parseInt(item.getAttribute('data-valor'));
+          if (valItem <= valorClicado) {
+            item.classList.add('ativa');
+          } else {
+            item.classList.remove('ativa');
+          }
+        });
+
+        tocarSom();
+      });
+    });
+
+    // Envio do formulário para o Supabase
     document.getElementById('formAvaliacao').addEventListener('submit', async (e) => {
       e.preventDefault();
-      tocarQuantidadeBips(parseInt(inputNota.value));
+
+      if (parseInt(inputNota.value) === 0) {
+        alert('Por favor, selecione ao menos uma estrela antes de enviar.');
+        return;
+      }
 
       const dados = {
         nome_cliente: document.getElementById('nomeCliente').value,
