@@ -636,7 +636,7 @@ body.darkened .sobre-mim-section {
 
 /* Garanta que a imagem acompanhe o novo tamanho */
 .sobre-mim-img {
-  width: 120%;
+  width: 100%;
   height: auto;
   border-radius: 12px; /* Mantém o arredondamento se houver */
   border: 1px solid rgba(212, 175, 55, 0.4);
