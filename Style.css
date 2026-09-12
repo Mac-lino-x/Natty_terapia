@@ -225,8 +225,8 @@ body.darkened .brand-subtitle { color: #d8c3a5; }
 /* INTERRUPTOR COLADO LOGO ABAIXO DO BOTÃO AGENDAR (fluxo normal, sem sobrepor) */
 .right-switch-block {
   position: relative;
-  width: 120px;
-  height: 147px;
+  width: 220px;
+  height: 247px;
   margin-top: -18px; /* aproxima do botão, compensando o espaço vazio do topo do SVG */
   cursor: pointer;
   z-index: 1;
