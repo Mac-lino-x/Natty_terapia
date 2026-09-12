@@ -5,22 +5,22 @@
 }
 
 :root {
-  /* Fundo Claro (Inicial) */
-  --bg-color-light: #c8d4bf;       /* Verde-sálvia claro pastel */
+  /* Fundo Único Mantido do Início (Verde-Sálvia Pastel) */
+  --bg-color-light: #c8d4bf;       
   --bg-overlay-light: rgba(200, 212, 191, 0.3);
   
-  /* Fundo Escuro Escuro Acinzentado / Grafite (Fidelidade ao Print) */
-  --bg-color-dark: #0d0e0c;        /* Preto acinzentado suave conforme a imagem */
-  --bg-overlay-dark: rgba(13, 14, 12, 0.96);
+  /* Mantém o mesmo fundo claro no modo escuro/agendamento */
+  --bg-color-dark: #c8d4bf;        
+  --bg-overlay-dark: rgba(200, 212, 191, 0.3);
   
-  --text-main: #2b3327;            /* Texto no modo claro */
+  --text-main: #2b3327;            /* Texto escuro para leitura no fundo claro */
   --text-muted: #53614e;
-  --text-darkened: #f2ebd9;        /* Texto claro levemente amarelado no modo escuro */
+  --text-darkened: #2b3327;        /* Mantém o texto escuro elegante */
   
-  /* Brilhos e Destaques Amarelados / Dourados */
-  --accent-gold: #d4af37;          /* Dourado/Amarelo aconchegante */
+  /* Brilho Amarelo/Dourado Aconchegante Mantido */
+  --accent-gold: #b38600;          /* Dourado legível sobre fundo claro */
   --accent-gold-glow: #e2b85e;     /* Amarelo de brilho/glow */
-  --accent-gold-soft: rgba(226, 184, 94, 0.3);
+  --accent-gold-soft: rgba(226, 184, 94, 0.4);
 }
 
 html {
@@ -59,7 +59,7 @@ body {
   transition: filter 2.5s ease;
 }
 
-/* CAMADA DE OVERLAY DO MODO ESCURO */
+/* CAMADA DE OVERLAY DO FUNDO (Sempre Clara) */
 .dark-overlay {
   position: fixed;
   top: 0;
@@ -83,7 +83,7 @@ body.darkened .dark-overlay {
 }
 
 body.darkened .bg-video {
-  filter: brightness(0.12) contrast(1.1);
+  filter: brightness(0.85) contrast(0.9);
 }
 
 /* CANVAS DE FUMAÇA */
@@ -96,12 +96,12 @@ body.darkened .bg-video {
   height: 100dvh;
   z-index: 3;
   pointer-events: none;
-  opacity: 1;
+  opacity: 0.6;
   filter: blur(16px);
 }
 
 body.darkened #smokeCanvas {
-  opacity: 1;
+  opacity: 0.6;
 }
 
 /* CONTAINER PRINCIPAL */
@@ -141,7 +141,7 @@ body.darkened #smokeCanvas {
   transition: color 2.5s ease;
 }
 
-body.darkened .stars-divider .line { background-color: rgba(212, 175, 55, 0.3); }
+body.darkened .stars-divider .line { background-color: rgba(83, 97, 78, 0.4); }
 body.darkened .stars-divider .star-group { color: var(--accent-gold); }
 
 /* TELA HERO */
@@ -196,8 +196,8 @@ body.darkened .stars-divider .star-group { color: var(--accent-gold); }
 }
 
 body.darkened .brand-title {
-  color: #fff6e5;
-  text-shadow: 0 0 12px rgba(226, 184, 94, 0.6), 0 0 25px rgba(212, 175, 55, 0.4);
+  color: var(--text-main);
+  text-shadow: 0 0 10px rgba(226, 184, 94, 0.4);
 }
 
 .brand-subtitle {
@@ -288,8 +288,8 @@ body.darkened .switch-lever {
 }
 
 body.darkened .stars-group path {
-  fill: #f7e3ad;
-  filter: drop-shadow(0px 0px 4px rgba(247, 227, 173, 0.8));
+  fill: #b38600;
+  filter: drop-shadow(0px 0px 4px rgba(226, 184, 94, 0.6));
 }
 
 /* QUESTIONÁRIO */
@@ -315,13 +315,13 @@ body.darkened .stars-group path {
 .quiz-title {
   font-family: 'Cormorant Garamond', serif;
   font-size: clamp(1.8rem, 4vw, 2.5rem);
-  color: #f7ebd2;
-  font-weight: 400;
+  color: var(--text-main);
+  font-weight: 500;
   margin-bottom: 25px;
 }
 
 .quiz-desc {
-  color: var(--accent-gold);
+  color: var(--text-muted);
   font-size: 0.95rem;
   margin-bottom: 25px;
   line-height: 1.5;
@@ -363,12 +363,13 @@ body.darkened .stars-group path {
 
 .opt-btn {
   padding: 16px 20px;
-  border: 1px solid rgba(212, 175, 55, 0.3);
-  background: rgba(13, 14, 12, 0.7);
-  color: #f7ebd2;
+  border: 1px solid rgba(43, 51, 39, 0.3);
+  background: rgba(255, 255, 255, 0.45);
+  color: var(--text-main);
   border-radius: 30px;
   font-size: 0.88rem;
   letter-spacing: 0.12em;
+  font-weight: 500;
   cursor: pointer;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -376,8 +377,9 @@ body.darkened .stars-group path {
 }
 
 .opt-btn:hover, .opt-btn.selected {
-  background: rgba(212, 175, 55, 0.2);
-  border-color: var(--accent-gold);
+  background: rgba(255, 255, 255, 0.8);
+  border-color: var(--text-main);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 /* BOTÃO DE INTERROGAÇÃO (?) */
@@ -385,12 +387,12 @@ body.darkened .stars-group path {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  border: 1px solid rgba(212, 175, 55, 0.4);
-  background: rgba(13, 14, 12, 0.7);
-  color: var(--accent-gold);
+  border: 1px solid rgba(43, 51, 39, 0.3);
+  background: rgba(255, 255, 255, 0.45);
+  color: var(--text-main);
   font-family: 'Montserrat', sans-serif;
   font-size: 0.75rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -402,11 +404,10 @@ body.darkened .stars-group path {
 }
 
 .info-btn:hover, .info-btn.active {
-  background: rgba(212, 175, 55, 0.3);
-  border-color: #fff6e5;
-  color: #fff6e5;
+  background: var(--text-main);
+  border-color: var(--text-main);
+  color: #ffffff;
   transform: scale(1.1);
-  box-shadow: 0 0 10px rgba(226, 184, 94, 0.5);
 }
 
 /* BOTÃO DE VOLTAR */
@@ -424,9 +425,9 @@ body.darkened .stars-group path {
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(13, 14, 12, 0.6);
-  border: 1px solid rgba(212, 175, 55, 0.3);
-  color: var(--accent-gold);
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(43, 51, 39, 0.3);
+  color: var(--text-main);
   font-family: 'Montserrat', sans-serif;
   font-size: 0.85rem;
   padding: 8px 16px;
@@ -441,9 +442,8 @@ body.darkened .stars-group path {
 }
 
 .btn-back:hover {
-  background: rgba(212, 175, 55, 0.2);
-  color: #fff6e5;
-  border-color: #fff6e5;
+  background: var(--text-main);
+  color: #ffffff;
   transform: translateY(-50%) translateX(-3px);
 }
 
@@ -496,16 +496,16 @@ body.darkened .stars-group path {
   height: 100%;
   object-fit: cover;
   border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(43, 51, 39, 0.2);
   display: block;
 }
 
 .info-inline-title {
   font-family: 'Cormorant Garamond', serif;
   font-size: 1.35rem;
-  font-weight: 500;
-  color: #f7ebd2;
+  font-weight: 600;
+  color: var(--text-main);
   letter-spacing: 0.05em;
   margin: 0 !important;
   padding: 0 !important;
@@ -516,18 +516,18 @@ body.darkened .stars-group path {
   font-family: 'Montserrat', sans-serif;
   font-size: 0.8rem;
   line-height: 1.35;
-  color: #d1cbbd;
-  font-weight: 300;
+  color: var(--text-muted);
+  font-weight: 400;
   margin: 0 !important;
   padding: 0 !important;
 }
 
 .info-inline-text strong {
-  color: #f7ebd2;
-  font-weight: 500;
+  color: var(--text-main);
+  font-weight: 600;
 }
 
-/* BOTÃO SOBRE MIM FLUTUANTE (COM O AMRELO/GLOW DO PRINT) */
+/* BOTÃO SOBRE MIM FLUTUANTE (COM O AMERELO/GLOW DO PRINT MANTIDO) */
 .btn-sobre-mim {
   position: fixed;
   bottom: 25px;
@@ -549,7 +549,7 @@ body.darkened .stars-group path {
   color: #fff6e5;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-  box-shadow: 0 0 15px rgba(226, 184, 94, 0.4);
+  box-shadow: 0 0 15px rgba(226, 184, 94, 0.5);
   animation: yellowPulseBtn 3s ease-in-out infinite;
   will-change: transform, box-shadow;
 }
@@ -558,13 +558,13 @@ body.darkened .stars-group path {
   font-size: 1.1rem;
   transition: transform 0.3s ease;
   display: inline-block;
-  color: var(--accent-gold);
+  color: #e2b85e;
 }
 
 .btn-sobre-mim:hover {
-  background: rgba(212, 175, 55, 0.9);
+  background: rgba(212, 175, 55, 0.95);
   color: #0d0e0c;
-  border-color: var(--accent-gold-glow);
+  border-color: #e2b85e;
   transform: translateY(-3px);
   box-shadow: 0 0 25px rgba(226, 184, 94, 0.8);
 }
@@ -577,12 +577,12 @@ body.darkened .stars-group path {
 /* ANIMAÇÃO DO BRILHO AMARELO DO BOTÃO SOBRE MIM */
 @keyframes yellowPulseBtn {
   0%, 100% {
-    box-shadow: 0 0 12px rgba(226, 184, 94, 0.35), 0 0 25px rgba(212, 175, 55, 0.2);
-    border-color: rgba(212, 175, 55, 0.5);
+    box-shadow: 0 0 12px rgba(226, 184, 94, 0.4), 0 0 25px rgba(212, 175, 55, 0.25);
+    border-color: rgba(212, 175, 55, 0.6);
     transform: scale(1);
   }
   50% {
-    box-shadow: 0 0 28px rgba(226, 184, 94, 0.75), 0 0 45px rgba(240, 201, 117, 0.5);
+    box-shadow: 0 0 28px rgba(226, 184, 94, 0.8), 0 0 45px rgba(240, 201, 117, 0.55);
     border-color: rgba(255, 235, 175, 0.9);
     transform: scale(1.03);
   }
@@ -594,12 +594,12 @@ body.darkened .stars-group path {
   max-width: 950px;
   margin: 60px auto 30px auto;
   padding: 40px 25px;
-  background: rgba(13, 14, 12, 0.85);
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(83, 97, 78, 0.3);
   border-radius: 20px;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1), transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
   animation: goldPulse 4s ease-in-out infinite;
   will-change: opacity, transform, box-shadow;
@@ -612,8 +612,8 @@ body.darkened .stars-group path {
 }
 
 body.darkened .sobre-mim-section {
-  border-color: rgba(212, 175, 55, 0.4);
-  background: rgba(13, 14, 12, 0.92);
+  border-color: rgba(83, 97, 78, 0.3);
+  background: rgba(255, 255, 255, 0.55);
 }
 
 .sobre-mim-container {
@@ -639,21 +639,21 @@ body.darkened .sobre-mim-section {
   width: 100%;
   height: auto;
   border-radius: 15px;
-  border: 1px solid rgba(212, 175, 55, 0.4);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(83, 97, 78, 0.3);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
   object-fit: cover;
 }
 
 .sobre-mim-content {
   flex: 1;
   text-align: left;
-  color: #d1cbbd;
+  color: var(--text-main);
 }
 
 .sobre-mim-title {
   font-family: 'Cormorant Garamond', serif;
   font-size: 2.2rem;
-  color: #f7ebd2;
+  color: var(--text-main);
   margin-bottom: 15px;
   font-weight: 500;
   letter-spacing: 0.05em;
@@ -661,23 +661,24 @@ body.darkened .sobre-mim-section {
 
 .sobre-mim-intro {
   font-size: 1.05rem;
-  color: var(--accent-gold);
+  color: var(--text-muted);
   margin-bottom: 12px;
-  font-weight: 400;
+  font-weight: 500;
 }
 
 .sobre-mim-content p {
   font-size: 0.9rem;
   line-height: 1.6;
   margin-bottom: 15px;
-  font-weight: 300;
+  font-weight: 400;
 }
 
 .sobre-mim-subtitle {
   font-family: 'Cormorant Garamond', serif;
   font-size: 1.35rem;
-  color: #f7ebd2;
+  color: var(--text-main);
   margin: 20px 0 10px 0;
+  font-weight: 600;
 }
 
 .sobre-mim-list {
@@ -687,33 +688,33 @@ body.darkened .sobre-mim-section {
 
 .sobre-mim-list li {
   font-size: 0.88rem;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.4);
   padding: 10px 14px;
   border-radius: 8px;
   margin-bottom: 8px;
-  border-left: 3px solid var(--accent-gold);
+  border-left: 3px solid var(--text-main);
   line-height: 1.4;
 }
 
 .sobre-mim-list strong {
-  color: #f7ebd2;
+  color: var(--text-main);
 }
 
-/* ANIMAÇÕES GLOW DOURADA */
+/* ANIMAÇÃO SUAVE DE BORDA NA SEÇÃO SOBRE MIM */
 @keyframes goldPulse {
   0%, 100% {
-    box-shadow: 0 0 15px rgba(212, 175, 55, 0.15), 0 0 30px rgba(212, 175, 55, 0.08);
-    border-color: rgba(212, 175, 55, 0.3);
+    box-shadow: 0 0 15px rgba(226, 184, 94, 0.2);
+    border-color: rgba(83, 97, 78, 0.3);
   }
   50% {
-    box-shadow: 0 0 30px rgba(212, 175, 55, 0.4), 0 0 50px rgba(226, 184, 94, 0.25);
+    box-shadow: 0 0 25px rgba(226, 184, 94, 0.4);
     border-color: rgba(212, 175, 55, 0.6);
   }
 }
 
 .glow-natally {
-  color: #fff6e5 !important;
-  text-shadow: 0 0 12px #e2b85e, 0 0 25px #d4af37, 0 0 40px #ffffff !important;
+  color: var(--text-main) !important;
+  text-shadow: 0 0 12px #e2b85e, 0 0 25px #d4af37 !important;
   transition: text-shadow 1s ease, color 1s ease;
 }
 
@@ -732,10 +733,10 @@ body.darkened .sobre-mim-section {
     width: 100% !important;
     max-width: 380px;
     margin-top: 20px;
-    background: rgba(13, 14, 12, 0.88);
+    background: rgba(255, 255, 255, 0.7);
     padding: 15px;
     border-radius: 12px;
-    border: 1px solid rgba(212, 175, 55, 0.3);
+    border: 1px solid rgba(83, 97, 78, 0.3);
   }
 
   .brand-title {
