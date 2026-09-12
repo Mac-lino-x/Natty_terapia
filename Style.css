@@ -53,6 +53,15 @@ body {
   transition: background 2.2s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
+/* Mude aqui para deixar o fundo com o tom verdinho translúcido quando escurecido */
+body.darkened .dark-overlay {
+  background: rgba(181, 190, 157, 0.88); /* Mantém o verde musgo (#b5be9d) com boa cobertura */
+}
+
+body.darkened .bg-video {
+  filter: brightness(0.4) contrast(1.0); /* Deixa o vídeo um pouco mais visível por trás do verdinho */
+}
+
 body.darkened .dark-overlay {
   background: rgba(12, 14, 10, 0.94);
 }
@@ -377,7 +386,7 @@ body.darkened .stars-group path {
 .opt-btn {
   padding: 16px 20px;
   border: 1px solid rgba(216, 195, 165, 0.4);
-  background: rgba(12, 10, 8, 0.5);
+  background: rgba(141, 72, 3, 0.5);
   color: #f7f3e9;
   border-radius: 30px;
   font-size: 0.88rem;
