@@ -198,19 +198,17 @@ body.darkened .brand-subtitle { color: #d8c3a5; }
   min-height: 220px;
 }
 
-/* BOTÃO AGENDAR */
+/* BOTÃO AGENDAR (RESTAURADO) */
 .btn-agendar {
   position: relative;
   z-index: 10;
   padding: 14px 38px;
   border: 1.5px solid #2c251d;
-  background: rgba(255, 255, 255, 0.45);
+  background: transparent;
   color: #2c251d;
   font-size: 0.85rem;
   letter-spacing: 0.2em;
   border-radius: 40px;
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
   transition: all 0.4s ease;
   cursor: pointer;
 }
@@ -220,12 +218,12 @@ body.darkened .brand-subtitle { color: #d8c3a5; }
   color: #f7f3e9;
 }
 
-/* INTERRUPTOR ATRÁS */
+/* INTERRUPTOR ATRÁS (RESTAURADO) */
 .right-switch-block {
   position: absolute;
-  top: 85px;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   width: 180px;
   height: 220px;
   cursor: pointer;
@@ -234,7 +232,7 @@ body.darkened .brand-subtitle { color: #d8c3a5; }
 }
 
 .right-switch-block:hover {
-  transform: translateX(-50%) scale(1.05);
+  transform: translate(-50%, -50%) scale(1.05);
 }
 
 .switch-svg-clean {
@@ -503,7 +501,7 @@ body.darkened .stars-group path {
   font-weight: 500;
 }
 
-/* BOTÃO SOBRE MIM POSICIONADO À ESQUERDA E SEMITRANSPARENTE */
+/* BOTÃO SOBRE MIM - MANTIDO SEMITRANSPARENTE */
 .btn-sobre-mim {
   position: absolute;
   top: 10px;
@@ -565,7 +563,7 @@ body.darkened .btn-sobre-mim:hover .arrow-down {
   color: #111;
 }
 
-/* ESTILIZAÇÃO DA SEÇÃO SOBRE MIM */
+/* SEÇÃO SOBRE MIM */
 .sobre-mim-section {
   width: 100%;
   max-width: 950px;
@@ -694,9 +692,7 @@ body.darkened .sobre-mim-section {
   transition: text-shadow 1s ease, color 1s ease;
 }
 
-/* =========================================================
-   AJUSTES RESPONSIVOS PARA CELULAR
-   ========================================================= */
+/* RESPONSIVIDADE */
 @media (max-width: 768px) {
   .quiz-interactive-layout {
     flex-direction: column;
@@ -751,7 +747,6 @@ body.darkened .sobre-mim-section {
   }
 }
 
-/* ACESSIBILIDADE - REDUÇÃO DE MOVIMENTO */
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after {
     animation-duration: 0.01ms !important;
