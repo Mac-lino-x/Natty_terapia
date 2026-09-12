@@ -96,6 +96,7 @@
     // Inicializa com 5 estrelas ativas e brilhando
     destacarEstrelas(5);
 
+    // Evento de clique nas estrelas: muda para amarelo brilhante e toca o bip
     estrelas.forEach(estrela => {
       estrela.addEventListener('click', () => {
         const valor = estrela.dataset.value;
