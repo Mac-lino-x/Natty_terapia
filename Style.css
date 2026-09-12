@@ -75,10 +75,6 @@ body.darkened .bg-video {
   filter: blur(16px);
 }
 
-body.darkened #smokeCanvas {
-  opacity: 1;
-}
-
 /* CONTAINER PRINCIPAL */
 .main-canvas {
   position: relative;
@@ -130,12 +126,15 @@ body.darkened .stars-divider .star-group { color: #d8c3a5; }
   margin: auto auto;
   min-height: calc(100vh - 100px);
   min-height: calc(100dvh - 100px);
-  transition: opacity 2s cubic-bezier(0.4, 0, 0.2, 1), transform 2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 2;
+  /* Transição bem lenta e suave para se desfazer */
+  transition: opacity 1.8s cubic-bezier(0.4, 0, 0.2, 1), transform 1.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .screen-hero.fade-out {
   opacity: 0;
-  transform: scale(0.95);
+  transform: scale(1.03);
   pointer-events: none;
 }
 
@@ -145,6 +144,8 @@ body.darkened .stars-divider .star-group { color: #d8c3a5; }
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
+  z-index: 2;
 }
 
 .logo-symbol { 
@@ -168,12 +169,11 @@ body.darkened .stars-divider .star-group { color: #d8c3a5; }
   letter-spacing: 0.12em;
   color: #2c251d;
   margin-top: 10px;
-  transition: color 2.5s ease, text-shadow 2.5s ease;
+  transition: color 2.5s ease;
 }
 
 body.darkened .brand-title {
   color: #fff3d1;
-  text-shadow: 0 0 12px rgba(216, 195, 165, 0.6), 0 0 25px rgba(212, 175, 55, 0.4);
 }
 
 .brand-subtitle {
@@ -187,7 +187,7 @@ body.darkened .brand-title {
 
 body.darkened .brand-subtitle { color: #d8c3a5; }
 
-/* ÁREA DE AÇÃO UNIFICADA (BOTÃO AGENDAR + INTERRUPTOR) */
+/* ÁREA DE AÇÃO UNIFICADA */
 .action-area {
   position: relative;
   margin: 20px auto 0 auto;
@@ -196,6 +196,7 @@ body.darkened .brand-subtitle { color: #d8c3a5; }
   align-items: center;
   width: 100%;
   gap: 0;
+  z-index: 5;
 }
 
 /* BOTÃO AGENDAR */
@@ -233,7 +234,7 @@ body.darkened .btn-agendar:hover {
   color: #12100c;
 }
 
-/* INTERRUPTOR PERFEITAMENTE ENCAIXADO LOGO ABAIXO */
+/* INTERRUPTOR */
 .right-switch-block {
   position: relative;
   width: 75px;
@@ -259,27 +260,28 @@ body.darkened .btn-agendar:hover {
   stroke: #d8c3a5;
 }
 
-/* EFEITO BRILHANTE (FLASH DOURADO) AO CLICAR */
+/* EFEITO DE LUZ/BRILHO LENTO POR TRÁS DAS LETRAS E LOGO */
 .shine-flash {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: radial-gradient(circle at center, rgba(255, 248, 214, 0.95) 0%, rgba(212, 175, 55, 0.55) 35%, rgba(212, 175, 55, 0) 70%);
-  z-index: 500;
+  /* Fica posicionado estritamente ATRÁS do conteúdo principal (z-index 4) */
+  z-index: 4;
+  background: radial-gradient(circle at 50% 45%, rgba(255, 250, 225, 1) 0%, rgba(212, 175, 55, 0.75) 30%, rgba(212, 175, 55, 0.15) 60%, rgba(0, 0, 0, 0) 85%);
   opacity: 0;
   pointer-events: none;
 }
 
 .shine-flash.active {
-  animation: shineFlashAnim 0.6s ease-out forwards;
+  animation: shineFlashAnim 1.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
 @keyframes shineFlashAnim {
-  0% { opacity: 0; transform: scale(0.6); }
-  35% { opacity: 1; transform: scale(1.15); }
-  100% { opacity: 0; transform: scale(1.6); }
+  0% { opacity: 0; transform: scale(0.3); }
+  40% { opacity: 1; transform: scale(1.1); }
+  100% { opacity: 0; transform: scale(2.2); }
 }
 
 .switch-svg-clean {
@@ -320,8 +322,8 @@ body.darkened .stars-group path {
   margin: auto 0;
   text-align: center;
   opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 1.8s ease 0.3s, transform 1.8s ease 0.3s;
+  transform: translateY(15px);
+  transition: opacity 1.8s ease 0.4s, transform 1.8s ease 0.4s;
 }
 
 .quiz-container.show {
@@ -401,7 +403,6 @@ body.darkened .stars-group path {
   border-color: #d8c3a5;
 }
 
-/* BOTÃO DE INTERROGAÇÃO (?) */
 .info-btn {
   width: 28px;
   height: 28px;
@@ -430,7 +431,6 @@ body.darkened .stars-group path {
   box-shadow: 0 0 8px rgba(255, 243, 209, 0.4);
 }
 
-/* BOTÃO DE VOLTAR */
 .step-header {
   position: relative;
   display: flex;
@@ -473,7 +473,6 @@ body.darkened .stars-group path {
   line-height: 1;
 }
 
-/* PAINEL LATERAL DIREITO */
 .info-inline-panel {
   position: absolute;
   right: 0;
@@ -548,7 +547,7 @@ body.darkened .stars-group path {
   font-weight: 500;
 }
 
-/* BOTÃO SOBRE MIM FLUTUANTE */
+/* BOTÃO SOBRE MIM / VOLTAR AO TOPO FLUTUANTE */
 .btn-sobre-mim {
   position: fixed;
   bottom: 25px;
@@ -572,10 +571,9 @@ body.darkened .stars-group path {
   transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
   animation: starPulseBtn 3s ease-in-out infinite;
-  will-change: transform, box-shadow;
 }
 
-.btn-sobre-mim .arrow-down {
+.btn-sobre-mim .arrow-icon {
   font-size: 1.1rem;
   transition: transform 0.3s ease;
   display: inline-block;
@@ -590,12 +588,11 @@ body.darkened .stars-group path {
   box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
 }
 
-.btn-sobre-mim:hover .arrow-down {
+.btn-sobre-mim:hover .arrow-icon {
   color: #111;
-  transform: translateY(3px);
 }
 
-/* ESTILIZAÇÃO DA SEÇÃO SOBRE MIM */
+/* SEÇÃO SOBRE MIM */
 .sobre-mim-section {
   width: 100%;
   max-width: 950px;
@@ -705,7 +702,7 @@ body.darkened .sobre-mim-section {
   color: #fff3d1;
 }
 
-/* ANIMAÇÕES GLOW & PULSE */
+/* ANIMAÇÕES */
 @keyframes starPulse {
   0%, 100% {
     box-shadow: 0 0 15px rgba(212, 175, 55, 0.2), 0 0 30px rgba(212, 175, 55, 0.1);
@@ -728,12 +725,6 @@ body.darkened .sobre-mim-section {
     border-color: rgba(255, 235, 150, 1);
     transform: scale(1.04);
   }
-}
-
-.glow-natally {
-  color: #fffdf0 !important;
-  text-shadow: 0 0 12px #ffd700, 0 0 25px #d4af37, 0 0 40px #ffffff !important;
-  transition: text-shadow 1s ease, color 1s ease;
 }
 
 /* RESPONSIVO PARA CELULAR */
