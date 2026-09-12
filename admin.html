@@ -3,50 +3,143 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel Administrativo - Visualizações</title>
+  <title>Painel Administrativo - Gestão e Avaliações</title>
   <link rel="stylesheet" href="admin-pre-pos.css">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
-  <!-- SDK do Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    .admin-container {
+      max-width: 900px !important;
+      text-align: left !important;
+    }
+    .avaliacao-card {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+    .avaliacao-card h3 {
+      margin: 0 0 5px 0;
+      color: #d4af37;
+      font-size: 1.2rem;
+    }
+    .estrelas-exibicao {
+      color: #d4af37;
+      font-size: 1.1rem;
+    }
+    .detalhe-item {
+      font-size: 0.95rem;
+      margin: 4px 0;
+    }
+  </style>
 </head>
 <body>
-  <div class="container-card">
-    <h1>Painel de Controle</h1>
-    <p>Métrica de acessos registrados na sua Landing Page:</p>
+  <div class="container-card admin-container">
+    <h1>Painel da Profissional</h1>
     
     <div class="contador-box" id="contadorAcessos">
-      Carregando visualizações...
+      Carregando acessos...
     </div>
 
-    <a href="index.html" class="btn-acao">Ir para o Site</a>
+    <h2>Fichas de Pré-Atendimento</h2>
+    <div id="listaPreAtendimento">
+      <p>Carregando fichas pré-sessão...</p>
+    </div>
+
+    <h2>Avaliações e Pós-Sessão</h2>
+    <div id="listaAvaliacoes">
+      <p>Carregando avaliações...</p>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+      <a href="index.html" class="btn-acao">Voltar para o Site</a>
+    </div>
   </div>
 
   <script>
-    // Coloque aqui as mesmas chaves do Supabase que você usa no main.js
     const SUPABASE_URL = 'SUA_URL_AQUI'; 
     const SUPABASE_KEY = 'SUA_ANON_KEY_AQUI';
-    
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    async function carregarVisualizacoes() {
+    async function carregarDadosAdmin() {
+      // 1. Carregar Acessos
       try {
-        // Conta o número de linhas na tabela 'acessos'
-        const { count, error } = await supabaseClient
+        const { count } = await supabaseClient
           .from('acessos')
           .select('*', { count: 'exact', head: true });
-
-        if (error) {
-          throw error;
-        }
-
-        document.getElementById('contadorAcessos').innerText = `${count !== null ? count : 0} Visualizações`;
+        document.getElementById('contadorAcessos').innerText = `${count !== null ? count : 0} Visualizações da Landing Page`;
       } catch (err) {
-        console.error('Erro ao buscar acessos:', err);
-        document.getElementById('contadorAcessos').innerText = 'Erro ao carregar dados';
+        console.error(err);
+      }
+
+      // 2. Carregar Pré-Atendimentos
+      try {
+        const { data, error } = await supabaseClient
+          .from('pre_atendimento')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        const containerPre = document.getElementById('listaPreAtendimento');
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+          containerPre.innerHTML = '<p>Nenhuma ficha pré-sessão cadastrada.</p>';
+        } else {
+          containerPre.innerHTML = '';
+          data.forEach(item => {
+            const dataFormatada = new Date(item.created_at).toLocaleDateString('pt-BR');
+            const card = document.createElement('div');
+            card.className = 'avaliacao-card';
+            card.innerHTML = `
+              <h3>${item.nome_cliente} (Dor: ${item.nivel_dor}/10)</h3>
+              <div class="detalhe-item"><strong>Técnica:</strong> ${item.tecnica_desejada} | <strong>Data:</strong> ${dataFormatada}</div>
+              <div class="detalhe-item"><strong>Sintomas:</strong> ${item.sintomas_queixas || 'Não informado'}</div>
+              <div class="detalhe-item"><strong>Restrições:</strong> ${item.restricoes_medicas || 'Nenhuma'}</div>
+            `;
+            containerPre.appendChild(card);
+          });
+        }
+      } catch (err) {
+        console.error(err);
+        document.getElementById('listaPreAtendimento').innerText = 'Erro ao carregar pré-atendimentos.';
+      }
+
+      // 3. Carregar Avaliações (Pós)
+      try {
+        const { data, error } = await supabaseClient
+          .from('avaliacoes')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        const container = document.getElementById('listaAvaliacoes');
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+          container.innerHTML = '<p>Nenhuma avaliação cadastrada ainda.</p>';
+        } else {
+          container.innerHTML = '';
+          data.forEach(item => {
+            const estrelasStr = '★'.repeat(item.nota_estrelas || 5) + '☆'.repeat(5 - (item.nota_estrelas || 5));
+            const dataFormatada = new Date(item.created_at).toLocaleDateString('pt-BR');
+            const card = document.createElement('div');
+            card.className = 'avaliacao-card';
+            card.innerHTML = `
+              <h3>${item.nome_cliente} <span class="estrelas-exibicao">(${estrelasStr})</span></h3>
+              <div class="detalhe-item"><strong>Técnica:</strong> ${item.tecnica} | <strong>Data:</strong> ${dataFormatada}</div>
+              <div class="detalhe-item"><strong>Após a sessão:</strong> ${item.respostas_pos || 'Não informado'}</div>
+              <div class="detalhe-item"><strong>Feedback:</strong> ${item.feedback || 'Nenhum comentário'}</div>
+            `;
+            container.appendChild(card);
+          });
+        }
+      } catch (err) {
+        console.error(err);
+        document.getElementById('listaAvaliacoes').innerText = 'Erro ao carregar avaliações.';
       }
     }
 
-    carregarVisualizacoes();
+    carregarDadosAdmin();
   </script>
 </body>
 </html>
