@@ -169,26 +169,108 @@
         .toLowerCase().replace(/\s+/g, ' ').trim();
     }
 
+    // Telefone só com números (sem o 55 do Brasil). Vazio se for inválido.
+    function chaveTelefone(tel) {
+      let d = String(tel || '').replace(/\D/g, '');
+      if (d.startsWith('55') && d.length >= 12) d = d.slice(2);
+      return d.length >= 10 ? d : '';
+    }
+
+    // ---------- Comparação de nomes (tolera erro de digitação e nome incompleto) ----------
+    // Distância entre duas palavras (conta letra trocada de lugar, como "macile" x "maciel", como 1 erro)
+    function distancia(a, b) {
+      const m = a.length, n = b.length;
+      const d = Array.from({ length: m + 1 }, (_, i) => [i, ...Array(n).fill(0)]);
+      for (let j = 0; j <= n; j++) d[0][j] = j;
+      for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
+          d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+          if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) {
+            d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + 1);
+          }
+        }
+      }
+      return d[m][n];
+    }
+
+    // "maciel" ~ "macile" (1 erro); palavras curtas precisam ser idênticas
+    function palavrasIguais(x, y) {
+      if (x === y) return true;
+      const menor = Math.min(x.length, y.length);
+      if (menor < 5) return false;
+      const limite = menor >= 9 ? 2 : 1;
+      return distancia(x, y) <= limite;
+    }
+
+    // "claudimiro" é compatível com "claudimiro fermentino" (todas as palavras do nome mais curto aparecem no mais longo)
+    function nomesCompativeis(a, b) {
+      const ta = normalizar(a).split(' ').filter(Boolean);
+      const tb = normalizar(b).split(' ').filter(Boolean);
+      if (!ta.length || !tb.length) return false;
+      const [curto, longo] = ta.length <= tb.length ? [ta, tb] : [tb, ta];
+      return curto.every(x => longo.some(y => palavrasIguais(x, y)));
+    }
+
+    // Telefone só com números (sem o 55 do Brasil). Vazio se for inválido.
+    function chaveTelefone(tel) {
+      let d = String(tel || '').replace(/\D/g, '');
+      if (d.startsWith('55') && d.length >= 12) d = d.slice(2);
+      return d.length >= 10 ? d : '';
+    }
+
+    // Agrupa as fichas e avaliações por cliente, sozinho:
+    //  1) mesmo telefone = mesma pessoa (mesmo que o nome esteja escrito diferente)
+    //  2) sem telefone: entra no cliente de nome igual ou parecido, desde que só UM cliente combine
+    //     (se combinar com mais de um, fica separado para não misturar pessoas diferentes)
     function montarClientes() {
       const mapa = new Map();
-      function pegar(chave, nome) {
-        if (!mapa.has(chave)) mapa.set(chave, { chave, nome, pres: [], poss: [], ultimo: 0 });
-        return mapa.get(chave);
+
+      function novo(chave, item) {
+        const c = { chave, nome: item.nome_cliente, nomes: new Set(), pres: [], poss: [], ultimo: 0 };
+        mapa.set(chave, c);
+        return c;
       }
-      listaPre.forEach(p => {
-        const k = normalizar(p.nome_cliente);
-        if (!k) return;
-        const c = pegar(k, p.nome_cliente);
-        c.pres.push(p);
-        c.ultimo = Math.max(c.ultimo, new Date(p.created_at).getTime());
+      function registrar(c, tipo, item) {
+        c[tipo].push(item);
+        c.nomes.add(String(item.nome_cliente).trim());
+        // mantém o nome mais completo (ex.: "Claudimiro Fermentino" em vez de "Claudimiro")
+        if (String(item.nome_cliente).trim().length > String(c.nome).trim().length) c.nome = item.nome_cliente;
+        c.ultimo = Math.max(c.ultimo, new Date(item.created_at).getTime());
+      }
+
+      const todos = [
+        ...listaPre.map(item => ({ tipo: 'pres', item })),
+        ...listaPos.map(item => ({ tipo: 'poss', item }))
+      ].filter(({ item }) => normalizar(item.nome_cliente));
+
+      // 1) por telefone
+      todos.forEach(({ tipo, item }) => {
+        const t = chaveTelefone(item.telefone);
+        if (!t) return;
+        const chave = 'tel:' + t;
+        registrar(mapa.get(chave) || novo(chave, item), tipo, item);
       });
-      listaPos.forEach(p => {
-        const k = normalizar(p.nome_cliente);
-        if (!k) return;
-        const c = pegar(k, p.nome_cliente);
-        c.poss.push(p);
-        c.ultimo = Math.max(c.ultimo, new Date(p.created_at).getTime());
+
+      // 2) sem telefone: por nome igual ou parecido
+      todos.forEach(({ tipo, item }) => {
+        if (chaveTelefone(item.telefone)) return;
+        const candidatos = Array.from(mapa.values()).filter(c =>
+          Array.from(c.nomes).some(n => nomesCompativeis(n, item.nome_cliente))
+        );
+        let escolhido = null;
+        if (candidatos.length === 1) {
+          escolhido = candidatos[0];
+        } else if (candidatos.length > 1) {
+          const k = normalizar(item.nome_cliente);
+          const exatos = candidatos.filter(c => Array.from(c.nomes).some(n => normalizar(n) === k));
+          if (exatos.length === 1) escolhido = exatos[0];
+        }
+        registrar(escolhido || novo('nome:' + normalizar(item.nome_cliente) + ':' + item.id, item), tipo, item);
       });
+
+      const porData = (a, b) => new Date(b.created_at) - new Date(a.created_at);
+      mapa.forEach(c => { c.pres.sort(porData); c.poss.sort(porData); });
+
       // quem atendeu/respondeu por último aparece primeiro
       return Array.from(mapa.values()).sort((a, b) => b.ultimo - a.ultimo);
     }
@@ -220,7 +302,7 @@
       const atual = clientes.find(c => c.chave === clienteAberto);
       if (!atual) { det.innerHTML = ''; return; }
 
-      det.innerHTML = htmlCliente(atual);
+      det.innerHTML = htmlCliente(atual, clientes);
       garantirResultado(atual);
     }
 
@@ -259,10 +341,25 @@
         </div>`;
     }
 
-    function htmlCliente(c) {
+    function htmlCliente(c, clientes) {
+      const outros = clientes.filter(x => x.chave !== c.chave);
+      const caixaUnir = outros.length ? `
+          <details class="unir-box">
+            <summary>Este cliente aparece duplicado? Unir com outro nome</summary>
+            <div class="unir-linha">
+              <select id="selectUnir" aria-label="Unir com qual cliente">
+                ${outros.map(o => `<option value="${esc(o.chave)}">${esc(o.nome)} (${rotuloCliente(o)})</option>`).join('')}
+              </select>
+              <button type="button" class="btn-acao btn-unir">Unir</button>
+            </div>
+            <p class="nota-pequena">Todas as fichas e avaliações de ${esc(c.nome)} passam a ficar no nome escolhido.</p>
+          </details>` : '';
+
       return `
         <div class="cliente-painel">
           <h3 class="cliente-nome">${esc(c.nome)}</h3>
+          ${c.nomes.size > 1 ? `<p class="nota-pequena">Também aparece como: ${esc(Array.from(c.nomes).filter(n => n !== c.nome).join(', '))} (juntado automaticamente).</p>` : ''}
+          ${caixaUnir}
 
           <h2>Fichas de Pré-Atendimento</h2>
           ${c.pres.length ? c.pres.map(cardPre).join('') : '<p class="empty-state">Este cliente ainda não preencheu a ficha pré-sessão.</p>'}
@@ -279,8 +376,8 @@
     // RESULTADO: resumo para a terapeuta + mensagem para o cliente
     // =====================================================
     function telefoneDe(c) {
-      const ficha = c.pres.find(p => telefoneWhats(p.telefone));
-      return ficha ? ficha.telefone : '';
+      const registro = [...c.pres, ...c.poss].find(p => telefoneWhats(p.telefone));
+      return registro ? registro.telefone : '';
     }
 
     // Aceita "(84) 99999-9999", "84999999999", "+55 84 99999-9999"...
@@ -482,7 +579,21 @@
         renderClientes();
         return;
       }
-      if (e.target.closest('.btn-abrir-whats')) abrirWhats(c);
+      if (e.target.closest('.btn-abrir-whats')) { abrirWhats(c); return; }
+
+      if (e.target.closest('.btn-unir')) {
+        const sel = document.getElementById('selectUnir');
+        const alvo = sel ? montarClientes().find(x => x.chave === sel.value) : null;
+        if (!alvo) return;
+        if (c.chave.startsWith('tel:') && alvo.chave.startsWith('tel:')) {
+          alert('Estes dois clientes têm telefones diferentes, então o painel os trata como pessoas diferentes.');
+          return;
+        }
+        abrirConfirmacao(
+          `Unir "${c.nome}" com "${alvo.nome}"? Tudo ficará no nome "${alvo.nome}".`,
+          () => unirClientes(c, alvo)
+        );
+      }
     });
 
     // ---------- Tempo real ----------
@@ -502,27 +613,23 @@
       }
     }
 
-    // ---------- Apagar com confirmação (Sim / Não) ----------
+    // ---------- Janela de confirmação (Sim / Não): apagar e unir ----------
     const modalApagar = document.getElementById('modalApagar');
     const modalTexto = document.getElementById('modalTexto');
     const btnSim = document.getElementById('btnApagarSim');
     const btnNao = document.getElementById('btnApagarNao');
-    let alvoApagar = null;
+    let acaoModal = null;
 
-    document.addEventListener('click', (e) => {
-      const btn = e.target.closest('.btn-lixeira');
-      if (!btn) return;
-      alvoApagar = { tabela: btn.dataset.tabela, id: btn.dataset.id };
-      modalTexto.textContent = alvoApagar.tabela === 'avaliacoes'
-        ? 'Tem certeza que deseja apagar esta avaliação?'
-        : 'Tem certeza que deseja apagar esta ficha?';
+    function abrirConfirmacao(texto, executar) {
+      acaoModal = executar;
+      modalTexto.textContent = texto;
       modalApagar.hidden = false;
       btnNao.focus();
-    });
+    }
 
     function fecharModal() {
       modalApagar.hidden = true;
-      alvoApagar = null;
+      acaoModal = null;
     }
 
     btnNao.addEventListener('click', fecharModal);
@@ -534,30 +641,75 @@
     });
 
     btnSim.addEventListener('click', async () => {
-      if (!alvoApagar) return;
-      const { tabela, id } = alvoApagar;
-
+      if (!acaoModal) return;
+      const executar = acaoModal;
       btnSim.disabled = true;
       btnNao.disabled = true;
-      btnSim.textContent = 'Apagando...';
-
-      // .select() devolve as linhas apagadas: se vier vazio, o banco recusou (política RLS)
-      const { data, error } = await window.db.from(tabela).delete().eq('id', id).select();
-
+      btnSim.textContent = 'Aguarde...';
+      try {
+        await executar();
+      } catch (err) {
+        console.error(err);
+        alert('Algo deu errado. Tente novamente.');
+      }
       btnSim.disabled = false;
       btnNao.disabled = false;
       btnSim.textContent = 'Sim';
       fecharModal();
+    });
 
-      if (error || !data || data.length === 0) {
-        console.error(error);
-        alert('Não foi possível apagar. Confirme que a política de exclusão foi criada no Supabase (supabase.sql).');
-        return;
+    // Lixeira: apagar ficha ou avaliação
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('.btn-lixeira');
+      if (!btn) return;
+      const { tabela, id } = btn.dataset;
+      abrirConfirmacao(
+        tabela === 'avaliacoes'
+          ? 'Tem certeza que deseja apagar esta avaliação?'
+          : 'Tem certeza que deseja apagar esta ficha?',
+        async () => {
+          // .select() devolve as linhas apagadas: se vier vazio, o banco recusou (política RLS)
+          const { data, error } = await window.db.from(tabela).delete().eq('id', id).select();
+          if (error || !data || data.length === 0) {
+            console.error(error);
+            alert('Não foi possível apagar. Confirme que a política de exclusão foi criada no Supabase (supabase.sql).');
+            return;
+          }
+          if (tabela === 'avaliacoes') carregarAvaliacoes();
+          else carregarPreAtendimento();
+        }
+      );
+    });
+
+    // Unir clientes: troca o nome das fichas/avaliações de "c" pelo nome de "alvo"
+    async function unirClientes(c, alvo) {
+      const grupos = [
+        { tabela: 'pre_atendimento', ids: c.pres.map(x => x.id) },
+        { tabela: 'avaliacoes', ids: c.poss.map(x => x.id) }
+      ];
+      let falhou = false;
+
+      for (const g of grupos) {
+        if (!g.ids.length) continue;
+        const { data, error } = await window.db
+          .from(g.tabela)
+          .update({ nome_cliente: alvo.nome })
+          .in('id', g.ids)
+          .select();
+        if (error || !data || data.length !== g.ids.length) {
+          console.error(error);
+          falhou = true;
+        }
       }
 
-      if (tabela === 'avaliacoes') carregarAvaliacoes();
-      else carregarPreAtendimento();
-    });
+      if (falhou) {
+        alert('Não foi possível unir tudo. Confirme que rodou o supabase.sql (política de atualização).');
+      }
+
+      clienteAberto = alvo.chave;
+      await carregarPreAtendimento();
+      await carregarAvaliacoes();
+    }
 
     // ---------- Login / Logout ----------
     document.getElementById('formLogin').addEventListener('submit', async (e) => {
