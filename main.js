@@ -121,6 +121,62 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentBip = 1;
   let fadeOutInterval = null;
 
+  // ===== CONTROLE DO ÁUDIO DE FUNDO =====
+  const VOLUME_FUNDO = 0.15;        // volume ao tocar
+  const DURACAO_MAX_MS = 60000;     // toca no máximo 1 minuto
+  const FADE_WHATSAPP_MS = 3000;    // sumir aos poucos ao ir para o WhatsApp
+  const FADE_LIMITE_MS = 4000;      // sumir aos poucos ao completar 1 minuto
+  let timerLimite = null;
+
+  function cancelarTemporizadores() {
+    if (timerLimite) { clearTimeout(timerLimite); timerLimite = null; }
+    if (fadeOutInterval) { clearInterval(fadeOutInterval); fadeOutInterval = null; }
+  }
+
+  // Abaixa o volume gradativamente até zero e então pausa
+  function pararAudio(duracao) {
+    if (!bgAudio) return;
+    cancelarTemporizadores();
+    if (bgAudio.paused) { bgAudio.volume = VOLUME_FUNDO; return; }
+
+    if (!duracao) {                       // parar na hora
+      bgAudio.pause();
+      bgAudio.volume = VOLUME_FUNDO;
+      return;
+    }
+
+    const passos = 30;
+    const intervalo = duracao / passos;
+    const volumeInicial = bgAudio.volume;
+    let passo = 0;
+    fadeOutInterval = setInterval(() => {
+      passo++;
+      bgAudio.volume = Math.max(0, volumeInicial * (1 - passo / passos));
+      if (passo >= passos) {
+        clearInterval(fadeOutInterval);
+        fadeOutInterval = null;
+        bgAudio.pause();
+        bgAudio.volume = VOLUME_FUNDO;
+      }
+    }, intervalo);
+  }
+
+  function iniciarAudio() {
+    if (!bgAudio) return;
+    cancelarTemporizadores();
+    bgAudio.volume = VOLUME_FUNDO;
+    bgAudio.currentTime = 0;
+    bgAudio.play().catch(() => {});
+    // depois de 1 minuto, diminui aos poucos e para
+    timerLimite = setTimeout(() => pararAudio(FADE_LIMITE_MS), DURACAO_MAX_MS);
+  }
+
+  // Página em segundo plano (troca de aba/app, tela bloqueada): para o som na hora
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) pararAudio(0);
+  });
+  window.addEventListener('pagehide', () => pararAudio(0));
+
   function playBip() {
     try {
       const soundPath = currentBip === 1 ? 'audio/bip1.mp3' : 'audio/bip2.mp3';
@@ -170,12 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('.right-switch-block').forEach(sw => sw.classList.add('switch-off'));
 
-    if (bgAudio) {
-      if (fadeOutInterval) clearInterval(fadeOutInterval);
-      bgAudio.volume = 0.15;
-      bgAudio.currentTime = 0;
-      bgAudio.play().catch(() => {});
-    }
+    iniciarAudio();
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -364,6 +415,7 @@ document.addEventListener('DOMContentLoaded', () => {
                   "Qual dia da semana você tem disponível?";
       }
 
+      pararAudio(FADE_WHATSAPP_MS);
       window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank', 'noopener');
     });
   }
