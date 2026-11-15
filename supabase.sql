@@ -27,6 +27,8 @@ create table if not exists avaliacoes (
 );
 
 alter table pre_atendimento add column if not exists consentimento_lgpd boolean not null default false;
+-- Telefone também na avaliação pós-sessão (serve para juntar a ficha e a avaliação da mesma pessoa)
+alter table avaliacoes add column if not exists telefone text;
 
 alter table acessos         enable row level security;
 alter table pre_atendimento enable row level security;
@@ -56,6 +58,13 @@ drop policy if exists "admin apaga" on avaliacoes;
 
 create policy "admin apaga" on pre_atendimento for delete to authenticated using (true);
 create policy "admin apaga" on avaliacoes      for delete to authenticated using (true);
+
+-- Profissional logada (authenticated) pode ATUALIZAR (usado em "Unir clientes")
+drop policy if exists "admin atualiza" on pre_atendimento;
+drop policy if exists "admin atualiza" on avaliacoes;
+
+create policy "admin atualiza" on pre_atendimento for update to authenticated using (true) with check (true);
+create policy "admin atualiza" on avaliacoes      for update to authenticated using (true) with check (true);
 
 -- Tempo real (se já estiver adicionada, o Supabase avisa; pode ignorar o aviso)
 alter publication supabase_realtime add table pre_atendimento;

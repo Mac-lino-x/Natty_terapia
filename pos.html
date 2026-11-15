@@ -38,6 +38,11 @@
         </div>
 
         <div class="form-group">
+          <label for="telefoneCliente">Telefone / WhatsApp:</label>
+          <input type="tel" id="telefoneCliente" required maxlength="16" inputmode="tel" autocomplete="tel" placeholder="(00) 00000-0000">
+        </div>
+
+        <div class="form-group">
           <label for="tecnicaRealizada">Técnica realizada:</label>
           <input type="text" id="tecnicaRealizada" required maxlength="80" placeholder="Ex: Massagem Relaxante">
         </div>
@@ -78,6 +83,20 @@
     const btnEnviar = document.getElementById('btnEnviarPos');
     const msgErro = document.getElementById('msgErro');
     const logo = document.querySelector('.marca-logo');
+    const inputTel = document.getElementById('telefoneCliente');
+
+    // Máscara simples (00) 00000-0000
+    inputTel.addEventListener('input', () => {
+      let n = inputTel.value.replace(/\D/g, '').slice(0, 11);
+      if (n.length > 6) {
+        n = n.length > 10
+          ? `(${n.slice(0, 2)}) ${n.slice(2, 7)}-${n.slice(7)}`
+          : `(${n.slice(0, 2)}) ${n.slice(2, 6)}-${n.slice(6)}`;
+      } else if (n.length > 2) {
+        n = `(${n.slice(0, 2)}) ${n.slice(2)}`;
+      }
+      inputTel.value = n;
+    });
 
     // ---------- Bips: uma nota diferente para cada estrela (Dó, Ré, Mi, Fá, Sol) ----------
     // false = notas geradas pelo próprio navegador (sempre toca as 5 estrelas)
@@ -296,8 +315,15 @@
       const nome = document.getElementById('nomeCliente').value.trim();
       const tecnica = document.getElementById('tecnicaRealizada').value.trim();
 
+      const telefone = inputTel.value.trim();
+      const digitos = telefone.replace(/\D/g, '');
+
       if (!nome || !tecnica) {
         msgErro.textContent = 'Preencha seu nome e a técnica realizada.';
+        return;
+      }
+      if (digitos.length < 10 || digitos.length > 11) {
+        msgErro.textContent = 'Informe seu telefone com DDD. Ele ajuda a juntar sua ficha e sua avaliação.';
         return;
       }
       if (parseInt(inputNota.value, 10) === 0) {
@@ -314,6 +340,7 @@
 
       const dados = {
         nome_cliente: nome,
+        telefone: telefone,
         tecnica: tecnica,
         nota_estrelas: parseInt(inputNota.value, 10),
         respostas_pos: document.getElementById('respPos').value.trim(),

@@ -921,3 +921,38 @@ h2::before {
 }
 
 .acoes-linha .btn-acao { flex: 1 1 200px; margin-top: 0; }
+
+/* =====================================================
+   UNIR CLIENTES DUPLICADOS
+   ===================================================== */
+.unir-box {
+  margin: 10px 0 4px;
+  font-size: 0.82rem;
+  color: var(--texto-suave);
+}
+
+.unir-box summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--salvia-profundo);
+}
+
+.unir-linha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.unir-linha select {
+  flex: 1 1 220px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--borda);
+  background: var(--creme-claro);
+  color: var(--texto);
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+.unir-linha .btn-acao { padding: 10px 22px; }
