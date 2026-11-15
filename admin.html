@@ -311,17 +311,30 @@
       return (d.length === 12 || d.length === 13) ? d : '';
     }
 
-    // Texto padrão, usado se a IA estiver indisponível
+    // Texto padrão (mesmo formato), usado se a IA estiver indisponível
     function mensagemPadrao(c) {
-      const primeiro = String(c.pre.nome_cliente).trim().split(' ')[0];
-      const dor = Number(c.pre.nivel_dor);
-      const queixa = c.pre.sintomas_queixas ? `, relatando ${c.pre.sintomas_queixas}` : '';
-      const saida = c.pos.respostas_pos ? `Ao final, você contou que estava: ${c.pos.respostas_pos}.` : 'Foi muito bom cuidar de você.';
-      return `Olá, ${primeiro}! 🌿\n\n` +
-        `Hoje você chegou para a sessão de ${c.pos.tecnica || c.pre.tecnica_desejada} com nível de dor/tensão ${dor}/10${queixa}. ` +
-        `${saida}\n\n` +
-        `Espero que tenha ficado se sentindo melhor e que venha mais vezes. Lembre-se sempre de cuidar de você! 💚\n\n` +
-        `Natallyane Costa · Massoterapeuta`;
+      const { pre, pos } = c;
+      const data = new Date(pre.created_at).toLocaleDateString('pt-BR');
+      const n = Math.min(5, Math.max(0, pos.nota_estrelas || 0));
+      const estrelas = '★'.repeat(n);
+
+      let chegada = `Você chegou para a sessão de *${pre.tecnica_desejada}* com nível de dor e tensão *${pre.nivel_dor}/10*.`;
+      if (pre.respostas_pre) chegada += ` Seu estado no dia: ${pre.respostas_pre}.`;
+      if (pre.sintomas_queixas) chegada += ` Suas queixas eram: ${pre.sintomas_queixas}.`;
+      if (pre.restricoes_medicas) chegada += ` Você também informou: ${pre.restricoes_medicas}, e isso foi levado em consideração no cuidado.`;
+
+      let saida = `Após a *${pos.tecnica}*,`;
+      saida += pos.respostas_pos ? ` você contou que se sentiu: ${pos.respostas_pos}.` : ' foi um prazer cuidar de você.';
+      saida += ` Sua avaliação foi ${estrelas} (${n}/5).`;
+      if (pos.feedback) saida += ` Você ainda deixou este comentário: ${pos.feedback}. Muito obrigada!`;
+
+      return `Olá, *${pre.nome_cliente}*! ✨\n\n` +
+        `Passando para compartilhar o resumo do seu atendimento do dia *${data}* e celebrar a sua evolução!\n\n` +
+        `📥 *Como você chegou:*\n${chegada}\n\n` +
+        `📤 *Como você saiu:*\n${saida}\n\n` +
+        `💛 *Meu desejo para você:*\n` +
+        `Quero que você se sinta sempre assim, leve, renovado e cada vez melhor! Não espere a tensão acumular: venha mais vezes e cuide sempre de você.\n\n` +
+        `Até a próxima sessão! 🙌`;
     }
 
     async function gerarMensagem(c, btn) {
@@ -345,9 +358,11 @@
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
           body: JSON.stringify({
             nome: c.pre.nome_cliente,
+            data: new Date(c.pre.created_at).toLocaleDateString('pt-BR'),
             tecnicaDesejada: c.pre.tecnica_desejada,
             nivelDor: c.pre.nivel_dor,
             sintomas: c.pre.sintomas_queixas,
+            restricoes: c.pre.restricoes_medicas,
             estadoAtual: c.pre.respostas_pre,
             tecnicaRealizada: c.pos.tecnica,
             nota: c.pos.nota_estrelas,
