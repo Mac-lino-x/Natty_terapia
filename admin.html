@@ -311,8 +311,29 @@
       return (d.length === 12 || d.length === 13) ? d : '';
     }
 
+    // Arruma o que o cliente digitou: "RElaxado" -> "relaxado", tira vírgulas soltas no fim.
+    // (Sem IA não dá para corrigir ortografia nem resumir com outras palavras.)
+    function limparTexto(t) {
+      return String(t || '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .replace(/[\s,;.]+$/, '')
+        .split(' ')
+        .map(w => /[A-ZÀ-Ý]/.test(w.slice(1)) ? w.toLowerCase() : w)
+        .join(' ');
+    }
+
     // Texto padrão (mesmo formato), usado se a IA estiver indisponível
-    function mensagemPadrao(c) {
+    function mensagemPadrao(c0) {
+      const c = {
+        pre: { ...c0.pre,
+          respostas_pre: limparTexto(c0.pre.respostas_pre),
+          sintomas_queixas: limparTexto(c0.pre.sintomas_queixas),
+          restricoes_medicas: limparTexto(c0.pre.restricoes_medicas) },
+        pos: { ...c0.pos,
+          respostas_pos: limparTexto(c0.pos.respostas_pos),
+          feedback: limparTexto(c0.pos.feedback) }
+      };
       const { pre, pos } = c;
       const data = new Date(pre.created_at).toLocaleDateString('pt-BR');
       const n = Math.min(5, Math.max(0, pos.nota_estrelas || 0));
