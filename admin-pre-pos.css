@@ -763,3 +763,111 @@ h2::before {
   background: linear-gradient(135deg, var(--erro), #8a3624);
   box-shadow: 0 10px 22px rgba(165, 67, 47, 0.45);
 }
+
+/* =====================================================
+   RESULTADOS (resumo do cliente + mensagem de WhatsApp)
+   ===================================================== */
+.resultados-lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.resultado-chip {
+  background: var(--creme-claro);
+  color: var(--marrom);
+  border: 1px solid var(--borda);
+  border-left: 4px solid var(--dourado);
+  border-radius: 999px;
+  padding: 9px 18px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.resultado-chip:hover { transform: translateY(-1px); border-color: var(--dourado); }
+
+.resultado-chip.ativo {
+  background: var(--salvia-escuro);
+  color: var(--creme-claro);
+  border-color: var(--salvia-profundo);
+  border-left-color: var(--dourado);
+}
+
+.resumo-painel {
+  background: var(--creme-claro);
+  border: 1px solid var(--borda);
+  border-left: 4px solid var(--salvia-escuro);
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin-bottom: 14px;
+  box-shadow: 0 3px 10px rgba(74, 42, 26, 0.06);
+  animation: surgir 0.3s ease;
+  overflow-wrap: anywhere;
+}
+
+.resumo-painel h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.35rem;
+  color: var(--marrom);
+  margin: 0 0 4px;
+}
+
+.resumo-bloco { margin-top: 14px; }
+
+.resumo-bloco h4 {
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--salvia-profundo);
+  margin-bottom: 4px;
+}
+
+.resumo-acoes {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--borda);
+}
+
+.msg-whats {
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px 13px;
+  border-radius: 10px;
+  border: 1px solid var(--borda);
+  background: #fff;
+  color: var(--texto);
+  font-family: inherit;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  resize: vertical;
+  min-height: 170px;
+}
+
+.msg-whats:focus {
+  border-color: var(--dourado);
+  box-shadow: 0 0 0 3px rgba(201, 160, 99, 0.25);
+  outline: none;
+}
+
+.status-ia {
+  font-size: 0.82rem;
+  color: var(--texto-suave);
+  margin-top: 10px;
+  min-height: 1.2em;
+}
+
+.btn-whats {
+  background: linear-gradient(135deg, #2fa866, #1f8a50);
+  border-color: #1f8a50;
+  box-shadow: 0 6px 16px rgba(31, 138, 80, 0.35);
+  margin-top: 12px;
+}
+
+.btn-whats:hover {
+  background: linear-gradient(135deg, #1f8a50, #187240);
+  box-shadow: 0 10px 22px rgba(31, 138, 80, 0.45);
+}

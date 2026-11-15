@@ -53,6 +53,10 @@
     <h2>Avaliações e Pós-Sessão</h2>
     <div id="listaAvaliacoes"><p class="empty-state">Carregando avaliações...</p></div>
 
+    <h2>Resultados</h2>
+    <div id="listaResultados"><p class="empty-state">Carregando resultados...</p></div>
+    <div id="resultadoDetalhe"></div>
+
     <div style="text-align: center; margin-top: 24px;">
       <a href="index.html" class="btn-acao" style="display:inline-block; text-decoration:none;">Voltar para o Site</a>
     </div>
@@ -75,6 +79,11 @@
     const loginErro = document.getElementById('loginErro');
     const esc = window.escapeHtml;
     let canalTempoReal = null;
+
+    // Dados carregados (usados para montar os Resultados)
+    let listaPre = [];
+    let listaPos = [];
+    let clienteAberto = null;
 
     // Ícone da lixeira (SVG)
     const ICONE_LIXEIRA = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6"/></svg>';
@@ -100,6 +109,9 @@
         iniciarTempoReal();
       } else {
         pararTempoReal();
+        listaPre = [];
+        listaPos = [];
+        clienteAberto = null;
       }
     }
 
@@ -126,12 +138,15 @@
           .order('created_at', { ascending: false });
         if (error) throw error;
 
-        if (!data || data.length === 0) {
+        listaPre = data || [];
+        renderResultados();
+
+        if (listaPre.length === 0) {
           el.innerHTML = '<p class="empty-state">Nenhuma ficha pré-sessão cadastrada.</p>';
           return;
         }
 
-        el.innerHTML = data.map(item => `
+        el.innerHTML = listaPre.map(item => `
           <div class="avaliacao-card">
             <button type="button" class="btn-lixeira" data-tabela="pre_atendimento" data-id="${esc(item.id)}" aria-label="Apagar ficha" title="Apagar ficha">${ICONE_LIXEIRA}</button>
             <h3>${esc(item.nome_cliente)} <span class="badge-dor ${classeDor(item.nivel_dor)}">Dor ${esc(item.nivel_dor)}/10</span></h3>
@@ -157,12 +172,15 @@
           .order('created_at', { ascending: false });
         if (error) throw error;
 
-        if (!data || data.length === 0) {
+        listaPos = data || [];
+        renderResultados();
+
+        if (listaPos.length === 0) {
           el.innerHTML = '<p class="empty-state">Nenhuma avaliação cadastrada ainda.</p>';
           return;
         }
 
-        el.innerHTML = data.map(item => {
+        el.innerHTML = listaPos.map(item => {
           const n = Math.min(5, Math.max(0, item.nota_estrelas || 0));
           const estrelasStr = '★'.repeat(n) + '☆'.repeat(5 - n);
           return `
@@ -181,6 +199,205 @@
       }
     }
 
+    // =====================================================
+    // RESULTADOS: clientes que já têm ficha PRÉ e avaliação PÓS
+    // (o par é feito pelo nome, ignorando maiúsculas e acentos)
+    // =====================================================
+    function normalizar(s) {
+      return String(s || '')
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase().replace(/\s+/g, ' ').trim();
+    }
+
+    function montarClientes() {
+      // as listas já vêm da mais nova para a mais antiga: a 1ª de cada nome é a mais recente
+      const pres = new Map();
+      listaPre.forEach(p => { const k = normalizar(p.nome_cliente); if (k && !pres.has(k)) pres.set(k, p); });
+      const poss = new Map();
+      listaPos.forEach(p => { const k = normalizar(p.nome_cliente); if (k && !poss.has(k)) poss.set(k, p); });
+
+      const lista = [];
+      pres.forEach((pre, chave) => {
+        if (poss.has(chave)) lista.push({ chave, pre, pos: poss.get(chave) });
+      });
+      return lista;
+    }
+
+    function renderResultados() {
+      const el = document.getElementById('listaResultados');
+      const detalhe = document.getElementById('resultadoDetalhe');
+      const clientes = montarClientes();
+
+      if (clientes.length === 0) {
+        el.innerHTML = '<p class="empty-state">Quando um cliente tiver ficha pré-sessão e avaliação pós-sessão, o nome dele aparece aqui.</p>';
+        detalhe.innerHTML = '';
+        clienteAberto = null;
+        return;
+      }
+
+      if (clienteAberto && !clientes.some(c => c.chave === clienteAberto)) {
+        clienteAberto = null;
+        detalhe.innerHTML = '';
+      }
+
+      el.innerHTML = '<div class="resultados-lista">' + clientes.map(c => `
+        <button type="button" class="resultado-chip ${c.chave === clienteAberto ? 'ativo' : ''}" data-chave="${esc(c.chave)}">${esc(c.pre.nome_cliente)}</button>
+      `).join('') + '</div>';
+    }
+
+    function abrirCliente(chave) {
+      const c = montarClientes().find(x => x.chave === chave);
+      const detalhe = document.getElementById('resultadoDetalhe');
+      if (!c) return;
+
+      // clicar de novo no mesmo nome fecha o resumo
+      if (clienteAberto === chave) {
+        clienteAberto = null;
+        detalhe.innerHTML = '';
+        renderResultados();
+        return;
+      }
+
+      clienteAberto = chave;
+      renderResultados();
+
+      const { pre, pos } = c;
+      const n = Math.min(5, Math.max(0, pos.nota_estrelas || 0));
+      const estrelasStr = '★'.repeat(n) + '☆'.repeat(5 - n);
+      const temTelefone = !!telefoneWhats(pre.telefone);
+
+      detalhe.innerHTML = `
+        <div class="resumo-painel" data-chave="${esc(chave)}">
+          <h3>${esc(pre.nome_cliente)}</h3>
+          <div class="detalhe-item">${pre.telefone ? `<strong>Telefone:</strong> ${esc(pre.telefone)}` : 'Sem telefone informado na ficha'}</div>
+
+          <div class="resumo-bloco">
+            <h4>Como chegou · ${esc(formatarData(pre.created_at))}</h4>
+            <div class="detalhe-item"><strong>Técnica desejada:</strong> ${esc(pre.tecnica_desejada)}</div>
+            <div class="detalhe-item"><strong>Dor / tensão:</strong> <span class="badge-dor ${classeDor(pre.nivel_dor)}">${esc(pre.nivel_dor)}/10</span></div>
+            <div class="detalhe-item"><strong>Sintomas e queixas:</strong> ${esc(pre.sintomas_queixas || 'Não informado')}</div>
+            <div class="detalhe-item"><strong>Restrições médicas:</strong> ${esc(pre.restricoes_medicas || 'Nenhuma')}</div>
+            <div class="detalhe-item"><strong>Estado no dia:</strong> ${esc(pre.respostas_pre || 'Não informado')}</div>
+          </div>
+
+          <div class="resumo-bloco">
+            <h4>Como saiu · ${esc(formatarData(pos.created_at))}</h4>
+            <div class="detalhe-item"><strong>Técnica realizada:</strong> ${esc(pos.tecnica)}</div>
+            <div class="detalhe-item"><strong>Satisfação:</strong> <span class="estrelas-exibicao">${estrelasStr}</span></div>
+            <div class="detalhe-item"><strong>Como se sentiu depois:</strong> ${esc(pos.respostas_pos || 'Não informado')}</div>
+            <div class="detalhe-item"><strong>Comentário:</strong> ${esc(pos.feedback || 'Nenhum comentário')}</div>
+          </div>
+
+          <div class="resumo-acoes">
+            <button type="button" class="btn-acao btn-gerar-msg" ${temTelefone ? '' : 'disabled'}>Enviar resultado ao cliente</button>
+            ${temTelefone ? '' : '<p class="status-ia">Esta ficha não tem um telefone válido para o WhatsApp.</p>'}
+            <p class="status-ia" id="statusIA"></p>
+            <div id="areaMensagem" hidden>
+              <textarea class="msg-whats" id="textoMensagem" aria-label="Mensagem para o cliente"></textarea>
+              <button type="button" class="btn-acao btn-whats btn-abrir-whats" style="width:100%;">Abrir no WhatsApp</button>
+            </div>
+          </div>
+        </div>
+      `;
+      detalhe.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // ---------- WhatsApp ----------
+    // Aceita "(84) 99999-9999", "84999999999", "+55 84 99999-9999"...
+    function telefoneWhats(tel) {
+      let d = String(tel || '').replace(/\D/g, '');
+      if (d.startsWith('00')) d = d.slice(2);
+      if (d.length === 10 || d.length === 11) d = '55' + d;
+      return (d.length === 12 || d.length === 13) ? d : '';
+    }
+
+    // Texto padrão, usado se a IA estiver indisponível
+    function mensagemPadrao(c) {
+      const primeiro = String(c.pre.nome_cliente).trim().split(' ')[0];
+      const dor = Number(c.pre.nivel_dor);
+      const queixa = c.pre.sintomas_queixas ? `, relatando ${c.pre.sintomas_queixas}` : '';
+      const saida = c.pos.respostas_pos ? `Ao final, você contou que estava: ${c.pos.respostas_pos}.` : 'Foi muito bom cuidar de você.';
+      return `Olá, ${primeiro}! 🌿\n\n` +
+        `Hoje você chegou para a sessão de ${c.pos.tecnica || c.pre.tecnica_desejada} com nível de dor/tensão ${dor}/10${queixa}. ` +
+        `${saida}\n\n` +
+        `Espero que tenha ficado se sentindo melhor e que venha mais vezes. Lembre-se sempre de cuidar de você! 💚\n\n` +
+        `Natallyane Costa · Massoterapeuta`;
+    }
+
+    async function gerarMensagem(c, btn) {
+      const status = document.getElementById('statusIA');
+      const area = document.getElementById('areaMensagem');
+      const caixa = document.getElementById('textoMensagem');
+
+      btn.disabled = true;
+      status.textContent = 'Gerando a mensagem com IA...';
+      area.hidden = true;
+
+      let texto = '';
+      let usouIA = true;
+
+      try {
+        const { data: sessao } = await window.db.auth.getSession();
+        const token = sessao && sessao.session ? sessao.session.access_token : '';
+
+        const resp = await fetch('/api/mensagem', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({
+            nome: c.pre.nome_cliente,
+            tecnicaDesejada: c.pre.tecnica_desejada,
+            nivelDor: c.pre.nivel_dor,
+            sintomas: c.pre.sintomas_queixas,
+            estadoAtual: c.pre.respostas_pre,
+            tecnicaRealizada: c.pos.tecnica,
+            nota: c.pos.nota_estrelas,
+            comoSaiu: c.pos.respostas_pos,
+            feedback: c.pos.feedback
+          })
+        });
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const json = await resp.json();
+        texto = (json.mensagem || '').trim();
+        if (!texto) throw new Error('vazio');
+      } catch (err) {
+        console.error('IA indisponível, usando texto padrão:', err);
+        usouIA = false;
+        texto = mensagemPadrao(c);
+      }
+
+      caixa.value = texto;
+      area.hidden = false;
+      btn.disabled = false;
+      btn.textContent = 'Gerar outra mensagem';
+      status.textContent = usouIA
+        ? 'Mensagem pronta. Leia, edite se quiser e abra no WhatsApp.'
+        : 'A IA não respondeu agora, então usei um texto padrão. Você pode editar antes de enviar.';
+    }
+
+    function abrirWhats(c) {
+      const numero = telefoneWhats(c.pre.telefone);
+      const texto = document.getElementById('textoMensagem').value.trim();
+      if (!numero || !texto) return;
+      window.open('https://wa.me/' + numero + '?text=' + encodeURIComponent(texto), '_blank', 'noopener');
+    }
+
+    // Cliques nos nomes e nos botões do resumo (conteúdo criado dinamicamente)
+    document.addEventListener('click', (e) => {
+      const chip = e.target.closest('.resultado-chip');
+      if (chip) { abrirCliente(chip.dataset.chave); return; }
+
+      const painel = e.target.closest('.resumo-painel');
+      if (!painel) return;
+      const c = montarClientes().find(x => x.chave === painel.dataset.chave);
+      if (!c) return;
+
+      const gerar = e.target.closest('.btn-gerar-msg');
+      if (gerar) { gerarMensagem(c, gerar); return; }
+
+      if (e.target.closest('.btn-abrir-whats')) abrirWhats(c);
+    });
+
+    // ---------- Tempo real ----------
     function iniciarTempoReal() {
       pararTempoReal();
       canalTempoReal = window.db
@@ -204,7 +421,6 @@
     const btnNao = document.getElementById('btnApagarNao');
     let alvoApagar = null;
 
-    // Clique em qualquer lixeira (os cartões são criados dinamicamente)
     document.addEventListener('click', (e) => {
       const btn = e.target.closest('.btn-lixeira');
       if (!btn) return;

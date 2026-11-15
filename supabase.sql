@@ -32,14 +32,14 @@ alter table acessos         enable row level security;
 alter table pre_atendimento enable row level security;
 alter table avaliacoes      enable row level security;
 
--- Visitantes (anon) só podem INSERIR
+-- Visitantes (anon) e a profissional logada (authenticated) podem INSERIR
 drop policy if exists "anon insere" on acessos;
 drop policy if exists "anon insere" on pre_atendimento;
 drop policy if exists "anon insere" on avaliacoes;
 
-create policy "anon insere" on acessos         for insert to anon with check (true);
-create policy "anon insere" on pre_atendimento for insert to anon with check (consentimento_lgpd = true);
-create policy "anon insere" on avaliacoes      for insert to anon with check (true);
+create policy "anon insere" on acessos         for insert to anon, authenticated with check (true);
+create policy "anon insere" on pre_atendimento for insert to anon, authenticated with check (consentimento_lgpd = true);
+create policy "anon insere" on avaliacoes      for insert to anon, authenticated with check (true);
 
 -- Profissional logada (authenticated) pode LER
 drop policy if exists "admin le" on acessos;
