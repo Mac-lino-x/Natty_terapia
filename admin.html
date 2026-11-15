@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#c5d1b8">
   <title>Painel Administrativo - Gestão e Avaliações</title>
   <link rel="stylesheet" href="admin-pre-pos.css">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
@@ -14,7 +15,9 @@
 
   <!-- LOGIN -->
   <div class="container-card login-box" id="telaLogin">
+    <img class="login-logo" src="imagem/imagem1.png" alt="">
     <h1>Painel da Profissional</h1>
+    <p class="login-sub">Acesso restrito</p>
     <form id="formLogin">
       <div class="form-group">
         <label for="loginEmail">E-mail:</label>
@@ -32,7 +35,13 @@
   <!-- PAINEL (só aparece após login) -->
   <div class="container-card admin-container" id="telaPainel" hidden>
     <div class="admin-topo">
-      <h1>Painel da Profissional</h1>
+      <div class="admin-marca">
+        <img class="admin-logo" src="imagem/imagem1.png" alt="">
+        <div>
+          <h1>Painel da Profissional</h1>
+          <p class="admin-sub">Natallyane Costa · Massoterapeuta</p>
+        </div>
+      </div>
       <button type="button" class="btn-acao btn-sair" id="btnSair">Sair</button>
     </div>
 
@@ -55,6 +64,11 @@
     const loginErro = document.getElementById('loginErro');
     const esc = window.escapeHtml;
     let canalTempoReal = null;
+
+    function classeDor(n) {
+      n = Number(n) || 0;
+      return n <= 3 ? 'dor-baixa' : (n <= 6 ? 'dor-media' : 'dor-alta');
+    }
 
     function formatarData(iso) {
       return new Date(iso).toLocaleDateString('pt-BR', {
@@ -105,7 +119,7 @@
 
         el.innerHTML = data.map(item => `
           <div class="avaliacao-card">
-            <h3>${esc(item.nome_cliente)} (Dor: ${esc(item.nivel_dor)}/10)</h3>
+            <h3>${esc(item.nome_cliente)} <span class="badge-dor ${classeDor(item.nivel_dor)}">Dor ${esc(item.nivel_dor)}/10</span></h3>
             <div class="detalhe-item"><strong>Técnica:</strong> ${esc(item.tecnica_desejada)} | <strong>Data:</strong> ${esc(formatarData(item.created_at))}</div>
             ${item.telefone ? `<div class="detalhe-item"><strong>Telefone:</strong> ${esc(item.telefone)}</div>` : ''}
             <div class="detalhe-item"><strong>Sintomas:</strong> ${esc(item.sintomas_queixas || 'Não informado')}</div>
