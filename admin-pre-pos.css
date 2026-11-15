@@ -871,3 +871,53 @@ h2::before {
   background: linear-gradient(135deg, #1f8a50, #187240);
   box-shadow: 0 10px 22px rgba(31, 138, 80, 0.45);
 }
+
+/* =====================================================
+   PAINEL POR CLIENTE
+   ===================================================== */
+.resultado-chip small {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-left: 8px;
+  opacity: 0.75;
+}
+
+.cliente-painel {
+  animation: surgir 0.3s ease;
+  margin-top: 4px;
+}
+
+.cliente-nome {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem;
+  color: var(--marrom);
+  margin: 6px 0 0;
+}
+
+.resumo-texto {
+  white-space: pre-line;
+  font-size: 0.93rem;
+  line-height: 1.65;
+  color: var(--texto);
+}
+
+.resumo-painel .resumo-bloco:first-child { margin-top: 0; }
+
+.nota-pequena {
+  font-size: 0.78rem;
+  color: var(--texto-suave);
+  font-style: italic;
+  margin-top: 8px;
+}
+
+.acoes-linha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.acoes-linha .btn-acao { flex: 1 1 200px; margin-top: 0; }
