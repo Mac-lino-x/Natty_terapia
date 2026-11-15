@@ -32,6 +32,7 @@ alter table acessos         enable row level security;
 alter table pre_atendimento enable row level security;
 alter table avaliacoes      enable row level security;
 
+-- Visitantes (anon) só podem INSERIR
 drop policy if exists "anon insere" on acessos;
 drop policy if exists "anon insere" on pre_atendimento;
 drop policy if exists "anon insere" on avaliacoes;
@@ -40,6 +41,7 @@ create policy "anon insere" on acessos         for insert to anon with check (tr
 create policy "anon insere" on pre_atendimento for insert to anon with check (consentimento_lgpd = true);
 create policy "anon insere" on avaliacoes      for insert to anon with check (true);
 
+-- Profissional logada (authenticated) pode LER
 drop policy if exists "admin le" on acessos;
 drop policy if exists "admin le" on pre_atendimento;
 drop policy if exists "admin le" on avaliacoes;
@@ -48,5 +50,13 @@ create policy "admin le" on acessos         for select to authenticated using (t
 create policy "admin le" on pre_atendimento for select to authenticated using (true);
 create policy "admin le" on avaliacoes      for select to authenticated using (true);
 
+-- Profissional logada (authenticated) pode APAGAR fichas e avaliações
+drop policy if exists "admin apaga" on pre_atendimento;
+drop policy if exists "admin apaga" on avaliacoes;
+
+create policy "admin apaga" on pre_atendimento for delete to authenticated using (true);
+create policy "admin apaga" on avaliacoes      for delete to authenticated using (true);
+
+-- Tempo real (se já estiver adicionada, o Supabase avisa; pode ignorar o aviso)
 alter publication supabase_realtime add table pre_atendimento;
 alter publication supabase_realtime add table avaliacoes;

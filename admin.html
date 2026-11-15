@@ -58,12 +58,26 @@
     </div>
   </div>
 
+  <!-- JANELA DE CONFIRMAÇÃO PARA APAGAR -->
+  <div class="modal-fundo" id="modalApagar" hidden>
+    <div class="modal-caixa" role="alertdialog" aria-modal="true" aria-labelledby="modalTexto">
+      <p id="modalTexto">Tem certeza que deseja apagar?</p>
+      <div class="modal-botoes">
+        <button type="button" class="btn-acao btn-sim" id="btnApagarSim">Sim</button>
+        <button type="button" class="btn-acao" id="btnApagarNao">Não</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const telaLogin = document.getElementById('telaLogin');
     const telaPainel = document.getElementById('telaPainel');
     const loginErro = document.getElementById('loginErro');
     const esc = window.escapeHtml;
     let canalTempoReal = null;
+
+    // Ícone da lixeira (SVG)
+    const ICONE_LIXEIRA = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6"/></svg>';
 
     function classeDor(n) {
       n = Number(n) || 0;
@@ -119,6 +133,7 @@
 
         el.innerHTML = data.map(item => `
           <div class="avaliacao-card">
+            <button type="button" class="btn-lixeira" data-tabela="pre_atendimento" data-id="${esc(item.id)}" aria-label="Apagar ficha" title="Apagar ficha">${ICONE_LIXEIRA}</button>
             <h3>${esc(item.nome_cliente)} <span class="badge-dor ${classeDor(item.nivel_dor)}">Dor ${esc(item.nivel_dor)}/10</span></h3>
             <div class="detalhe-item"><strong>Técnica:</strong> ${esc(item.tecnica_desejada)} | <strong>Data:</strong> ${esc(formatarData(item.created_at))}</div>
             ${item.telefone ? `<div class="detalhe-item"><strong>Telefone:</strong> ${esc(item.telefone)}</div>` : ''}
@@ -152,6 +167,7 @@
           const estrelasStr = '★'.repeat(n) + '☆'.repeat(5 - n);
           return `
             <div class="avaliacao-card">
+              <button type="button" class="btn-lixeira" data-tabela="avaliacoes" data-id="${esc(item.id)}" aria-label="Apagar avaliação" title="Apagar avaliação">${ICONE_LIXEIRA}</button>
               <h3>${esc(item.nome_cliente)} <span class="estrelas-exibicao" aria-label="${n} de 5 estrelas">(${estrelasStr})</span></h3>
               <div class="detalhe-item"><strong>Técnica:</strong> ${esc(item.tecnica)} | <strong>Data:</strong> ${esc(formatarData(item.created_at))}</div>
               <div class="detalhe-item"><strong>Após a sessão:</strong> ${esc(item.respostas_pos || 'Não informado')}</div>
@@ -180,6 +196,64 @@
         canalTempoReal = null;
       }
     }
+
+    // ---------- Apagar com confirmação (Sim / Não) ----------
+    const modalApagar = document.getElementById('modalApagar');
+    const modalTexto = document.getElementById('modalTexto');
+    const btnSim = document.getElementById('btnApagarSim');
+    const btnNao = document.getElementById('btnApagarNao');
+    let alvoApagar = null;
+
+    // Clique em qualquer lixeira (os cartões são criados dinamicamente)
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('.btn-lixeira');
+      if (!btn) return;
+      alvoApagar = { tabela: btn.dataset.tabela, id: btn.dataset.id };
+      modalTexto.textContent = alvoApagar.tabela === 'avaliacoes'
+        ? 'Tem certeza que deseja apagar esta avaliação?'
+        : 'Tem certeza que deseja apagar esta ficha?';
+      modalApagar.hidden = false;
+      btnNao.focus();
+    });
+
+    function fecharModal() {
+      modalApagar.hidden = true;
+      alvoApagar = null;
+    }
+
+    btnNao.addEventListener('click', fecharModal);
+    modalApagar.addEventListener('click', (e) => {
+      if (e.target === modalApagar) fecharModal();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !modalApagar.hidden) fecharModal();
+    });
+
+    btnSim.addEventListener('click', async () => {
+      if (!alvoApagar) return;
+      const { tabela, id } = alvoApagar;
+
+      btnSim.disabled = true;
+      btnNao.disabled = true;
+      btnSim.textContent = 'Apagando...';
+
+      // .select() devolve as linhas apagadas: se vier vazio, o banco recusou (política RLS)
+      const { data, error } = await window.db.from(tabela).delete().eq('id', id).select();
+
+      btnSim.disabled = false;
+      btnNao.disabled = false;
+      btnSim.textContent = 'Sim';
+      fecharModal();
+
+      if (error || !data || data.length === 0) {
+        console.error(error);
+        alert('Não foi possível apagar. Confirme que a política de exclusão foi criada no Supabase (supabase.sql).');
+        return;
+      }
+
+      if (tabela === 'avaliacoes') carregarAvaliacoes();
+      else carregarPreAtendimento();
+    });
 
     // ---------- Login / Logout ----------
     document.getElementById('formLogin').addEventListener('submit', async (e) => {
