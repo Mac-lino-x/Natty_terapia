@@ -1,15 +1,25 @@
 {
   "name": "Natty Terapia",
   "short_name": "NattyTerapia",
-  "start_url": "https://nattyterapia.vercel.app",
+  "description": "Natallyane Costa — Massoterapeuta. Agende sua sessão.",
+  "lang": "pt-BR",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#2e7d32",
+  "background_color": "#0c0c0c",
+  "theme_color": "#d4af37",
   "icons": [
     {
-      "src": "imagem/Ventosaterapia.jpg",
+      "src": "imagem/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "imagem/icon-512.png",
       "sizes": "512x512",
-      "type": "image/jpeg"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }

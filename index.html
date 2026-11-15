@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#d4af37">
+  <meta name="description" content="Natallyane Costa — Massoterapeuta. Ventosaterapia, massagem relaxante, terapêutica, liberação miofascial e drenagem linfática. Agende sua sessão.">
   <title>Natallyane Costa — Massoterapeuta</title>
-  
+
   <link rel="manifest" href="manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,7 +17,7 @@
 <body>
 
   <!-- VÍDEO DE FUNDO -->
-  <video class="bg-video" id="bgVideo" autoplay loop muted playsinline>
+  <video class="bg-video" id="bgVideo" autoplay loop muted playsinline aria-hidden="true">
     <source src="video/video1.mp4" type="video/mp4">
     <source src="video/video1.webm" type="video/webm">
   </video>
@@ -24,10 +26,10 @@
   <div class="dark-overlay" id="darkOverlay"></div>
 
   <!-- CANVAS DA FUMAÇA -->
-  <canvas id="smokeCanvas"></canvas>
+  <canvas id="smokeCanvas" aria-hidden="true"></canvas>
 
   <main class="main-canvas">
-    
+
     <!-- DIVISOR SUPERIOR -->
     <div class="stars-divider">
       <span class="line"></span>
@@ -35,9 +37,9 @@
       <span class="line"></span>
     </div>
 
-<!-- TELA 1: HERO (INICIAL) -->
+    <!-- TELA 1: HERO (INICIAL) -->
     <div class="screen-hero" id="screenHero">
-      
+
       <!-- BOTÃO SOBRE MIM NO CANTO ESQUERDO -->
       <button id="btnSobreMim" class="btn-sobre-mim" type="button">
         <span id="btnSobreMimText">Sobre Mim</span>
@@ -61,7 +63,7 @@
         </button>
 
         <div class="right-switch-block" id="switchBtn">
-          <svg class="switch-svg-clean" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+          <svg class="switch-svg-clean" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <g class="stars-group">
               <path d="M 150 30 Q 150 45 165 45 Q 150 45 150 60 Q 150 45 135 45 Q 150 45 150 30 Z" fill="#d4af37" />
               <path d="M 175 20 Q 175 27 182 27 Q 175 27 175 34 Q 175 27 168 27 Q 175 27 175 20 Z" fill="#d4af37" />
@@ -79,10 +81,10 @@
       </div>
     </div>
 
-    
+
     <!-- TELA 2: QUESTIONÁRIO -->
     <div class="quiz-container hidden" id="quizContainer">
-      
+
       <!-- Passo 1: Técnica -->
       <div class="quiz-step active" id="step1">
         <div class="step-header">
@@ -91,48 +93,48 @@
           </button>
           <h2 class="quiz-title">Qual técnica você gostaria de agendar?</h2>
         </div>
-        
+
         <div class="quiz-interactive-layout">
           <div class="options-grid">
             <div class="option-wrapper">
               <button type="button" class="opt-btn" data-category="tecnica" data-value="Ventosaterapia">Ventosaterapia</button>
-              <button type="button" class="info-btn active" data-info="ventosaterapia" title="Saiba mais">?</button>
+              <button type="button" class="info-btn active" data-info="ventosaterapia" title="Saiba mais" aria-label="Saiba mais sobre Ventosaterapia">?</button>
             </div>
 
             <div class="option-wrapper">
               <button type="button" class="opt-btn" data-category="tecnica" data-value="Massagem Relaxante">Massagem Relaxante</button>
-              <button type="button" class="info-btn" data-info="relaxante" title="Saiba mais">?</button>
+              <button type="button" class="info-btn" data-info="relaxante" title="Saiba mais" aria-label="Saiba mais sobre Massagem Relaxante">?</button>
             </div>
 
             <div class="option-wrapper">
-              <button type="button" class="opt-btn" data-category="tecnica" data-value="Massagem Terapêutica">Massagem Terapêutica</button>
-              <button type="button" class="info-btn" data-info="terapeutica" title="Saiba mais">?</button>
+              <button type="button" class="opt-btn" data-category="tecnica" data-value="Massagem Modeladora">Massagem Modeladora</button>
+              <button type="button" class="info-btn" data-info="modeladora" title="Saiba mais" aria-label="Saiba mais sobre Massagem Modeladora">?</button>
             </div>
 
             <div class="option-wrapper">
               <button type="button" class="opt-btn" data-category="tecnica" data-value="Liberação Miofascial">Liberação Miofascial</button>
-              <button type="button" class="info-btn" data-info="liberacao" title="Saiba mais">?</button>
+              <button type="button" class="info-btn" data-info="liberacao" title="Saiba mais" aria-label="Saiba mais sobre Liberação Miofascial">?</button>
             </div>
 
             <div class="option-wrapper">
               <button type="button" class="opt-btn" data-category="tecnica" data-value="Drenagem Linfática">Drenagem Linfática</button>
-              <button type="button" class="info-btn" data-info="drenagem" title="Saiba mais">?</button>
+              <button type="button" class="info-btn" data-info="drenagem" title="Saiba mais" aria-label="Saiba mais sobre Drenagem Linfática">?</button>
             </div>
 
             <div class="option-wrapper">
-              <button type="button" class="opt-btn" data-category="tecnica" data-value="Avaliação Terapêutica">Preciso de Indicação</button>
-              <button type="button" class="info-btn" data-info="indicacao" title="Saiba mais">?</button>
+              <button type="button" class="opt-btn" data-category="tecnica" data-value="Preciso de Indicação">Preciso de Indicação</button>
+              <button type="button" class="info-btn" data-info="indicacao" title="Saiba mais" aria-label="Saiba mais sobre a avaliação terapêutica">?</button>
             </div>
           </div>
 
-          <div class="info-inline-panel visible" id="infoInlinePanel">
+          <div class="info-inline-panel visible" id="infoInlinePanel" aria-live="polite">
             <div class="tech-img-container has-img" id="techImgWrapper">
-              <img src="imagem/Ventosaterapia.jpg" alt="Técnica" class="tech-img" id="techImg">
+              <img src="imagem/Ventosaterapia.jpg" alt="Ventosaterapia" class="tech-img" id="techImg">
             </div>
-            
+
             <h3 class="info-inline-title" id="infoTitle">Ventosaterapia</h3>
             <p class="info-inline-text" id="infoText">
-              <strong>Procedimento:</strong> Aplicação de ventosas para liberação miofascial, melhora da circulação e alívio de tensões profundas.
+              <strong>Procedimento:</strong> Aplicação de ventosas para liberação miofascial, melhora da circulação e alívio de tensões profundas.<br><br><strong>Objetivo:</strong> Aliviar dores e tensões musculares profundas, soltar a fáscia (a camada que envolve os músculos) e estimular a circulação local. Ajuda a reduzir a sensação de peso, a rigidez e o desconforto em regiões como costas, ombros e lombar, e favorece a recuperação muscular.
             </p>
           </div>
         </div>
@@ -174,23 +176,23 @@
     <section class="sobre-mim-section" id="sobreMimSection">
       <div class="sobre-mim-container">
         <div class="sobre-mim-img-wrapper">
-          <img src="imagem/eu.png" alt="Natallyane Costa" class="sobre-mim-img">
+          <img src="imagem/eu.png" alt="Natallyane Costa" class="sobre-mim-img" loading="lazy">
         </div>
-        
+
         <div class="sobre-mim-content">
           <h2 class="sobre-mim-title">Sobre Mim</h2>
-          <p class="sobre-mim-intro">Seja muito bem-vindo(a) ao meu espaço de cuidado!</p>
+          <p class="sobre-mim-intro" style="color:#4caf50;">Seja muito bem-vindo(a) ao meu espaço de cuidado!</p>
           <p>
-            Sou estudante do 7º período de Fisioterapia e apaixonada pela área da saúde e pelo estudo do corpo humano. Como Massoterapeuta, meu compromisso é proporcionar a você um momento de pausa, alívio de dores e renovação do seu bem-estar físico e mental.
+            Sou estudante de Fisioterapia e apaixonada pela área da saúde e pelo estudo do corpo humano. Como Massoterapeuta, meu compromisso é proporcionar a você um momento de pausa, alívio de dores e renovação do seu bem-estar físico e mental.
           </p>
 
           <h3 class="sobre-mim-subtitle">Como funcionam as sessões?</h3>
           <ul class="sobre-mim-list">
-            <li><strong>Ventosaterapia:</strong> Aplicação de ventosas para liberação miofascial, melhora da circulação e alívio de tensões profundas[cite: 1].</li>
-            <li><strong>Massagem Relaxante:</strong> Movimentos suaves e firmes para redução do estresse, ansiedade e relaxamento muscular completo[cite: 1].</li>
-            <li><strong>Massagem Terapêutica:</strong> É indicada para estresse, tensão muscular, dores relacionadas à sobrecarga e rigidez corporal.</li>
+            <li><strong>Ventosaterapia:</strong> Aplicação de ventosas para liberação miofascial, melhora da circulação e alívio de tensões profundas.</li>
+            <li><strong>Massagem Relaxante:</strong> Movimentos suaves e firmes para redução do estresse, ansiedade e relaxamento muscular completo.</li>
+            <li><strong>Massagem Modeladora:</strong> Técnica manual que utiliza movimentos firmes, profundos e repetitivos para remodelar o contorno corporal.</li>
             <li><strong>Liberação Miofascial:</strong> É indicada principalmente para tensão muscular, rigidez, sobrecarga e restrição de movimento.</li>
-            <li><strong>Drenagem Linfática:</strong> Técnica manual que estimula o sistema linfático, reduzindo a retenção de líquidos e o inchaço[cite: 1].</li>
+            <li><strong>Drenagem Linfática:</strong> Técnica manual que estimula o sistema linfático, reduzindo a retenção de líquidos e o inchaço.</li>
           </ul>
         </div>
       </div>
@@ -206,13 +208,14 @@
   </main>
 
   <!-- ÁUDIO DE FUNDO -->
-  <audio id="bgAudio" loop preload="auto">
+  <audio id="bgAudio" loop preload="none">
     <source src="audio/audio1.mpeg" type="audio/mpeg">
     <source src="audio/audio1.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- SDK do Supabase -->
+  <!-- Supabase + configuração + lógica -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
   <script src="main.js"></script>
 </body>
 </html>

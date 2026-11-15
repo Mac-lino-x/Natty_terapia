@@ -3,190 +3,173 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Avaliação e Pós-Sessão - Natallyane Costa</title>
+  <title>Avaliação Pré-Sessão - Natallyane Costa</title>
   <link rel="stylesheet" href="admin-pre-pos.css">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    .form-group { margin-bottom: 12px; }
-    .form-group label { display: block; margin-bottom: 4px; font-weight: 600; color: #f8f4d6; font-size: 0.9rem; }
-    .form-group input, .form-group textarea {
-      width: 100%; padding: 8px; border-radius: 8px;
-      border: 1px solid rgba(212, 175, 55, 0.5);
-      background: rgba(255, 255, 255, 0.05); color: #fff;
-      box-sizing: border-box; font-size: 0.9rem;
-      box-shadow: inset 0 0 8px rgba(0,0,0,0.3);
-    }
-    .form-group input:focus, .form-group textarea:focus {
-      border-color: #ffd700;
-      box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
-      outline: none;
-    }
-
-    /* SISTEMA DE ESTRELAS COM HOVER E CLIQUE DINÂMICO */
-    .estrelas-container {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      cursor: pointer;
-      margin: 15px 0;
-    }
-
-    .estrela-svg {
-      width: 40px;
-      height: 40px;
-      fill: #424242; /* Começa cinza apagada */
-      transition: transform 0.2s ease, fill 0.2s ease, filter 0.2s ease;
-    }
-
-    .estrela-svg:hover {
-      transform: scale(1.15);
-    }
-
-    /* ESTRELA ATIVA OU EM HOVER: Amarela com o brilho radiante idêntico ao botão */
-    .estrela-svg.ativa,
-    .estrela-svg.hover {
-      fill: #ffd700 !important;
-      filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8)) drop-shadow(0 0 20px rgba(255, 215, 0, 0.5));
-      transform: scale(1.1);
-    }
-  </style>
+  <script src="config.js"></script>
 </head>
 <body>
-  <!-- Elemento de áudio oficial -->
-  <audio id="meuAudio" src="audio/pib2.mp3" preload="auto"></audio>
+  <audio id="somBip" src="audio/bip2.mp3" preload="auto"></audio>
 
   <div class="container-card container-card-flex">
     <div class="video-coluna">
-      <video src="video/931656b0428e4cd5b1adeb1b7470cb7d.webm" autoplay loop muted playsinline></video>
+      <!-- Renomeie o arquivo para video/pre.webm (sem espaços nem parênteses) -->
+      <video src="video/pre.webm" autoplay loop muted playsinline aria-hidden="true"></video>
     </div>
 
     <div class="form-coluna">
-      <h1>Avaliação Pós-Sessão</h1>
-      
-      <form id="formAvaliacao">
-        <div class="form-group">
-          <label>Seu Nome:</label>
-          <input type="text" id="nomeCliente" required placeholder="Digite seu nome">
+      <h1>Avaliação Pré-Sessão</h1>
+
+      <form id="formPre" novalidate>
+        <!-- Campo armadilha anti-spam -->
+        <div class="hp-field" aria-hidden="true">
+          <label for="website">Não preencha</label>
+          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
         </div>
 
         <div class="form-group">
-          <label>Técnica realizada:</label>
-          <input type="text" id="tecnicaRealizada" required placeholder="Ex: Relaxante">
+          <label for="nomeCliente">Seu Nome:</label>
+          <input type="text" id="nomeCliente" required maxlength="120" autocomplete="name" placeholder="Digite seu nome completo">
         </div>
 
-        <div class="form-group" style="text-align: center;">
-          <label>Nível de Satisfação:</label>
-          <!-- Container inteiro com eventos para rastrear o mouse em cima das estrelas -->
-          <div class="estrelas-container" id="starContainer">
-            <svg class="estrela-svg" data-valor="1" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg class="estrela-svg" data-valor="2" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg class="estrela-svg" data-valor="3" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg class="estrela-svg" data-valor="4" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg class="estrela-svg" data-valor="5" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <div class="form-group">
+          <label for="telefoneCliente">Telefone / WhatsApp:</label>
+          <input type="tel" id="telefoneCliente" maxlength="16" inputmode="tel" autocomplete="tel" placeholder="(00) 00000-0000">
+        </div>
+
+        <div class="form-group">
+          <label for="tecnicaPre">Qual técnica será realizada?</label>
+          <input type="text" id="tecnicaPre" required maxlength="80" placeholder="Ex: Massagem Relaxante">
+        </div>
+
+        <div class="form-group">
+          <label for="nivelDor">Nível de dor / tensão atual:</label>
+          <div class="dor-wrapper">
+            <input type="range" id="nivelDor" min="0" max="10" value="0" aria-valuemin="0" aria-valuemax="10" aria-describedby="dorValor">
+            <span class="dor-valor" id="dorValor" aria-live="polite">0</span>
           </div>
-          <input type="hidden" id="notaSelecionada" value="0">
         </div>
 
         <div class="form-group">
-          <label>Como está se sentindo após?</label>
-          <textarea id="respPos" rows="2" placeholder="Ex: Muito mais leve..."></textarea>
+          <label for="sintomasPre">Sintomas ou queixas:</label>
+          <textarea id="sintomasPre" rows="2" maxlength="1000" placeholder="Ex: Dor lombar, ombros tensos..."></textarea>
         </div>
 
         <div class="form-group">
-          <label>Feedback adicional:</label>
-          <textarea id="feedbackCliente" rows="2" placeholder="Seu comentário..."></textarea>
+          <label for="restricoesPre">Restrições médicas (se houver):</label>
+          <textarea id="restricoesPre" rows="2" maxlength="1000" placeholder="Ex: Gestante, hipertensão, nenhuma..."></textarea>
         </div>
 
-        <button type="submit" class="btn-acao" style="width: 100%; margin-top: 5px;">Enviar Avaliação</button>
+        <div class="form-group">
+          <label for="respPre">Como você está se sentindo hoje?</label>
+          <textarea id="respPre" rows="2" required maxlength="1000" placeholder="Descreva seu estado físico e emocional atual..."></textarea>
+        </div>
+
+        <div class="check-group">
+          <input type="checkbox" id="consentimento" required>
+          <label for="consentimento">
+            Autorizo o uso destes dados, inclusive informações de saúde, apenas para o planejamento e a realização do meu atendimento (LGPD). Posso solicitar a exclusão a qualquer momento.
+          </label>
+        </div>
+
+        <p class="msg-erro" id="msgErro" role="alert"></p>
+
+        <button type="submit" class="btn-acao" id="btnEnviarPre" style="width: 100%; margin-top: 6px;">Enviar Pré-Sessão</button>
       </form>
     </div>
   </div>
 
   <script>
-    const SUPABASE_URL = 'SUA_URL_AQUI'; 
-    const SUPABASE_KEY = 'SUA_ANON_KEY_AQUI';
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const somBip = document.getElementById('somBip');
+    const sliderDor = document.getElementById('nivelDor');
+    const dorValor = document.getElementById('dorValor');
+    const btnEnviar = document.getElementById('btnEnviarPre');
+    const msgErro = document.getElementById('msgErro');
+    const inputTel = document.getElementById('telefoneCliente');
 
-    const estrelas = document.querySelectorAll('.estrela-svg');
-    const container = document.getElementById('starContainer');
-    const inputNota = document.getElementById('notaSelecionada');
-    const audioElement = document.getElementById('meuAudio');
+    sliderDor.addEventListener('input', () => {
+      dorValor.textContent = sliderDor.value;
+    });
 
-    // Função para tocar o som pib2.mp3 de forma segura
-    function tocarSom() {
-      try {
-        audioElement.currentTime = 0;
-        audioElement.play().catch(err => {
-          console.log("Aguardando interação para tocar o áudio:", err);
-        });
-      } catch (e) {
-        console.log("Erro no audio:", e);
+    // Máscara simples (00) 00000-0000
+    inputTel.addEventListener('input', () => {
+      let n = inputTel.value.replace(/\D/g, '').slice(0, 11);
+      if (n.length > 6) {
+        n = n.length > 10
+          ? `(${n.slice(0, 2)}) ${n.slice(2, 7)}-${n.slice(7)}`
+          : `(${n.slice(0, 2)}) ${n.slice(2, 6)}-${n.slice(6)}`;
+      } else if (n.length > 2) {
+        n = `(${n.slice(0, 2)}) ${n.slice(2)}`;
       }
+      inputTel.value = n;
+    });
+
+    function mostrarErro(texto) {
+      msgErro.textContent = texto;
     }
 
-    // Efeito ao passar o mouse por cima (arrastar o mouse pelas estrelas)
-    estrelas.forEach(estrela => {
-      estrela.addEventListener('mouseenter', () => {
-        const valorHover = parseInt(estrela.getAttribute('data-valor'));
-        estrelas.forEach(item => {
-          const valItem = parseInt(item.getAttribute('data-valor'));
-          if (valItem <= valorHover) {
-            item.classList.add('hover');
-          } else {
-            item.classList.remove('hover');
-          }
-        });
-      });
-    });
-
-    // Quando o mouse sai do container das estrelas, limpa o hover e restaura a seleção fixa
-    container.addEventListener('mouseleave', () => {
-      estrelas.forEach(item => item.classList.remove('hover'));
-    });
-
-    // Clique na estrela fixa a nota, acende permanentemente e toca o som
-    estrelas.forEach(estrela => {
-      estrela.addEventListener('click', () => {
-        const valorClicado = parseInt(estrela.getAttribute('data-valor'));
-        inputNota.value = valorClicado;
-
-        estrelas.forEach(item => {
-          const valItem = parseInt(item.getAttribute('data-valor'));
-          if (valItem <= valorClicado) {
-            item.classList.add('ativa');
-          } else {
-            item.classList.remove('ativa');
-          }
-        });
-
-        tocarSom();
-      });
-    });
-
-    // Envio do formulário para o Supabase
-    document.getElementById('formAvaliacao').addEventListener('submit', async (e) => {
+    document.getElementById('formPre').addEventListener('submit', async (e) => {
       e.preventDefault();
+      mostrarErro('');
 
-      if (parseInt(inputNota.value) === 0) {
-        alert('Por favor, selecione ao menos uma estrela antes de enviar.');
+      // Anti-spam: robôs costumam preencher o campo escondido
+      if (document.getElementById('website').value) {
+        window.location.href = 'index.html';
         return;
       }
 
+      const nome = document.getElementById('nomeCliente').value.trim();
+      const tecnica = document.getElementById('tecnicaPre').value.trim();
+      const estado = document.getElementById('respPre').value.trim();
+      const telefone = inputTel.value.trim();
+      const digitos = telefone.replace(/\D/g, '');
+
+      if (!nome || !tecnica || !estado) {
+        mostrarErro('Preencha nome, técnica e como você está se sentindo.');
+        return;
+      }
+      if (telefone && (digitos.length < 10 || digitos.length > 11)) {
+        mostrarErro('Telefone inválido. Use DDD + número.');
+        return;
+      }
+      if (!document.getElementById('consentimento').checked) {
+        mostrarErro('É necessário autorizar o uso dos dados para enviar a ficha.');
+        return;
+      }
+      if (!window.db) {
+        mostrarErro('Sistema indisponível no momento. Tente novamente mais tarde.');
+        return;
+      }
+
+      btnEnviar.disabled = true;
+      btnEnviar.textContent = 'Enviando...';
+
+      try {
+        somBip.currentTime = 0;
+        somBip.play().catch(() => {});
+      } catch (err) {}
+
       const dados = {
-        nome_cliente: document.getElementById('nomeCliente').value,
-        tecnica: document.getElementById('tecnicaRealizada').value,
-        nota_estrelas: parseInt(inputNota.value),
-        respostas_pos: document.getElementById('respPos').value,
-        feedback: document.getElementById('feedbackCliente').value
+        nome_cliente: nome,
+        telefone: telefone || null,
+        tecnica_desejada: tecnica,
+        nivel_dor: parseInt(sliderDor.value, 10),
+        sintomas_queixas: document.getElementById('sintomasPre').value.trim(),
+        restricoes_medicas: document.getElementById('restricoesPre').value.trim(),
+        respostas_pre: estado,
+        consentimento_lgpd: true
       };
 
-      const { error } = await supabaseClient.from('avaliacoes').insert([dados]);
+      const { error } = await window.db.from('pre_atendimento').insert([dados]);
+
       if (error) {
-        alert('Erro ao enviar avaliação.');
         console.error(error);
+        mostrarErro('Erro ao enviar a ficha. Tente novamente.');
+        btnEnviar.disabled = false;
+        btnEnviar.textContent = 'Enviar Pré-Sessão';
       } else {
-        alert('Obrigado pela sua avaliação!');
+        alert('Pré-sessão enviada com sucesso!');
         window.location.href = 'index.html';
       }
     });

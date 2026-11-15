@@ -1,115 +1,87 @@
-// CONEXÃO COM O SUPABASE (Preencha com suas chaves do painel Supabase)
-const SUPABASE_URL = 'SUA_URL_AQUI';
-const SUPABASE_KEY = 'SUA_ANON_KEY_AQUI';
-
-let _supabase = null;
-try {
-  if (typeof supabase !== 'undefined' && SUPABASE_URL && SUPABASE_URL !== 'SUA_URL_AQUI') {
-    _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  }
-} catch (err) {
-  console.warn('Supabase não inicializado (verifique SUPABASE_URL/SUPABASE_KEY em main.js):', err);
-}
+// A conexão com o Supabase agora vem de config.js (window.db).
 
 document.addEventListener('DOMContentLoaded', () => {
 
   // ==========================================
-  // 1. INTEGRAÇÃO DE DADOS (SUPABASE)
+  // 1. REGISTRO DE ACESSOS (SUPABASE)
   // ==========================================
-
-  if (_supabase) {
-    if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || window.location.pathname === '') {
-      _supabase.from('acessos').insert([{}]).then(({ error }) => {
-        if (error) console.error('Erro ao registrar acesso:', error);
-      });
+  // Conta uma visita por sessão do navegador (evita contar recarregamentos repetidos).
+  // Para não contar as suas próprias visitas, abra o site uma vez com ?admin=1
+  // (isso marca o seu navegador e ele deixa de ser contado).
+  try {
+    if (new URLSearchParams(window.location.search).get('admin') === '1') {
+      localStorage.setItem('natty_ignorar_acesso', '1');
     }
+  } catch (e) {}
 
-    const formPre = document.getElementById('formPre');
-    if (formPre) {
-      formPre.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const dados = {
-          nome: document.getElementById('nome').value,
-          whatsapp: document.getElementById('whatsapp').value,
-          queixa: document.getElementById('queixa').value,
-          nivel_dor: parseInt(document.getElementById('nivelDor').value),
-          historico: document.getElementById('historico').value
-        };
+  function deveRegistrarAcesso() {
+    try {
+      if (localStorage.getItem('natty_ignorar_acesso') === '1') return false;
+      if (sessionStorage.getItem('natty_acesso_registrado') === '1') return false;
+    } catch (e) {}
+    return true;
+  }
 
-        const { error } = await _supabase.from('pre_sessao').insert([dados]);
-        if (!error) {
-          alert('Ficha pré-sessão enviada com sucesso!');
-          window.location.href = 'index.html';
-        } else {
-          alert('Erro ao enviar dados. Tente novamente.');
-        }
-      });
-    }
+  const caminho = window.location.pathname;
+  const ehIndex = caminho.endsWith('index.html') || caminho.endsWith('/');
 
-    const formPos = document.getElementById('formPos');
-    if (formPos) {
-      formPos.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const dados = {
-          whatsapp: document.getElementById('whatsappPos').value,
-          nivel_dor: parseInt(document.getElementById('nivelDorPos').value),
-          feedback: document.getElementById('feedback').value
-        };
-
-        const { error } = await _supabase.from('pos_sessao').insert([dados]);
-        if (!error) {
-          alert('Avaliação enviada com sucesso! Obrigado pelo feedback.');
-          window.location.href = 'index.html';
-        } else {
-          alert('Erro ao enviar avaliação. Tente novamente.');
-        }
-      });
-    }
+  if (window.db && ehIndex && deveRegistrarAcesso()) {
+    window.db.from('acessos').insert([{}]).then(({ error }) => {
+      if (error) {
+        console.error('Erro ao registrar acesso:', error);
+      } else {
+        try { sessionStorage.setItem('natty_acesso_registrado', '1'); } catch (e) {}
+      }
+    });
   }
 
   // ==========================================
-  // 2. CÓDIGO DA LANDING PAGE E INTERAÇÕES
+  // 2. LANDING PAGE E INTERAÇÕES
   // ==========================================
 
   const techniquesData = {
     ventosaterapia: {
       title: "Ventosaterapia",
-      description: "<strong>Procedimento:</strong> Aplicação de ventosas para liberação miofascial, melhora da circulação e alívio de tensões profundas.",
+      description: "<strong>Procedimento:</strong> Aplicação de ventosas para liberação miofascial, melhora da circulação e alívio de tensões profundas.<br><br><strong>Objetivo:</strong> Aliviar dores e tensões musculares profundas, soltar a fáscia (a camada que envolve os músculos) e estimular a circulação local. Ajuda a reduzir a sensação de peso, a rigidez e o desconforto em regiões como costas, ombros e lombar, e favorece a recuperação muscular.",
       img: "imagem/Ventosaterapia.jpg"
     },
     relaxante: {
       title: "Massagem Relaxante",
-      description: "<strong>Procedimento:</strong> Movimentos suaves e firmes para redução do estresse, ansiedade e relaxamento muscular completo.",
-      img: "imagem/Massagem Relaxante.jpg"
+      description: "<strong>Procedimento:</strong> Movimentos suaves e firmes para redução do estresse, ansiedade e relaxamento muscular completo.<br><br><strong>Objetivo:</strong> Proporcionar um momento de pausa para o corpo e a mente: diminuir o estresse e a ansiedade, soltar a musculatura e promover bem-estar e uma sensação de leveza. É ideal para quem busca descansar e desacelerar da rotina.",
+      img: "imagem/massagem-relaxante.jpg"
     },
     drenagem: {
       title: "Drenagem Linfática",
-      description: "<strong>Procedimento:</strong> Técnica manual que estimula o sistema linfático, reduzindo a retenção de líquidos e o inchaço.",
-      img: "imagem/Drenagem Linfática.webp"
+      description: "<strong>Procedimento:</strong> Técnica manual que estimula o sistema linfático, reduzindo a retenção de líquidos e o inchaço.<br><br><strong>Objetivo:</strong> Estimular a circulação da linfa para ajudar o corpo a eliminar o excesso de líquidos e toxinas retidos nos tecidos. Reduz o inchaço e a sensação de pernas e corpo pesados, melhora o conforto e é muito procurada para cuidado do corpo e no pós-operatório (com liberação médica).",
+      img: "imagem/drenagem-linfatica.jpg"
     },
-    terapeutica: {
-      title: "Massagem Terapêutica",
-      description: "<strong>Procedimento:</strong> É indicada para estresse, tensão muscular, dores relacionadas à sobrecarga e rigidez corporal.",
-      img: "imagem/Massagem Terapêutica.jpg" // Ajuste o nome da imagem conforme o seu arquivo
+    modeladora: {
+      title: "Massagem Modeladora",
+      description: "<strong>Procedimento:</strong> Técnica manual que utiliza movimentos firmes, profundos e repetitivos para remodelar o contorno corporal.<br><br><strong>Objetivo:</strong> Trabalhar o contorno corporal com manobras firmes e profundas, melhorando a circulação e o aspecto da pele e dos tecidos nas áreas tratadas. Auxilia na definição das formas e na sensação de corpo mais firme, como complemento de bons hábitos de alimentação e atividade física (não substitui emagrecimento).",
+      img: "imagem/massagem-modeladora.jpg"
     },
     liberacao: {
       title: "Liberação Miofascial",
-      description: "<strong>Procedimento:</strong> É indicada principalmente para tensão muscular, rigidez, sobrecarga e restrição de movimento.",
-      img: "imagem/Liberação Miofascial.jpg" // Ajuste o nome da imagem conforme o seu arquivo
+      description: "<strong>Procedimento:</strong> É indicada principalmente para tensão muscular, rigidez, sobrecarga e restrição de movimento.<br><br><strong>Objetivo:</strong> Soltar as restrições da fáscia e dos músculos que limitam o movimento, aliviando pontos de tensão, rigidez e sobrecarga. O foco é devolver mobilidade, diminuir dores e melhorar a postura e o conforto nos movimentos do dia a dia.",
+      img: "imagem/liberacao-miofascial.jpg"
     },
     indicacao: {
       title: "Avaliação Terapêutica",
-      description: "<strong>Procedimento:</strong> Análise individual do seu estado físico e queixas de dor antes do início do tratamento.",
-      img: "imagem/Preciso de Indicação.jpg"
+      description: "<strong>Procedimento:</strong> Análise individual do seu estado físico e queixas de dor antes do início do tratamento.<br><br><strong>Objetivo:</strong> Entender a sua queixa, o local da dor e a sua rotina para indicar a técnica mais adequada ao seu caso. Assim, você não precisa escolher sozinha(o): a avaliação define o melhor caminho e deixa o atendimento mais seguro e eficaz.",
+      img: "imagem/preciso-de-indicacao.jpg"
     }
   };
 
   const bookingState = { tecnica: "", horario: "" };
 
+  function ehIndicacao(valor) {
+    return valor === "Preciso de Indicação" || valor === "Avaliação Terapêutica";
+  }
+
   const body = document.body;
   const screenHero = document.getElementById('screenHero');
   const quizContainer = document.getElementById('quizContainer');
-  const natallyName = document.querySelector('.hero-title') || document.getElementById('natallyName');
+  const natallyName = document.querySelector('.brand-title');
 
   const step1 = document.getElementById('step1');
   const step2 = document.getElementById('step2');
@@ -117,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnBackToStep1 = document.getElementById('btnBackToStep1');
   const btnBackToStep2 = document.getElementById('btnBackToStep2');
   const btnBackToHero = document.getElementById('btnBackToHero');
-  const btnWhatsapp = document.querySelector('.btn-confirmar-whatsapp') || document.getElementById('btnWhatsapp');
+  const btnWhatsapp = document.getElementById('btnWhatsapp');
 
   const infoInlinePanel = document.getElementById('infoInlinePanel');
   const infoTitle = document.getElementById('infoTitle');
@@ -125,12 +97,26 @@ document.addEventListener('DOMContentLoaded', () => {
   const techImg = document.getElementById('techImg');
   const techImgWrapper = document.getElementById('techImgWrapper');
 
-  const sobreMimSection = document.getElementById('sobreMimSection') || document.querySelector('.sobre-mim-section');
-  const btnSobreMim = document.getElementById('btnSobreMim') || document.querySelector('.btn-sobre-mim');
-  const btnSobreMimText = document.getElementById('btnSobreMimText') || (btnSobreMim ? btnSobreMim.querySelector('span') : null);
-  const btnSobreMimArrow = document.getElementById('btnSobreMimArrow') || (btnSobreMim ? btnSobreMim.querySelector('i') : null);
+  const sobreMimSection = document.getElementById('sobreMimSection');
+  const btnSobreMim = document.getElementById('btnSobreMim');
+  const btnSobreMimText = document.getElementById('btnSobreMimText');
+  const btnSobreMimArrow = document.getElementById('btnSobreMimArrow');
 
   const bgAudio = document.getElementById('bgAudio');
+
+  // Se uma imagem não carregar, tenta a mesma imagem com outra extensão (jpg, jpeg, png, webp)
+  const EXTENSOES = ['jpg', 'jpeg', 'png', 'webp'];
+  document.querySelectorAll('img').forEach(img => {
+    img.addEventListener('error', () => {
+      const m = img.src.match(/^(.*)\.(\w+)(\?.*)?$/);
+      if (!m) return;
+      const tentadas = (img.dataset.tried || '').split(',').filter(Boolean);
+      tentadas.push(m[2].toLowerCase());
+      img.dataset.tried = tentadas.join(',');
+      const proxima = EXTENSOES.find(e => !tentadas.includes(e));
+      if (proxima) img.src = m[1] + '.' + proxima;
+    });
+  });
 
   let currentBip = 1;
   let fadeOutInterval = null;
@@ -145,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) {}
   }
 
-  // EFEITO BRILHANTE (FLASH DOURADO) AO INICIAR A TRANSIÇÃO PRA OUTRA "PÁGINA"
+  // EFEITO BRILHANTE (FLASH DOURADO) AO INICIAR A TRANSIÇÃO
   function triggerShineFlash() {
     const flash = document.createElement('div');
     flash.className = 'shine-flash';
@@ -154,7 +140,6 @@ document.addEventListener('DOMContentLoaded', () => {
       flash.classList.add('active');
     });
     flash.addEventListener('animationend', () => flash.remove());
-    // segurança: remove mesmo se o evento não disparar por algum motivo
     setTimeout(() => { if (flash.parentNode) flash.remove(); }, 900);
   }
 
@@ -163,10 +148,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const data = techniquesData[key];
     if (!data) return;
 
-    if (infoTitle) infoTitle.innerHTML = data.title;
-    if (infoText) infoText.innerHTML = data.description;
+    if (infoTitle) infoTitle.textContent = data.title;
+    if (infoText) infoText.innerHTML = data.description; // texto fixo definido acima (seguro)
 
     if (data.img && techImg && techImgWrapper) {
+      techImg.dataset.tried = '';
       techImg.src = data.img;
       techImg.alt = data.title;
       techImgWrapper.classList.add('has-img');
@@ -182,7 +168,6 @@ document.addEventListener('DOMContentLoaded', () => {
     playBip();
     triggerShineFlash();
 
-    // animação de "desligar" o interruptor no exato momento do clique
     document.querySelectorAll('.right-switch-block').forEach(sw => sw.classList.add('switch-off'));
 
     if (bgAudio) {
@@ -221,7 +206,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function closeQuiz() {
     playBip();
 
-    // religa o interruptor visualmente ao voltar pro início
     document.querySelectorAll('.right-switch-block').forEach(sw => sw.classList.remove('switch-off'));
 
     body.classList.remove('darkened');
@@ -243,8 +227,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 300);
   }
 
-  // CONFIGURAÇÃO DOS BOTÕES DE AGENDAR (Atende por ID ou Classe)
-  const agendarButtons = document.querySelectorAll('#btnAgendar, .btn-agendar, #switchBtn, .right-switch-block');
+  // BOTÕES DE AGENDAR
+  // CORREÇÃO: o botão do WhatsApp também tem a classe .btn-agendar e antes
+  // reabria o quiz ao ser clicado. Agora ele é excluído deste seletor.
+  const agendarButtons = document.querySelectorAll(
+    '#btnAgendar, #switchBtn, .right-switch-block, .btn-agendar:not(.btn-whatsapp)'
+  );
   agendarButtons.forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
@@ -256,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnBackToHero.addEventListener('click', closeQuiz);
   }
 
-  // BOTÃO SOBRE MIM — rola a tela até o FIM da página
+  // BOTÃO SOBRE MIM — rola até o fim da página
   let isAtBottom = false;
   if (btnSobreMim) {
     btnSobreMim.addEventListener('click', (e) => {
@@ -271,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.addEventListener('scroll', () => {
       const scrollBottom = window.scrollY + window.innerHeight;
-      const pageBottom = document.body.scrollHeight - 2; // pequena margem de tolerância
+      const pageBottom = document.body.scrollHeight - 2;
       if (scrollBottom >= pageBottom) {
         isAtBottom = true;
         if (btnSobreMimText) btnSobreMimText.textContent = "Voltar ao topo";
@@ -296,8 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
         playBip();
         document.querySelectorAll('.info-btn').forEach(btn => btn.classList.remove('active'));
         infoBtn.classList.add('active');
-        const key = infoBtn.getAttribute('data-info');
-        updateInfoPanel(key);
+        updateInfoPanel(infoBtn.getAttribute('data-info'));
       });
     }
 
@@ -311,13 +298,12 @@ document.addEventListener('DOMContentLoaded', () => {
         bookingState.tecnica = selectedValue;
 
         if (infoBtn) {
-          const key = infoBtn.getAttribute('data-info');
-          updateInfoPanel(key);
+          updateInfoPanel(infoBtn.getAttribute('data-info'));
         }
 
         setTimeout(() => {
           if (step1) step1.classList.remove('active');
-          if (selectedValue === "Preciso de Indicação" || selectedValue === "Avaliação Terapêutica") {
+          if (ehIndicacao(selectedValue)) {
             bookingState.horario = "";
             if (step3) step3.classList.add('active');
           } else {
@@ -340,7 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnBackToStep2.addEventListener('click', () => {
       playBip();
       if (step3) step3.classList.remove('active');
-      if (bookingState.tecnica === "Preciso de Indicação" || bookingState.tecnica === "Avaliação Terapêutica") {
+      if (ehIndicacao(bookingState.tecnica)) {
         if (step1) step1.classList.add('active');
       } else {
         if (step2) step2.classList.add('active');
@@ -363,21 +349,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // WHATSAPP — mensagem agora codificada com encodeURIComponent
   if (btnWhatsapp) {
     btnWhatsapp.addEventListener('click', () => {
       playBip();
       const phone = "5584988502719";
       let message = "";
 
-      if (bookingState.tecnica === "Preciso de Indicação" || bookingState.tecnica === "Avaliação Terapêutica") {
-        message = `Olá Natallyane! Gostaria de uma indicação/avaliação para saber qual a melhor técnica para o meu caso.%0A%0A` +
-                  `Qual dia da semana você tem disponível?`;
+      if (ehIndicacao(bookingState.tecnica)) {
+        message = "Olá Natallyane! Gostaria de uma indicação/avaliação para saber qual a melhor técnica para o meu caso.\n\n" +
+                  "Qual dia da semana você tem disponível?";
       } else {
-        message = `Olá Natallyane! Gostaria de agendar uma sessão de *${bookingState.tecnica}* no *${bookingState.horario}*.%0A%0A` +
-                  `Qual dia da semana você tem disponível?`;
+        message = `Olá Natallyane! Gostaria de agendar uma sessão de *${bookingState.tecnica}* no *${bookingState.horario}*.\n\n` +
+                  "Qual dia da semana você tem disponível?";
       }
 
-      window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
+      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank', 'noopener');
     });
   }
 
@@ -386,6 +373,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (canvas) {
     const ctx = canvas.getContext('2d');
     let wisps = [];
+    const reduzirMovimento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     function resizeCanvas() {
       canvas.width = window.innerWidth;
@@ -493,7 +481,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function animateSmoke() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      if (body.classList.contains('darkened')) {
+      // só anima quando o quiz está aberto, a aba está visível e o usuário não pediu menos movimento
+      if (body.classList.contains('darkened') && !document.hidden && !reduzirMovimento) {
         wisps.forEach(wisp => {
           wisp.update();
           wisp.draw();
