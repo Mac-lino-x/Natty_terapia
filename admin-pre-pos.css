@@ -83,6 +83,28 @@ body {
   margin: 14px auto 6px;
 }
 
+/* Logo com a mão: só brilha quando alguma estrela está selecionada */
+.marca-logo {
+  transition: filter 0.4s ease;
+}
+
+.marca-logo.brilhando {
+  animation: brilhoLogo 2.2s ease-in-out infinite;
+}
+
+@keyframes brilhoLogo {
+  0%, 100% {
+    filter: drop-shadow(0 0 4px rgba(255, 255, 245, 0.9))
+            drop-shadow(0 0 12px rgba(255, 240, 170, 0.7))
+            drop-shadow(0 0 26px rgba(255, 224, 110, 0.4));
+  }
+  50% {
+    filter: drop-shadow(0 0 6px rgba(255, 255, 250, 1))
+            drop-shadow(0 0 18px rgba(255, 244, 185, 0.95))
+            drop-shadow(0 0 36px rgba(255, 228, 120, 0.6));
+  }
+}
+
 .marca-nome {
   font-family: 'Cormorant Garamond', serif;
   font-size: 1.7rem;
@@ -281,45 +303,80 @@ h2::before {
 }
 
 /* ---------- SLIDER DE DOR ---------- */
+/* Variáveis atualizadas pelo JavaScript conforme o nível (0 a 10):
+   --cor-dor / --brilho-dor: verde -> amarelo -> vermelho
+   --pct: até onde a barra está preenchida
+   --emoji-dor: carinha 3D que serve de botão da barra */
 .dor-wrapper {
+  --cor-dor: hsl(130 80% 42%);
+  --brilho-dor: hsl(130 95% 55% / 0.65);
+  --pct: 22px;
+  --emoji-dor: none;
   display: flex;
   align-items: center;
   gap: 14px;
+  padding: 8px 0;
 }
 
 .dor-wrapper input[type="range"] {
   flex: 1;
   -webkit-appearance: none;
   appearance: none;
-  height: 7px;
+  height: 9px;
   border-radius: 6px;
-  background: linear-gradient(90deg, var(--salvia-escuro), var(--dourado) 55%, #b4573f);
+  background:
+    linear-gradient(to right, transparent var(--pct), #e6dfcd var(--pct)),
+    linear-gradient(90deg, #3fae5a, #d9c23a 50%, #d9402b);
+  box-shadow: 0 0 6px var(--brilho-dor), 0 0 16px var(--brilho-dor);
+  transition: box-shadow 0.3s ease;
   outline: none;
+  cursor: pointer;
 }
 
 .dor-wrapper input[type="range"]:focus-visible {
-  box-shadow: 0 0 0 3px rgba(201, 160, 99, 0.45);
+  outline: none;
 }
 
+/* Botão da barra = emoji 3D que muda de expressão */
 .dor-wrapper input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 24px;
-  height: 24px;
+  width: 44px;
+  height: 44px;
+  border: none;
   border-radius: 50%;
-  background: var(--creme-claro);
-  border: 3px solid var(--dourado);
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(74, 42, 26, 0.3);
+  background-color: transparent;
+  background-image: var(--emoji-dor);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  cursor: grab;
+  box-shadow: 0 0 10px var(--brilho-dor), 0 0 22px var(--brilho-dor);
+  filter: drop-shadow(0 3px 3px rgba(74, 42, 26, 0.35));
+  transition: transform 0.15s ease;
 }
 
 .dor-wrapper input[type="range"]::-moz-range-thumb {
-  width: 24px;
-  height: 24px;
+  width: 44px;
+  height: 44px;
+  border: none;
   border-radius: 50%;
-  background: var(--creme-claro);
-  border: 3px solid var(--dourado);
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(74, 42, 26, 0.3);
+  background-color: transparent;
+  background-image: var(--emoji-dor);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  cursor: grab;
+  box-shadow: 0 0 10px var(--brilho-dor), 0 0 22px var(--brilho-dor);
+  filter: drop-shadow(0 3px 3px rgba(74, 42, 26, 0.35));
+  transition: transform 0.15s ease;
+}
+
+.dor-wrapper input[type="range"]:active::-webkit-slider-thumb {
+  transform: scale(1.12);
+  cursor: grabbing;
+}
+
+.dor-wrapper input[type="range"]:active::-moz-range-thumb {
+  transform: scale(1.12);
+  cursor: grabbing;
 }
 
 .dor-valor {
@@ -328,7 +385,9 @@ h2::before {
   font-family: 'Cormorant Garamond', serif;
   font-size: 1.7rem;
   font-weight: 600;
-  color: var(--marrom);
+  color: var(--cor-dor);
+  text-shadow: 0 0 10px var(--brilho-dor);
+  transition: color 0.3s ease;
 }
 
 /* ---------- ESTRELAS ---------- */
@@ -338,6 +397,10 @@ h2::before {
   gap: 12px;
   cursor: pointer;
   margin: 15px 0;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .estrela-svg {
@@ -351,16 +414,38 @@ h2::before {
 
 .estrela-svg:hover { transform: scale(1.15); }
 
+.estrela-svg:focus,
 .estrela-svg:focus-visible {
-  outline: 2px solid var(--salvia-escuro);
-  outline-offset: 3px;
+  outline: none;
 }
 
-.estrela-svg.ativa,
+.estrela-svg:focus-visible { transform: scale(1.18); }
+
+/* pré-visualização ao passar o mouse */
 .estrela-svg.hover {
-  fill: var(--dourado) !important;
-  filter: drop-shadow(0 3px 6px rgba(169, 129, 71, 0.45));
+  fill: #fff0a0 !important;
+  filter: drop-shadow(0 0 4px rgba(255, 250, 220, 0.8));
   transform: scale(1.1);
+}
+
+/* estrela selecionada: neon suave, branco com tom amarelado */
+.estrela-svg.ativa {
+  fill: #ffe873 !important;
+  transform: scale(1.12);
+  animation: brilhoEstrela 2.2s ease-in-out infinite;
+}
+
+@keyframes brilhoEstrela {
+  0%, 100% {
+    filter: drop-shadow(0 0 3px rgba(255, 255, 245, 0.95))
+            drop-shadow(0 0 8px rgba(255, 240, 170, 0.75))
+            drop-shadow(0 0 16px rgba(255, 224, 110, 0.4));
+  }
+  50% {
+    filter: drop-shadow(0 0 4px rgba(255, 255, 250, 1))
+            drop-shadow(0 0 11px rgba(255, 244, 185, 0.95))
+            drop-shadow(0 0 24px rgba(255, 228, 120, 0.6));
+  }
 }
 
 /* ---------- BOTÕES ---------- */
@@ -578,4 +663,6 @@ h2::before {
 
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
+  .estrela-svg.ativa { filter: drop-shadow(0 0 4px rgba(255, 255, 245, 0.95)) drop-shadow(0 0 12px rgba(255, 236, 150, 0.8)); }
+  .marca-logo.brilhando { filter: drop-shadow(0 0 5px rgba(255, 255, 245, 0.9)) drop-shadow(0 0 16px rgba(255, 236, 150, 0.8)); }
 }

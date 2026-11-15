@@ -11,8 +11,6 @@
   <script src="config.js"></script>
 </head>
 <body>
-  <audio id="somBip" src="audio/bip2.mp3" preload="auto"></audio>
-
   <div class="container-card container-card-flex">
     <div class="marca-coluna">
       <div class="marca-conteudo">
@@ -77,60 +75,207 @@
     const estrelas = Array.from(document.querySelectorAll('.estrela-svg'));
     const container = document.getElementById('starContainer');
     const inputNota = document.getElementById('notaSelecionada');
-    const somBip = document.getElementById('somBip');
     const btnEnviar = document.getElementById('btnEnviarPos');
     const msgErro = document.getElementById('msgErro');
+    const logo = document.querySelector('.marca-logo');
+
+    // ---------- Bips: uma nota diferente para cada estrela (Dó, Ré, Mi, Fá, Sol) ----------
+    // false = notas geradas pelo próprio navegador (sempre toca as 5 estrelas)
+    // true  = usa os arquivos da pasta audio/ (um por estrela, na ordem da lista abaixo)
+    const USAR_ARQUIVOS_DE_AUDIO = false;
+    const ARQUIVOS_BIP = [
+      'audio/bip1.mp3',
+      'audio/bip2.mp3',
+      'audio/bip3.mp3',
+      'audio/bip4.mp3',
+      'audio/bip5.mp3'
+    ];
+    const NOTAS = [523.25, 587.33, 659.25, 698.46, 783.99]; // Dó, Ré, Mi, Fá, Sol
+
+    const bips = USAR_ARQUIVOS_DE_AUDIO
+      ? ARQUIVOS_BIP.map(src => {
+          const a = new Audio();
+          a.preload = 'auto';
+          a._ok = false;
+          a.addEventListener('canplaythrough', () => { a._ok = true; });
+          a.src = src;
+          return a;
+        })
+      : [];
+
+    let ctxAudio = null;
+    function obterContexto() {
+      try {
+        ctxAudio = ctxAudio || new (window.AudioContext || window.webkitAudioContext)();
+        if (ctxAudio.state === 'suspended') ctxAudio.resume();
+      } catch (err) {}
+      return ctxAudio;
+    }
+
+    // Nota suave (tom principal + um harmônico leve)
+    function tomSintetico(i) {
+      const ctx = obterContexto();
+      if (!ctx) return;
+      const t = ctx.currentTime;
+      const nota = NOTAS[i] || NOTAS[0];
+      [[1, 0.24], [2, 0.06]].forEach(([mult, volume]) => {
+        const osc = ctx.createOscillator();
+        const ganho = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = nota * mult;
+        ganho.gain.setValueAtTime(0.0001, t);
+        ganho.gain.exponentialRampToValueAtTime(volume, t + 0.015);
+        ganho.gain.exponentialRampToValueAtTime(0.0001, t + 0.38);
+        osc.connect(ganho);
+        ganho.connect(ctx.destination);
+        osc.start(t);
+        osc.stop(t + 0.4);
+      });
+    }
+
+    function tocarBip(indice) {
+      const a = bips[indice];
+      if (a && a._ok) {
+        try {
+          a.currentTime = 0;
+          const p = a.play();
+          if (p && p.catch) p.catch(() => tomSintetico(indice));
+          return;
+        } catch (err) {}
+      }
+      tomSintetico(indice);
+    }
 
     let timerBips = null;
 
-    function tocarSequenciaBips(quantidade) {
-      // cancela sequência anterior para não acumular bips em cliques rápidos
-      if (timerBips) clearTimeout(timerBips);
-      let atual = 0;
-      function disparar() {
-        if (atual >= quantidade) return;
-        atual++;
-        try {
-          somBip.currentTime = 0;
-          somBip.play().catch(() => {});
-        } catch (err) {}
-        timerBips = setTimeout(disparar, 250);
-      }
-      disparar();
+    // Bip original do site (audio/bip2.mp3): toca uma vez, antes das notas
+    const bipOriginal = new Audio('audio/bip2.mp3');
+    bipOriginal.preload = 'auto';
+    function tocarBipOriginal() {
+      try {
+        bipOriginal.currentTime = 0;
+        const p = bipOriginal.play();
+        if (p && p.catch) p.catch(() => {});
+      } catch (err) {}
     }
 
-    function selecionar(valor) {
+    // Seleção nova: bip original 1x e, em seguida, uma nota por estrela (Dó, Ré, Mi, Fá, Sol).
+    // Ao arrastar para cima, toca só as notas das estrelas novas.
+    function tocarSequenciaBips(de, ate) {
+      if (timerBips) clearTimeout(timerBips);
+      let atual = de;
+      function proximo() {
+        if (atual >= ate) return;
+        tocarBip(atual);
+        atual++;
+        timerBips = setTimeout(proximo, 250);
+      }
+      if (de === 0) {
+        tocarBipOriginal();
+        timerBips = setTimeout(proximo, 350);
+      } else {
+        proximo();
+      }
+    }
+
+    // 'de' = a partir de qual bip tocar (0 = toca desde a estrela 1)
+    function selecionar(valor, de = 0) {
       inputNota.value = valor;
       estrelas.forEach(item => {
         const v = parseInt(item.dataset.valor, 10);
         item.classList.toggle('ativa', v <= valor);
-        item.setAttribute('aria-checked', v === valor ? 'true' : 'false');
+        item.setAttribute('aria-checked', (valor > 0 && v === valor) ? 'true' : 'false');
         item.tabIndex = (v === valor || (valor === 0 && v === 1)) ? 0 : -1;
       });
+
+      // o logo só brilha enquanto houver ao menos uma estrela selecionada
+      if (logo) logo.classList.toggle('brilhando', valor > 0);
+
       msgErro.textContent = '';
-      tocarSequenciaBips(valor);
+
+      if (valor > 0) {
+        tocarSequenciaBips(de, valor);
+      } else if (timerBips) {
+        clearTimeout(timerBips);
+      }
     }
 
+    // Descobre qual estrela está sob o dedo/mouse (arrastando para a esquerda da 1ª zera)
+    function estrelaNoPonto(x) {
+      let escolhida = 0;
+      estrelas.forEach(item => {
+        const r = item.getBoundingClientRect();
+        if (x >= r.left - 6) escolhida = parseInt(item.dataset.valor, 10);
+      });
+      return escolhida;
+    }
+
+    // ---------- Clique e arrastar (mouse, toque e caneta) ----------
+    let arrastando = false;
+    let moveu = false;
+    let valorAoPressionar = 0;
+    let valorPressionado = 0;
+
+    container.addEventListener('pointerdown', (e) => {
+      if (e.button !== undefined && e.button !== 0) return;
+      if (!e.target.closest('.estrela-svg')) return;
+
+      obterContexto();
+      arrastando = true;
+      moveu = false;
+      valorAoPressionar = parseInt(inputNota.value, 10);
+      valorPressionado = estrelaNoPonto(e.clientX);
+
+      try { container.setPointerCapture(e.pointerId); } catch (err) {}
+
+      // tocou numa estrela diferente da atual: aplica já (brilho e bips imediatos)
+      if (valorPressionado !== valorAoPressionar) selecionar(valorPressionado);
+    });
+
+    container.addEventListener('pointermove', (e) => {
+      if (!arrastando) return;
+      const v = estrelaNoPonto(e.clientX);
+      const atual = parseInt(inputNota.value, 10);
+      if (v !== atual) {
+        moveu = true;
+        // subindo: toca só os bips das estrelas novas; descendo: toca o bip da estrela alcançada
+        selecionar(v, v > atual ? atual : Math.max(0, v - 1));
+      }
+    });
+
+    function soltar() {
+      if (!arrastando) return;
+      arrastando = false;
+      // toque simples na estrela que já estava selecionada = zera a nota
+      if (!moveu && valorPressionado === valorAoPressionar && valorAoPressionar > 0) {
+        selecionar(0);
+      }
+    }
+    container.addEventListener('pointerup', soltar);
+    container.addEventListener('pointercancel', soltar);
+
+    // ---------- Pré-visualização com o mouse ----------
     estrelas.forEach(estrela => {
       const valor = parseInt(estrela.dataset.valor, 10);
 
       estrela.addEventListener('mouseenter', () => {
+        if (arrastando) return;
         estrelas.forEach(item => {
           item.classList.toggle('hover', parseInt(item.dataset.valor, 10) <= valor);
         });
       });
 
-      estrela.addEventListener('click', () => selecionar(valor));
-
+      // ---------- Teclado ----------
       estrela.addEventListener('keydown', (e) => {
         let novo = null;
         if (e.key === 'Enter' || e.key === ' ') novo = valor;
         else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') novo = Math.min(5, valor + 1);
         else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') novo = Math.max(1, valor - 1);
+        else if (e.key === 'Escape' || e.key === 'Delete' || e.key === 'Backspace') novo = 0;
         if (novo !== null) {
           e.preventDefault();
           selecionar(novo);
-          estrelas[novo - 1].focus();
+          if (novo > 0) estrelas[novo - 1].focus();
         }
       });
     });

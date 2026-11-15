@@ -95,9 +95,198 @@
     const msgErro = document.getElementById('msgErro');
     const inputTel = document.getElementById('telefoneCliente');
 
+    // ---------- Emojis 3D da barra de dor ----------
+    const EMOJI_DEFS = `<defs>
+<radialGradient id="f" cx="38%" cy="30%" r="80%"><stop offset="0" stop-color="#fff6b0"/><stop offset=".35" stop-color="#ffd83d"/><stop offset=".75" stop-color="#f4a912"/><stop offset="1" stop-color="#cf7d04"/></radialGradient>
+<radialGradient id="r" cx="50%" cy="50%" r="50%"><stop offset=".7" stop-color="#8a4300" stop-opacity="0"/><stop offset="1" stop-color="#8a4300" stop-opacity=".5"/></radialGradient>
+<radialGradient id="h" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+<linearGradient id="e" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7a3a14"/><stop offset="1" stop-color="#34160a"/></linearGradient>
+<linearGradient id="b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a1f0a"/><stop offset="1" stop-color="#2a1006"/></linearGradient>
+<linearGradient id="t" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff7a68"/><stop offset="1" stop-color="#e02b2b"/></linearGradient>
+<linearGradient id="l" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d4f1ff"/><stop offset="1" stop-color="#4fb4f0"/></linearGradient>
+</defs>`;
+
+    const SOBRANCELHA = 'fill="none" stroke="#9a5516" stroke-width="2.4" stroke-linecap="round" opacity=".85"';
+    const SOBR_NORMAL = `<path d="M24 28 Q33 22 42 27" ${SOBRANCELHA}/><path d="M58 27 Q67 22 76 28" ${SOBRANCELHA}/>`;
+    const SOBR_PREOC  = `<path d="M22 35 Q32 33 42 27" ${SOBRANCELHA}/><path d="M58 27 Q68 33 78 35" ${SOBRANCELHA}/>`;
+
+    const OLHOS = `<ellipse cx="33" cy="43" rx="8" ry="9.5" fill="url(#e)"/><ellipse cx="67" cy="43" rx="8" ry="9.5" fill="url(#e)"/>
+<circle cx="35.5" cy="39" r="3.2" fill="#fff"/><circle cx="69.5" cy="39" r="3.2" fill="#fff"/>
+<circle cx="30" cy="47" r="1.5" fill="#fff" opacity=".85"/><circle cx="64" cy="47" r="1.5" fill="#fff" opacity=".85"/>`;
+    const OLHOS_FECHADOS = `<path d="M24 46 Q33 51 42 46" fill="none" stroke="#3b1a08" stroke-width="3.4" stroke-linecap="round"/><path d="M58 46 Q67 51 76 46" fill="none" stroke="#3b1a08" stroke-width="3.4" stroke-linecap="round"/>`;
+
+    const BOCA_ABERTA = `<path d="M22 60 Q50 66 78 60 Q75 85 50 85 Q25 85 22 60Z" fill="url(#b)"/>`;
+    const DENTES = `<path d="M24.5 61.5 Q50 67 75.5 61.5 Q75 69 73.5 71 Q50 76 26.5 71 Q25 69 24.5 61.5Z" fill="#fff"/>`;
+    const LINGUA = `<path d="M31 78 Q50 68 69 78 Q63 85 50 85 Q37 85 31 78Z" fill="url(#t)"/>`;
+    const BOCA_NEUTRA = `<rect x="34" y="66" width="32" height="7" rx="3.5" fill="url(#b)"/>`;
+    const BOCA_CURTA = `<rect x="36" y="68" width="28" height="6" rx="3" fill="url(#b)"/>`;
+    const BOCA_TRISTE = `<path d="M27 82 Q50 52 73 82Z" fill="url(#b)"/>`;
+    const LINGUA_TRISTE = `<path d="M36 82 Q50 68 64 82Z" fill="url(#t)"/>`;
+    const LAGRIMAS = `<path d="M20 54 Q27 64 20 70 Q13 64 20 54Z" fill="url(#l)"/><path d="M80 54 Q87 64 80 70 Q73 64 80 54Z" fill="url(#l)"/>
+<circle cx="18" cy="63" r="1.6" fill="#fff" opacity=".9"/><circle cx="78" cy="63" r="1.6" fill="#fff" opacity=".9"/>`;
+
+    // 6 expressões: 0-1 muito feliz | 2-3 feliz | 4-5 neutro | 6-7 incomodado | 8-9 aflito | 10 muita dor
+    const ROSTOS = [
+      SOBR_NORMAL + OLHOS + BOCA_ABERTA + DENTES,
+      SOBR_NORMAL + OLHOS + BOCA_ABERTA + LINGUA,
+      SOBR_NORMAL + OLHOS + BOCA_NEUTRA,
+      SOBR_PREOC + OLHOS_FECHADOS + BOCA_CURTA,
+      SOBR_PREOC + OLHOS + BOCA_TRISTE + LINGUA_TRISTE,
+      SOBR_PREOC + OLHOS + BOCA_TRISTE + LINGUA_TRISTE + LAGRIMAS
+    ];
+
+    function criarEmoji3D(rosto) {
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">${EMOJI_DEFS}
+<circle cx="50" cy="50" r="47" fill="url(#f)"/>
+<circle cx="50" cy="50" r="47" fill="url(#r)"/>
+<ellipse cx="36" cy="21" rx="19" ry="10" fill="url(#h)" transform="rotate(-22 36 21)"/>
+${rosto}</svg>`;
+      return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+    }
+    const EMOJIS_DOR = ROSTOS.map(criarEmoji3D);
+
+    // Cor, brilho e emoji da barra de dor: verde (0) -> amarelo -> vermelho (10)
+    const wrapperDor = document.querySelector('.dor-wrapper');
+    function atualizarCorDor() {
+      const v = parseInt(sliderDor.value, 10);
+      const matiz = Math.round(130 - (v / 10) * 130);
+      wrapperDor.style.setProperty('--cor-dor', `hsl(${matiz} 80% 42%)`);
+      wrapperDor.style.setProperty('--brilho-dor', `hsl(${matiz} 95% 55% / 0.65)`);
+      // preenchimento acompanha o centro do emoji (botão de 44px)
+      wrapperDor.style.setProperty('--pct', `calc(22px + (100% - 44px) * ${v / 10})`);
+      wrapperDor.style.setProperty('--emoji-dor', EMOJIS_DOR[Math.min(5, Math.floor(v / 2))]);
+      dorValor.textContent = v;
+    }
+    // ---------- Sons de reação (efeitos sintetizados, um para cada carinha) ----------
+    // voz: tipo da onda, de/ate = frequência inicial/final (Hz), dur = duração (s), vol,
+    //      vib = [velocidade, profundidade] do vibrato, filtro = corte agudo, inicio = atraso (s)
+    const REACOES = [
+      // 0 muito feliz: "fiiiim" subindo, brilho leve
+      { voces: [
+        { tipo: 'sine', de: 520, ate: 1250, dur: 1.0, vol: 0.10, vib: [5, 8] },
+        { tipo: 'sine', de: 1040, ate: 2500, dur: 1.0, vol: 0.02 }
+      ] },
+      // 1 feliz: "vi-viiim" dois deslizes suaves subindo
+      { voces: [
+        { tipo: 'sine', de: 450, ate: 760, dur: 0.55, vol: 0.09 },
+        { tipo: 'sine', de: 600, ate: 980, dur: 0.85, vol: 0.09, inicio: 0.4 }
+      ] },
+      // 2 neutro: "vimmm" calmo e prolongado
+      { voces: [
+        { tipo: 'sine', de: 380, ate: 340, dur: 0.9, vol: 0.10, vib: [3, 4] }
+      ] },
+      // 3 incomodado: "zzzimmm" tremido, bem leve
+      { voces: [
+        { tipo: 'triangle', de: 500, ate: 340, dur: 1.2, vol: 0.07, vib: [12, 6], filtro: 900 }
+      ] },
+      // 4 aflito: "viiiuuu" descendo devagar
+      { voces: [
+        { tipo: 'triangle', de: 760, ate: 270, dur: 1.4, vol: 0.07, vib: [7, 10], filtro: 1000 },
+        { tipo: 'sine', de: 380, ate: 135, dur: 1.4, vol: 0.07 }
+      ] },
+      // 5 muita dor: "zziiiimmm" longo, descendo e grave, sem aspereza
+      { voces: [
+        { tipo: 'triangle', de: 900, ate: 170, dur: 1.8, vol: 0.07, vib: [10, 14], filtro: 1100 },
+        { tipo: 'sine', de: 450, ate: 85, dur: 1.8, vol: 0.07 }
+      ] }
+    ];
+
+    let ctxReacao = null;
+    let somReacaoAtual = null;
+
+    function obterCtxReacao() {
+      try {
+        ctxReacao = ctxReacao || new (window.AudioContext || window.webkitAudioContext)();
+        if (ctxReacao.state === 'suspended') ctxReacao.resume();
+      } catch (err) {}
+      return ctxReacao;
+    }
+
+    // corta o som anterior rapidamente para não acumular ao arrastar a barra
+    function pararSomReacao() {
+      if (!somReacaoAtual) return;
+      const { mestre, fontes, ctx } = somReacaoAtual;
+      const t = ctx.currentTime;
+      try {
+        mestre.gain.cancelScheduledValues(t);
+        mestre.gain.setTargetAtTime(0.0001, t, 0.05);
+        fontes.forEach(o => { try { o.stop(t + 0.3); } catch (e) {} });
+      } catch (err) {}
+      somReacaoAtual = null;
+    }
+
+    function tocarReacao(indice) {
+      const ctx = obterCtxReacao();
+      if (!ctx) return;
+      pararSomReacao();
+
+      const t0 = ctx.currentTime + 0.01;
+      const mestre = ctx.createGain();
+      mestre.gain.value = 1;
+      mestre.connect(ctx.destination);
+      const fontes = [];
+
+      REACOES[indice].voces.forEach(v => {
+        const ini = t0 + (v.inicio || 0);
+        const fim = ini + v.dur;
+
+        const osc = ctx.createOscillator();
+        osc.type = v.tipo;
+        osc.frequency.setValueAtTime(v.de, ini);
+        osc.frequency.exponentialRampToValueAtTime(v.ate, fim);
+
+        const ganho = ctx.createGain();
+        const entrada = Math.min(0.15, v.dur * 0.2);
+        ganho.gain.setValueAtTime(0.0001, ini);
+        ganho.gain.exponentialRampToValueAtTime(v.vol, ini + entrada);
+        ganho.gain.setValueAtTime(v.vol, ini + v.dur * 0.35);
+        ganho.gain.exponentialRampToValueAtTime(0.0001, fim);
+
+        if (v.filtro) {
+          const filtro = ctx.createBiquadFilter();
+          filtro.type = 'lowpass';
+          filtro.frequency.value = v.filtro;
+          osc.connect(filtro);
+          filtro.connect(ganho);
+        } else {
+          osc.connect(ganho);
+        }
+        ganho.connect(mestre);
+
+        if (v.vib) {
+          const lfo = ctx.createOscillator();
+          lfo.frequency.value = v.vib[0];
+          const prof = ctx.createGain();
+          prof.gain.value = v.vib[1];
+          lfo.connect(prof);
+          prof.connect(osc.frequency);
+          lfo.start(ini);
+          lfo.stop(fim + 0.05);
+          fontes.push(lfo);
+        }
+
+        osc.start(ini);
+        osc.stop(fim + 0.05);
+        fontes.push(osc);
+      });
+
+      somReacaoAtual = { mestre, fontes, ctx };
+    }
+
+    // libera o áudio no primeiro toque na barra (exigência dos navegadores)
+    sliderDor.addEventListener('pointerdown', obterCtxReacao);
+    sliderDor.addEventListener('keydown', obterCtxReacao);
+
+    let rostoAtual = 0;
     sliderDor.addEventListener('input', () => {
-      dorValor.textContent = sliderDor.value;
+      atualizarCorDor();
+      const rosto = Math.min(5, Math.floor(parseInt(sliderDor.value, 10) / 2));
+      if (rosto !== rostoAtual) {      // só toca quando a carinha muda
+        rostoAtual = rosto;
+        tocarReacao(rosto);
+      }
     });
+    atualizarCorDor();
 
     // Máscara simples (00) 00000-0000
     inputTel.addEventListener('input', () => {
