@@ -485,7 +485,7 @@
       if (pos.feedback) saida += ` Você ainda deixou este comentário: ${pos.feedback}. Muito obrigada!`;
 
       return `Olá, *${pre.nome_cliente}*! ✨\n\n` +
-        `Passando para compartilhar o resumo do seu atendimento do dia *${soData(pre.created_at)}* e celebrar a sua evolução!\n\n` +
+        `Passando para compartilhar o resumo do seu atendimento e celebrar a sua evolução!\n\n` +
         `📥 *Como você chegou:*\n${chegada}\n\n` +
         `📤 *Como você saiu:*\n${saida}\n\n` +
         `💛 *Meu desejo para você:*\n` +
@@ -519,8 +519,6 @@
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
           body: JSON.stringify({
             nome: pre.nome_cliente,
-            dataPre: soData(pre.created_at),
-            dataPos: soData(pos.created_at),
             tecnicaDesejada: pre.tecnica_desejada,
             nivelDor: pre.nivel_dor,
             sintomas: pre.sintomas_queixas,
@@ -555,7 +553,19 @@
       const caixa = document.getElementById('textoMensagem');
       const texto = caixa ? caixa.value.trim() : '';
       if (!numero || !texto) return;
-      window.open('https://wa.me/' + numero + '?text=' + encodeURIComponent(texto), '_blank', 'noopener');
+      const textoUrl = encodeURIComponent(texto);
+
+      // Android (navegador ou APK): abre o app do WhatsApp direto por "intent",
+      // evitando o erro ERR_UNKNOWN_URL_SCHEME do whatsapp://
+      if (/Android/i.test(navigator.userAgent)) {
+        try { if (navigator.clipboard) navigator.clipboard.writeText(texto); } catch (err) {} // cópia de segurança
+        window.location.href = 'intent://send/?phone=' + numero + '&text=' + textoUrl +
+          '#Intent;scheme=whatsapp;package=com.whatsapp;end';
+        return;
+      }
+
+      // Computador / iPhone
+      window.open('https://api.whatsapp.com/send?phone=' + numero + '&text=' + textoUrl, '_blank', 'noopener');
     }
 
     // Guarda o que você editar na mensagem (para não perder se a tela atualizar)
